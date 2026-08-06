@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Completo — V3</title>
+<title>Casa Cambuquira — Painel Completo — V4</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -728,6 +728,7 @@ footer{
 }
 
 </style>
+<!-- GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 </head>
 <body>
 <header>
@@ -1060,7 +1061,8 @@ footer{
           <input
             id="photoWebAppUrl"
             type="url"
-            value="https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGcIj666E1QHhjR8s1s60xLITcA/exec"
+            readonly
+            value="https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec"
             placeholder="https://script.google.com/macros/s/.../exec">
         </label>
 
@@ -1503,7 +1505,7 @@ function freshState(){
   houseData.forEach(g=>g.items.forEach(i=>houseChecked[i.id]=DEFAULT_CHECKED.has(i.id)));
   return {
     houseData,houseChecked,houseNotes:{},nextHouseId:501,
-    inventory:[],manualBuys:[],events:[],repairs:createSuggestedRepairs(),photoGalleryUrl:"https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGcIj666E1QHhjR8s1s60xLITcA/exec",otherCity:"Três Corações",hideBought:false
+    inventory:[],manualBuys:[],events:[],repairs:createSuggestedRepairs(),photoGalleryUrl:"https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec",otherCity:"Três Corações",hideBought:false
   };
 }
 function loadState(){
@@ -1883,7 +1885,7 @@ repairPriorityFilter.onchange=renderRepairs;
 
 
 
-const DEFAULT_PHOTO_GALLERY_URL="https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGcIj666E1QHhjR8s1s60xLITcA/exec";
+const DEFAULT_PHOTO_GALLERY_URL="https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec";
 
 /* GALERIA DE FOTOS DO GOOGLE DRIVE */
 function normalizeAppsScriptUrl(value){
@@ -1892,7 +1894,7 @@ function normalizeAppsScriptUrl(value){
   return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/(exec|dev)(\?.*)?$/i.test(url)?url:"";
 }
 function currentPhotoGalleryUrl(){
-  return normalizeAppsScriptUrl(state.photoGalleryUrl) || DEFAULT_PHOTO_GALLERY_URL;
+  return DEFAULT_PHOTO_GALLERY_URL;
 }
 function updatePhotoSupportStatus(url){
   if(!supportPhotoStatus)return;
@@ -1903,7 +1905,7 @@ function updatePhotoSupportStatus(url){
 function renderPhotoPanel(){
   const url=currentPhotoGalleryUrl();
 
-  if(!state.photoGalleryUrl && url){
+  if(state.photoGalleryUrl!==url){
     state.photoGalleryUrl=url;
     save();
   }
@@ -1929,41 +1931,11 @@ function renderPhotoPanel(){
   }
 }
 savePhotoUrlBtn.onclick=()=>{
-  const url=normalizeAppsScriptUrl(photoWebAppUrl.value);
-
-  if(!url){
-    alert("Cole uma URL válida do Apps Script terminada em /exec.");
-    updatePhotoSupportStatus("");
-    return;
-  }
-
-  state.photoGalleryUrl=url;
+  photoWebAppUrl.value=DEFAULT_PHOTO_GALLERY_URL;
+  state.photoGalleryUrl=DEFAULT_PHOTO_GALLERY_URL;
   save();
-  photoGalleryFrame.src=url+(url.includes("?")?"&":"?")+"t="+Date.now();
   renderPhotoPanel();
-};
-openPhotoSupportBtn.onclick=()=>{
-  openPanel("supportPanel");
-};
-reloadPhotoGalleryBtn.onclick=()=>{
-  const url=currentPhotoGalleryUrl();
-
-  if(!url){
-    alert("A galeria ainda não está configurada. Abra a aba Suporte.");
-    return;
-  }
-
-  photoGalleryFrame.src=url+(url.includes("?")?"&":"?")+"t="+Date.now();
-};
-openPhotoGalleryBtn.onclick=()=>{
-  const url=currentPhotoGalleryUrl();
-
-  if(!url){
-    alert("A galeria ainda não está configurada. Abra a aba Suporte.");
-    return;
-  }
-
-  window.open(url,"_blank","noopener,noreferrer");
+  alert("A URL oficial da galeria já está configurada.");
 };
 copyPhotoUrlBtn.onclick=async()=>{
   const url=currentPhotoGalleryUrl();
@@ -1978,10 +1950,10 @@ copyPhotoUrlBtn.onclick=async()=>{
 };
 resetPhotoUrlBtn.onclick=()=>{
   state.photoGalleryUrl=DEFAULT_PHOTO_GALLERY_URL;
-  save();
   photoWebAppUrl.value=DEFAULT_PHOTO_GALLERY_URL;
-  photoGalleryFrame.src=DEFAULT_PHOTO_GALLERY_URL+"?t="+Date.now();
+  save();
   renderPhotoPanel();
+  alert("URL oficial restaurada.");
 };
 
 
