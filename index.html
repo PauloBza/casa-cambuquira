@@ -1,0 +1,2628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Cambuquira — Painel Netflix</title>
+<style>
+:root{
+  --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
+  --accent:#2563eb;--accent-soft:#eff6ff;--ok:#15803d;--ok-soft:#f0fdf4;
+  --warn:#b54708;--warn-soft:#fffaeb;--danger:#b42318;--danger-soft:#fff1f0;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{position:sticky;top:0;z-index:40;background:rgba(244,246,248,.97);backdrop-filter:blur(9px);border-bottom:1px solid var(--border)}
+.header-inner{max-width:1380px;margin:auto;padding:13px 16px}
+h1{font-size:23px;margin:0 0 3px}
+.subtitle{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:7px;margin-top:12px;overflow-x:auto;padding-bottom:2px}
+.tab{white-space:nowrap;border:1px solid var(--border);background:white;border-radius:9px;min-height:39px;padding:0 13px;font-weight:700}
+.tab.active{background:var(--accent);border-color:var(--accent);color:white}
+main{max-width:1380px;margin:auto;padding:16px}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:white;border:1px solid var(--border);border-radius:12px;padding:14px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:13px}
+.metric{background:white;border:1px solid var(--border);border-radius:11px;padding:12px;color:var(--muted);font-size:12px}
+.metric strong{display:block;color:var(--text);font-size:20px;margin-top:4px}
+.metric.alert strong{color:var(--danger)}
+.metric.warn strong{color:var(--warn)}
+.metric.ok strong{color:var(--ok)}
+.toolbar,.actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.toolbar input[type="search"]{flex:1;min-width:220px}
+input,select,textarea{border:1px solid var(--border);border-radius:8px;background:white;min-height:39px;padding:7px 9px}
+textarea{resize:vertical}
+.btn{border:1px solid var(--border);background:white;border-radius:8px;min-height:39px;padding:0 12px;font-weight:700}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.btn.danger{color:var(--danger)}
+.btn.small{min-height:29px;padding:0 8px;font-size:12px}
+.btn.good{color:var(--ok)}
+.help{background:var(--warn-soft);border:1px solid #fedf89;color:#7a2e0e;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
+.section-title h2{margin:0;font-size:18px}
+.empty{padding:24px;text-align:center;color:var(--muted);background:white;border:1px dashed var(--border);border-radius:10px}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-height:24px;padding:0 8px;border-radius:99px;font-size:11px;font-weight:700}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+.badge.warn{background:var(--warn-soft);color:var(--warn)}
+.badge.danger{background:var(--danger-soft);color:var(--danger)}
+.badge.info{background:var(--accent-soft);color:var(--accent)}
+.money{font-weight:700;white-space:nowrap}
+.muted{color:var(--muted);font-size:12px}
+.table-wrap{overflow:auto;background:white;border:1px solid var(--border);border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:1100px}
+th,td{border-bottom:1px solid #eef0f3;padding:7px 8px;text-align:left;vertical-align:middle}
+th{position:sticky;top:0;background:#fafbfc;color:var(--muted);font-size:11px;z-index:2}
+td input,td select{width:100%;min-width:75px}
+tr:last-child td{border-bottom:0}
+tr.low{background:#fffbeb}
+tr.out{background:#fff5f4}
+tr.done{background:#f0fdf4}
+.price-best{outline:2px solid #86efac;background:#f0fdf4}
+.summary-list{display:grid;gap:7px}
+.summary-item{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border:1px solid var(--border);border-radius:9px;background:#fff}
+.category{background:white;border:1px solid var(--border);border-radius:11px;margin-bottom:9px;overflow:hidden}
+.category summary{list-style:none;padding:13px 14px;font-weight:700;cursor:pointer;display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center}
+.category summary::-webkit-details-marker{display:none}
+.category-count{font-size:12px;color:var(--muted)}
+.category-actions,.item-actions{display:none;gap:4px}
+.edit-mode .category-actions,.edit-mode .item-actions{display:flex}
+.items{border-top:1px solid var(--border)}
+.check-item{display:grid;grid-template-columns:29px 1fr auto;gap:8px;align-items:center;padding:9px 12px;border-bottom:1px solid #eef0f3}
+.check-item:last-child{border-bottom:0}
+.check-item.checked{background:var(--ok-soft)}
+.check-item.checked .check-name{text-decoration:line-through;color:var(--ok)}
+.check-item input[type="checkbox"]{width:20px;height:20px}
+.check-right{display:flex;align-items:center;gap:4px}
+.progress{height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:-2px 0 13px}
+.progress div{height:100%;background:var(--accent);width:0}
+.event-card{background:white;border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.event-head{padding:13px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.event-head h3{margin:0 0 4px;font-size:17px}
+.event-body{padding:12px}
+.city-setting{display:grid;grid-template-columns:auto minmax(180px,260px);align-items:center;gap:8px;margin-bottom:12px}
+dialog{border:0;border-radius:14px;width:min(560px,calc(100% - 24px));padding:0;box-shadow:0 20px 70px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.dialog-body{padding:18px}
+.dialog-body h2{margin:0 0 15px;font-size:20px}
+.form-grid{display:grid;gap:10px}
+.form-grid label{font-size:12px;font-weight:700;display:grid;gap:5px}
+.form-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+footer{max-width:1380px;margin:auto;padding:0 16px 28px;color:var(--muted);font-size:12px}
+@media(max-width:1050px){.cards{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:1fr}}
+@media(max-width:650px){h1{font-size:20px}.cards{grid-template-columns:1fr 1fr}.metric:last-child{grid-column:1/-1}.category summary{grid-template-columns:1fr auto}.category-actions{grid-column:1/-1}.check-item{grid-template-columns:27px 1fr}.check-right{grid-column:2;justify-content:flex-end}.form-cols{grid-template-columns:1fr}.city-setting{grid-template-columns:1fr}}
+@media print{header,.actions,.toolbar,.btn,footer,.help{display:none!important}.panel{display:block!important}body{background:white}main{max-width:none;padding:0}.table-wrap{overflow:visible}table{min-width:0;font-size:10px}}
+
+/* Melhorias visuais e módulo de reparos */
+.repair-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
+}
+.repair-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 4px 16px rgba(24,34,48,.045);
+}
+.repair-card.urgent{border-left:5px solid var(--danger)}
+.repair-card.high{border-left:5px solid var(--warning)}
+.repair-card.done{border-left:5px solid var(--ok);background:#f7fdf9}
+.repair-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  padding:13px 14px;
+  border-bottom:1px solid var(--border);
+  background:#fbfcfe;
+}
+.repair-title{min-width:0}
+.repair-title h3{margin:0 0 4px;font-size:16px;line-height:1.3}
+.repair-meta{display:flex;flex-wrap:wrap;gap:5px}
+.repair-body{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  padding:12px 14px;
+}
+.repair-field{display:grid;gap:4px}
+.repair-field.full{grid-column:1/-1}
+.repair-field label{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.repair-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  padding:0 14px 13px;
+}
+.repair-summary{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:12px;
+}
+.priority-urgent{background:#fff1f0;color:var(--danger)}
+.priority-high{background:#fffaeb;color:var(--warning)}
+.priority-medium{background:#eef4ff;color:var(--accent)}
+.priority-low{background:#f2f4f7;color:#475467}
+.status-done{background:#ecfdf3;color:var(--ok)}
+.status-progress{background:#eef4ff;color:var(--accent)}
+.status-pending{background:#fff7ed;color:#9a3412}
+.status-check{background:#f2f4f7;color:#475467}
+.repair-cost-line{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:9px;
+  background:#f8fafc;
+  font-size:12px;
+}
+.repair-cost-line strong{font-size:14px}
+.quick-guide{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:12px;
+}
+.quick-guide div{
+  padding:10px 11px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:white;
+  font-size:12px;
+}
+.quick-guide strong{display:block;margin-bottom:3px}
+@media(max-width:900px){
+  .repair-grid{grid-template-columns:1fr}
+  .repair-summary,.quick-guide{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .repair-body{grid-template-columns:1fr}
+  .repair-field.full{grid-column:auto}
+  .repair-summary,.quick-guide{grid-template-columns:1fr 1fr}
+  .repair-actions{display:grid;grid-template-columns:1fr 1fr}
+  .repair-actions .btn{width:100%}
+}
+
+
+.photo-setup{display:grid;grid-template-columns:minmax(220px,1fr) auto auto auto;gap:8px;align-items:end;margin-bottom:12px}
+.photo-setup label{display:grid;gap:5px;color:var(--muted);font-size:11px;font-weight:700}
+.photo-frame-wrap{min-height:520px;background:white;border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative}
+.photo-frame{display:block;width:100%;min-height:720px;border:0;background:#f8fafc}
+.photo-placeholder{min-height:520px;display:grid;place-items:center;text-align:center;padding:28px;color:var(--muted)}
+.photo-placeholder strong{display:block;color:var(--text);font-size:18px;margin-bottom:7px}
+.photo-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.photo-step{padding:11px;background:white;border:1px solid var(--border);border-radius:10px;font-size:12px}
+.photo-step strong{display:block;margin-bottom:4px}
+@media(max-width:900px){.photo-setup{grid-template-columns:1fr 1fr}.photo-setup label{grid-column:1/-1}.photo-steps{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.photo-setup{grid-template-columns:1fr}.photo-setup label{grid-column:auto}.photo-steps{grid-template-columns:1fr}.photo-frame{min-height:620px}}
+
+
+/* ===== OVERRIDE VISUAL — ESTILO CINEMÁTICO / NETFLIX ===== */
+:root{
+  --bg:#0b0b0f !important;
+  --card:#14161c !important;
+  --text:#f5f7fb !important;
+  --muted:#a6afbf !important;
+  --border:#262a34 !important;
+  --accent:#e50914 !important;
+  --accent-soft:#2b1114 !important;
+  --ok:#2ecc71 !important;
+  --ok-soft:#102118 !important;
+  --warn:#f59e0b !important;
+  --warn-soft:#2a200d !important;
+  --danger:#ff5c5c !important;
+  --danger-soft:#2b1417 !important;
+}
+html,body{background:radial-gradient(circle at top,#161a23 0%,#0d0f14 36%,#08090c 100%) !important}
+body{
+  color:var(--text) !important;
+  letter-spacing:.1px;
+}
+header{
+  background:linear-gradient(180deg,rgba(6,7,10,.96),rgba(10,12,18,.92)) !important;
+  border-bottom:1px solid rgba(255,255,255,.06) !important;
+  box-shadow:0 10px 40px rgba(0,0,0,.35) !important;
+}
+.header-inner{max-width:1440px !important;padding:14px 18px !important}
+h1{
+  font-size:26px !important;
+  font-weight:800 !important;
+  letter-spacing:.2px !important;
+}
+.subtitle{
+  color:#c3cada !important;
+  font-size:13px !important;
+}
+main{max-width:1440px !important;padding:16px 18px 24px !important}
+.tab{
+  border:1px solid rgba(255,255,255,.08) !important;
+  background:rgba(255,255,255,.05) !important;
+  color:#eef2f8 !important;
+  border-radius:999px !important;
+  min-height:40px !important;
+  padding:0 15px !important;
+  transition:.2s ease;
+}
+.tab:hover{background:rgba(255,255,255,.08) !important}
+.tab.active{
+  background:var(--accent) !important;
+  border-color:var(--accent) !important;
+  color:white !important;
+  box-shadow:0 10px 24px rgba(229,9,20,.28);
+}
+.card,.category,.event-card,.table-wrap,.metric,.photo-step,.photo-frame-wrap,
+.summary-item,.summary-item,.repair-card,.help{
+  border-color:rgba(255,255,255,.08) !important;
+  box-shadow:0 10px 28px rgba(0,0,0,.22) !important;
+}
+.card,.category,.event-card,.table-wrap,.metric,.repair-card,.photo-step,.summary-item{
+  background:rgba(18,20,27,.94) !important;
+}
+.metric{
+  border-radius:16px !important;
+  padding:14px 14px !important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)),
+    rgba(18,20,27,.96) !important;
+}
+.metric span{color:#b5bfd0 !important}
+.metric strong{
+  color:#ffffff !important;
+  font-size:22px !important;
+}
+.metric.ok strong{color:#8ef1b3 !important}
+.metric.warn strong{color:#ffd166 !important}
+.metric.alert strong{color:#ff8080 !important}
+.help{
+  background:linear-gradient(180deg,rgba(229,9,20,.10),rgba(229,9,20,.05)) !important;
+  color:#f4d7d8 !important;
+  border-radius:14px !important;
+}
+.btn{
+  background:#1a1d25 !important;
+  color:#f5f7fb !important;
+  border:1px solid rgba(255,255,255,.09) !important;
+  border-radius:10px !important;
+  min-height:39px !important;
+  transition:.18s ease;
+}
+.btn:hover{transform:translateY(-1px);background:#20242d !important}
+.btn.primary{
+  background:var(--accent) !important;
+  border-color:var(--accent) !important;
+  color:white !important;
+  box-shadow:0 12px 30px rgba(229,9,20,.20);
+}
+.btn.good{color:#9af1ba !important}
+.btn.danger{color:#ff8d8d !important}
+input,select,textarea{
+  background:#11141a !important;
+  color:#f5f7fb !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  border-radius:11px !important;
+}
+input::placeholder,textarea::placeholder{color:#7f8798 !important}
+.progress{
+  background:#1b1e26 !important;
+  height:10px !important;
+  border-radius:999px !important;
+}
+.progress div{
+  background:linear-gradient(90deg,#e50914,#ff4d59) !important;
+}
+.summary-item{
+  padding:10px 11px !important;
+  background:#151821 !important;
+}
+.category{
+  border-radius:14px !important;
+  background:#13161d !important;
+}
+.category summary{
+  padding:14px 16px !important;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent) !important;
+}
+.items{border-top:1px solid rgba(255,255,255,.06) !important}
+.check-item{
+  padding:10px 14px !important;
+  border-bottom:1px solid rgba(255,255,255,.05) !important;
+}
+.check-item.checked{
+  background:rgba(46,204,113,.10) !important;
+}
+.table-wrap{
+  border-radius:16px !important;
+  overflow:auto !important;
+  background:#12151b !important;
+}
+th{
+  background:#181c24 !important;
+  color:#c7cfde !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+}
+td{
+  border-bottom:1px solid rgba(255,255,255,.05) !important;
+  color:#eef2f8 !important;
+}
+tr.low{background:rgba(245,158,11,.08) !important}
+tr.out{background:rgba(255,92,92,.08) !important}
+tr.done{background:rgba(46,204,113,.08) !important}
+.badge.info{background:#20293a !important;color:#9cc1ff !important}
+.badge.ok{background:#102118 !important;color:#90f5b5 !important}
+.badge.warn{background:#30230e !important;color:#ffd166 !important}
+.badge.danger{background:#31171b !important;color:#ff9999 !important}
+.event-head{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent) !important;
+  border-bottom:1px solid rgba(255,255,255,.06) !important;
+}
+.photo-setup.card{
+  background:#13161d !important;
+}
+.photo-frame-wrap{
+  min-height:420px !important;
+  background:#101218 !important;
+}
+.photo-frame{
+  min-height:520px !important;
+  background:#0e1116 !important;
+}
+.photo-placeholder{
+  min-height:420px !important;
+  color:#b4bccb !important;
+}
+.photo-placeholder strong{color:#fff !important}
+.photo-step{
+  background:#151922 !important;
+  color:#c2cad8 !important;
+}
+.repair-summary,.quick-guide{gap:10px !important}
+.quick-guide div{
+  background:#151821 !important;
+  color:#c6cedd !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:14px !important;
+}
+.repair-card{
+  background:#13161d !important;
+  border-radius:16px !important;
+}
+.repair-top{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent) !important;
+  border-bottom:1px solid rgba(255,255,255,.06) !important;
+}
+.repair-cost-line{
+  background:#171b23 !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+}
+.empty{
+  background:#12151b !important;
+  color:#9ea8bb !important;
+  border:1px dashed rgba(255,255,255,.12) !important;
+  border-radius:14px !important;
+}
+footer{
+  color:#7f8798 !important;
+  padding-bottom:18px !important;
+}
+#dashboardPanel .grid-2{grid-template-columns:1fr 1fr !important}
+@media(max-width:1100px){
+  .cards{grid-template-columns:repeat(2,1fr) !important}
+}
+@media(max-width:700px){
+  h1{font-size:22px !important}
+  main{padding:12px !important}
+  .cards{grid-template-columns:1fr 1fr !important;gap:8px !important}
+  .grid-2,#dashboardPanel .grid-2{grid-template-columns:1fr !important}
+  .metric strong{font-size:18px !important}
+  .photo-frame{min-height:460px !important}
+}
+
+
+/* ===== BANCO DE PREÇOS — PROTÓTIPO ===== */
+.price-db-shell{display:grid;gap:12px}
+.price-db-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 15px;border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;background:
+    linear-gradient(135deg,rgba(229,9,20,.13),rgba(255,255,255,.025)),
+    #13161d;
+}
+.price-db-banner strong{display:block;font-size:15px;margin-bottom:3px}
+.price-db-banner span{color:var(--muted);font-size:12px}
+.price-db-badge{
+  white-space:nowrap;padding:7px 10px;border-radius:999px;
+  background:#231519;color:#ffb0b4;border:1px solid rgba(229,9,20,.25);
+  font-size:11px;font-weight:800
+}
+.price-db-metrics{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px
+}
+.price-db-metric{
+  padding:13px;border:1px solid rgba(255,255,255,.08);
+  border-radius:15px;background:#13161d;color:var(--muted);font-size:11px
+}
+.price-db-metric strong{
+  display:block;margin-top:5px;color:#fff;font-size:21px
+}
+.price-db-toolbar{
+  display:grid;grid-template-columns:minmax(220px,1fr) 180px 180px auto;
+  gap:8px
+}
+.price-db-actions{display:flex;gap:8px;flex-wrap:wrap}
+.price-db-list{display:grid;gap:10px}
+.price-product{
+  overflow:hidden;border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;background:#12151b;
+  box-shadow:0 12px 28px rgba(0,0,0,.19)
+}
+.price-product-head{
+  display:grid;grid-template-columns:minmax(220px,1fr) auto auto;
+  gap:12px;align-items:center;padding:13px 14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),transparent)
+}
+.price-product-title{min-width:0}
+.price-product-title h3{
+  margin:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.price-product-title div{margin-top:4px;color:var(--muted);font-size:11px}
+.price-product-best{text-align:right}
+.price-product-best span{display:block;color:var(--muted);font-size:10px}
+.price-product-best strong{display:block;color:#8ef1b3;font-size:17px;margin-top:3px}
+.price-product-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.price-quotes{
+  border-top:1px solid rgba(255,255,255,.06);padding:0 12px 10px
+}
+.price-quote-row{
+  display:grid;
+  grid-template-columns:minmax(150px,1.3fr) minmax(110px,.8fr) 115px 115px 105px auto;
+  gap:8px;align-items:center;padding:9px 2px;
+  border-bottom:1px solid rgba(255,255,255,.05);font-size:11px
+}
+.price-quote-row:last-child{border-bottom:0}
+.price-quote-store strong{display:block;color:#fff}
+.price-quote-store span,.price-quote-muted{color:var(--muted)}
+.price-quote-unit{font-weight:800;color:#dfe6f3}
+.price-quote-total{font-weight:800}
+.price-best-tag{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:23px;padding:0 7px;border-radius:999px;
+  background:#102118;color:#8ef1b3;font-size:10px;font-weight:800
+}
+.price-db-empty{
+  padding:28px;text-align:center;border:1px dashed rgba(255,255,255,.13);
+  border-radius:15px;background:#11141a;color:var(--muted)
+}
+.price-db-empty strong{display:block;color:#fff;margin-bottom:5px}
+.price-history{
+  border:1px solid rgba(255,255,255,.08);border-radius:16px;
+  overflow:hidden;background:#12151b
+}
+.price-history summary{
+  cursor:pointer;padding:13px 14px;font-weight:800;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)
+}
+.price-history-wrap{overflow:auto;border-top:1px solid rgba(255,255,255,.06)}
+.price-history table{min-width:950px}
+.price-dialog-large{width:min(720px,calc(100vw - 24px))}
+.price-dialog-hint{
+  padding:9px 10px;border-radius:10px;background:#161b24;
+  color:var(--muted);font-size:11px;border:1px solid rgba(255,255,255,.07)
+}
+.price-inline{
+  display:grid;grid-template-columns:1fr 1fr;gap:9px
+}
+.price-link{
+  color:#9ec4ff;text-decoration:none;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;display:block
+}
+.price-link:hover{text-decoration:underline}
+@media(max-width:1050px){
+  .price-db-metrics{grid-template-columns:repeat(2,1fr)}
+  .price-db-toolbar{grid-template-columns:1fr 1fr}
+  .price-quote-row{
+    grid-template-columns:minmax(160px,1fr) 110px 110px 100px auto
+  }
+  .price-quote-row .quote-date{display:none}
+}
+@media(max-width:720px){
+  .price-db-banner{align-items:flex-start;flex-direction:column}
+  .price-db-metrics{grid-template-columns:1fr 1fr}
+  .price-db-toolbar{grid-template-columns:1fr}
+  .price-product-head{grid-template-columns:1fr}
+  .price-product-best{text-align:left}
+  .price-product-actions{justify-content:flex-start}
+  .price-quote-row{
+    grid-template-columns:1fr auto;gap:4px 10px;padding:10px 2px
+  }
+  .price-quote-row > *{grid-column:auto}
+  .price-quote-row .quote-city,
+  .price-quote-row .quote-date{display:block}
+  .price-inline{grid-template-columns:1fr}
+}
+
+</style>
+</head>
+<body>
+<header>
+<div class="header-inner">
+  <h1>Casa Cambuquira</h1>
+  <div class="subtitle">Painel visual da casa: reparos, fotos, estoque, compras e organização rural.</div>
+  <div class="tabs">
+    <button class="tab active" data-panel="dashboardPanel">Resumo</button>
+    <button class="tab" data-panel="checklistPanel">Checklist da casa</button>
+    <button class="tab" data-panel="repairsPanel">Reparos</button>
+    <button class="tab" data-panel="photosPanel">Fotos</button>
+    <button class="tab" data-panel="stockPanel">Estoque</button>
+    <button class="tab" data-panel="priceDbPanel">Preços & Compras</button>
+    <button class="tab" data-panel="eventsPanel">Especiais</button>
+    <button class="tab" data-panel="backupPanel">Backup</button>
+  </div>
+</div>
+</header>
+
+<main>
+<section id="dashboardPanel" class="panel active">
+  <div class="cards">
+    <div class="metric"><span>Itens da casa</span><strong id="dashHouseTotal">0</strong></div>
+    <div class="metric alert"><span>Faltando na casa</span><strong id="dashHouseMissing">0</strong></div>
+    <div class="metric warn"><span>Estoque baixo ou zerado</span><strong id="dashLowStock">0</strong></div>
+    <div class="metric warn"><span>Vencendo em 30 dias</span><strong id="dashExpiring">0</strong></div>
+    <div class="metric alert"><span>Reparos urgentes</span><strong id="dashUrgentRepairs">0</strong></div>
+    <div class="metric ok"><span>Compra pelo menor preço</span><strong id="dashBestTotal">R$ 0,00</strong></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>Precisa comprar</h2><button class="btn small" onclick="openPanel('priceDbPanel')">Abrir lista</button></div>
+      <div id="dashShopping" class="summary-list"></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>Validades próximas</h2><button class="btn small" onclick="openPanel('stockPanel')">Abrir estoque</button></div>
+      <div id="dashExpiry" class="summary-list"></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>Reparos prioritários</h2><button class="btn small" onclick="openPanel('repairsPanel')">Abrir reparos</button></div>
+      <div id="dashRepairs" class="summary-list"></div>
+    </div>
+  </div>
+</section>
+
+<section id="checklistPanel" class="panel">
+  <div class="cards">
+    <div class="metric"><span>Total</span><strong id="houseTotal">0</strong></div>
+    <div class="metric ok"><span>Já temos</span><strong id="houseChecked">0</strong></div>
+    <div class="metric alert"><span>Ainda falta</span><strong id="houseUnchecked">0</strong></div>
+    <div class="metric"><span>Progresso</span><strong id="housePercent">0%</strong></div>
+  </div>
+  <div class="progress"><div id="houseProgress"></div></div>
+  <div class="toolbar">
+    <input id="houseSearch" type="search" placeholder="Buscar item ou número...">
+    <select id="houseFilter">
+      <option value="all">Todos</option>
+      <option value="checked">Já temos</option>
+      <option value="unchecked">Ainda falta</option>
+    </select>
+    <button id="houseExpand" class="btn">Abrir tudo</button>
+  </div>
+  <div class="actions">
+    <button id="addHouseCategory" class="btn primary">+ Categoria</button>
+    <button id="addHouseItem" class="btn primary">+ Item</button>
+    <button id="houseEditMode" class="btn">Ativar edição</button>
+    <button id="houseMarkVisible" class="btn">Marcar visíveis</button>
+    <button id="houseUnmarkVisible" class="btn">Desmarcar visíveis</button>
+  </div>
+  <div id="houseApp"></div>
+</section>
+
+
+<section id="repairsPanel" class="panel">
+  <div class="help">
+    Checklist pensado para uma casa em área rural de Cambuquira: chuva, umidade, madeira, terreno, cercas, água, fossa, acesso e manutenção preventiva.
+  </div>
+
+  <div class="repair-summary">
+    <div class="metric"><span>Total de verificações</span><strong id="repairTotal">0</strong></div>
+    <div class="metric alert"><span>Urgentes</span><strong id="repairUrgent">0</strong></div>
+    <div class="metric warn"><span>Em andamento</span><strong id="repairProgress">0</strong></div>
+    <div class="metric ok"><span>Concluídos</span><strong id="repairDone">0</strong></div>
+  </div>
+
+  <div class="quick-guide">
+    <div><strong>1. Verificar</strong>Faça uma inspeção e registre o problema.</div>
+    <div><strong>2. Priorizar</strong>Urgente para risco, infiltração ou segurança.</div>
+    <div><strong>3. Orçar</strong>Registre material, mão de obra e previsão.</div>
+    <div><strong>4. Concluir</strong>Atualize o gasto real e marque como concluído.</div>
+  </div>
+
+  <div class="toolbar">
+    <input id="repairSearch" type="search" placeholder="Buscar reparo, área ou material...">
+    <select id="repairAreaFilter">
+      <option value="all">Todas as áreas</option>
+    </select>
+    <select id="repairStatusFilter">
+      <option value="all">Todos os estados</option>
+      <option value="A verificar">A verificar</option>
+      <option value="Precisa reparar">Precisa reparar</option>
+      <option value="Em andamento">Em andamento</option>
+      <option value="Concluído">Concluído</option>
+    </select>
+    <select id="repairPriorityFilter">
+      <option value="all">Todas as prioridades</option>
+      <option value="Urgente">Urgente</option>
+      <option value="Alta">Alta</option>
+      <option value="Média">Média</option>
+      <option value="Baixa">Baixa</option>
+    </select>
+  </div>
+
+  <div class="actions">
+    <button id="addRepairBtn" class="btn primary">+ Novo reparo</button>
+    <button id="restoreRepairTemplateBtn" class="btn">Adicionar checklist rural</button>
+    <button id="showPendingRepairsBtn" class="btn">Mostrar só pendentes</button>
+    <button id="exportRepairsCsvBtn" class="btn">Exportar reparos CSV</button>
+  </div>
+
+  <div id="repairList" class="repair-grid"></div>
+</section>
+
+
+<section id="photosPanel" class="panel">
+  <div class="help">
+    As fotos continuam no Google Drive. Esta aba exibe a galeria criada pelo Google Apps Script. Ao subir imagens novas, clique em “Atualizar galeria”.
+  </div>
+  <div class="photo-steps">
+    <div class="photo-step"><strong>1. Pasta exclusiva</strong>Crie uma pasta no Drive somente para fotos da casa.</div>
+    <div class="photo-step"><strong>2. Apps Script</strong>Publique o código fornecido como aplicativo da Web.</div>
+    <div class="photo-step"><strong>3. Cole a URL</strong>Informe abaixo o endereço terminado em <code>/exec</code>.</div>
+    <div class="photo-step"><strong>4. Atualize</strong>As novas imagens aparecem ao recarregar a galeria.</div>
+  </div>
+  <div class="photo-setup card">
+    <label>URL do aplicativo da Web do Google Apps Script
+      <input id="photoWebAppUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+    </label>
+    <button id="savePhotoUrlBtn" class="btn primary">Salvar endereço</button>
+    <button id="reloadPhotoGalleryBtn" class="btn">Atualizar galeria</button>
+    <button id="openPhotoGalleryBtn" class="btn">Abrir separada</button>
+  </div>
+  <div class="photo-frame-wrap">
+    <div id="photoPlaceholder" class="photo-placeholder">
+      <div><strong>Galeria ainda não configurada</strong>Cole acima o endereço publicado pelo Google Apps Script.</div>
+    </div>
+    <iframe id="photoGalleryFrame" class="photo-frame" title="Fotos da Casa Cambuquira" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen" hidden></iframe>
+  </div>
+</section>
+
+<section id="stockPanel" class="panel">
+  <div class="help">
+    Cadastre a quantidade que existe em casa e o estoque mínimo. Quando a quantidade ficar abaixo do mínimo, o produto entra automaticamente na aba <strong>Comprar</strong>.
+  </div>
+  <div class="city-setting">
+    <strong>Outra cidade para comparar:</strong>
+    <input id="otherCityName" type="text" placeholder="Ex.: Três Corações">
+  </div>
+  <div class="cards">
+    <div class="metric"><span>Produtos cadastrados</span><strong id="stockTotal">0</strong></div>
+    <div class="metric alert"><span>Zerados</span><strong id="stockOut">0</strong></div>
+    <div class="metric warn"><span>Abaixo do mínimo</span><strong id="stockLow">0</strong></div>
+    <div class="metric warn"><span>Vencendo em 30 dias</span><strong id="stockExpiry">0</strong></div>
+    <div class="metric"><span>Valor do estoque</span><strong id="stockValue">R$ 0,00</strong></div>
+  </div>
+  <div class="toolbar">
+    <input id="stockSearch" type="search" placeholder="Buscar produto...">
+    <select id="stockCategoryFilter">
+      <option value="all">Todas as categorias</option>
+      <option>Alimentos</option><option>Limpeza</option><option>Higiene</option>
+      <option>Bebidas</option><option>Casa e outros</option>
+    </select>
+    <select id="stockStatusFilter">
+      <option value="all">Todos os estados</option>
+      <option value="out">Zerados</option>
+      <option value="low">Estoque baixo</option>
+      <option value="ok">Estoque suficiente</option>
+      <option value="expiring">Vencendo</option>
+    </select>
+  </div>
+  <div class="actions">
+    <button id="addStockBtn" class="btn primary">+ Produto</button>
+    <button id="basicStockBtn" class="btn">Adicionar lista básica</button>
+    <button id="exportStockCsv" class="btn">Exportar estoque CSV</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Situação</th><th>Produto</th><th>Categoria</th><th>Em casa</th><th>Unidade</th>
+        <th>Mínimo</th><th>Validade</th><th>Cambuquira</th><th class="other-city-label">Outra cidade</th>
+        <th>São Paulo</th><th>Menor preço</th><th>Atualizado</th><th>Observação</th><th></th>
+      </tr></thead>
+      <tbody id="stockBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="shoppingPanel" class="panel">
+  <div class="help">
+    A lista é formada automaticamente pelos produtos abaixo do estoque mínimo. Você também pode adicionar itens avulsos. Os totais comparam as três cidades.
+  </div>
+  <div class="cards">
+    <div class="metric"><span>Itens pendentes</span><strong id="shoppingPending">0</strong></div>
+    <div class="metric"><span>Total Cambuquira</span><strong id="shoppingCambTotal">R$ 0,00</strong></div>
+    <div class="metric"><span class="other-city-label">Outra cidade</span><strong id="shoppingOtherTotal">R$ 0,00</strong></div>
+    <div class="metric"><span>Total São Paulo</span><strong id="shoppingSpTotal">R$ 0,00</strong></div>
+    <div class="metric ok"><span>Menor total possível</span><strong id="shoppingBestTotal">R$ 0,00</strong></div>
+  </div>
+  <div class="actions">
+    <button id="addManualBuyBtn" class="btn primary">+ Item avulso</button>
+    <button id="removeBoughtBtn" class="btn">Ocultar comprados</button>
+    <button id="exportShoppingCsv" class="btn">Exportar compras CSV</button>
+    <button class="btn" onclick="window.print()">Imprimir</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Comprado</th><th>Item</th><th>Categoria</th><th>Comprar</th><th>Unidade</th>
+        <th>Cambuquira</th><th class="other-city-label">Outra cidade</th><th>São Paulo</th>
+        <th>Onde comprar</th><th>Total</th><th>Entrada</th><th></th>
+      </tr></thead>
+      <tbody id="shoppingBody"></tbody>
+    </table>
+  </div>
+</section>
+
+
+<section id="priceDbPanel" class="panel">
+  <div class="price-db-shell">
+    <div class="price-db-banner">
+      <div>
+        <strong>Banco de preços e compras</strong>
+        <span>Cadastre cotações de qualquer cidade, loja, fornecedor ou site. O sistema compara o preço por unidade e destaca onde vale mais a pena comprar.</span>
+      </div>
+      <div class="price-db-badge">BASE LOCAL DE TESTE</div>
+    </div>
+
+    <div class="price-db-metrics">
+      <div class="price-db-metric"><span>Produtos</span><strong id="priceDbProductCount">0</strong></div>
+      <div class="price-db-metric"><span>Cotações registradas</span><strong id="priceDbQuoteCount">0</strong></div>
+      <div class="price-db-metric"><span>Total pelo menor preço</span><strong id="priceDbBestTotal">R$ 0,00</strong></div>
+      <div class="price-db-metric"><span>Economia possível</span><strong id="priceDbSavings">R$ 0,00</strong></div>
+      <div class="price-db-metric"><span>Compras registradas</span><strong id="priceDbPurchaseTotal">R$ 0,00</strong></div>
+    </div>
+
+    <div class="price-db-actions">
+      <button id="priceDbAddProductBtn" class="btn primary">+ Produto</button>
+      <button id="priceDbAddQuoteBtn" class="btn">+ Cotação</button>
+      <button id="priceDbAddPurchaseBtn" class="btn">Registrar compra</button>
+      <button id="priceDbImportStockBtn" class="btn">Importar do estoque</button>
+      <button id="priceDbExportBtn" class="btn">Exportar base</button>
+      <button id="priceDbImportBtn" class="btn">Importar base</button>
+      <input id="priceDbImportFile" type="file" accept=".json,application/json" hidden>
+    </div>
+
+    <div class="price-db-toolbar">
+      <input id="priceDbSearch" type="search" placeholder="Buscar produto, loja ou cidade...">
+      <select id="priceDbCategoryFilter">
+        <option value="all">Todas as categorias</option>
+      </select>
+      <select id="priceDbSort">
+        <option value="name">Nome do produto</option>
+        <option value="best">Menor preço unitário</option>
+        <option value="savings">Maior economia</option>
+        <option value="recent">Cotação mais recente</option>
+      </select>
+      <button id="priceDbClearFilters" class="btn">Limpar filtros</button>
+    </div>
+
+    <div id="priceDbList" class="price-db-list"></div>
+
+    <details class="price-history">
+      <summary>Histórico de compras realizadas</summary>
+      <div class="price-history-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th><th>Produto</th><th>Loja / fornecedor</th><th>Cidade</th>
+              <th>Quantidade</th><th>Valor pago</th><th>Pagamento</th><th>Observação</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="priceDbPurchaseBody"></tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="eventsPanel" class="panel">
+  <div class="help">
+    Crie listas separadas para churrasco, pizza, festa, almoço, viagem ou qualquer outra ocasião. As quantidades iniciais dos modelos são apenas sugestões e podem ser alteradas.
+  </div>
+  <div class="actions">
+    <button id="newEventBtn" class="btn primary">+ Novo especial</button>
+  </div>
+  <div id="eventsList"></div>
+</section>
+
+<section id="backupPanel" class="panel">
+  <div class="card">
+    <div class="section-title"><h2>Segurança dos dados</h2></div>
+    <p>As informações ficam salvas neste navegador. Exporte um backup para não perder seus dados ao trocar de aparelho, navegador ou limpar o histórico.</p>
+    <div class="actions">
+      <button id="exportBackupBtn" class="btn primary">Exportar backup completo</button>
+      <button id="importBackupBtn" class="btn">Importar backup</button>
+      <button id="resetAllBtn" class="btn danger">Apagar e restaurar tudo</button>
+      <input id="backupFile" type="file" accept=".json,application/json" hidden>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>Os preços não são pesquisados automaticamente. Preencha os valores encontrados em mercados, lojas ou sites e informe a data da consulta.</footer>
+
+
+<dialog id="priceProductDialog">
+  <form method="dialog" id="priceProductForm" class="dialog-body price-dialog-large">
+    <h2 id="priceProductDialogTitle">Novo produto</h2>
+    <input id="priceProductId" type="hidden">
+
+    <div class="form-cols">
+      <label>Produto
+        <input id="priceProductName" required placeholder="Ex.: Tinta acrílica branca">
+      </label>
+      <label>Categoria
+        <input id="priceProductCategory" required placeholder="Ex.: Material de construção">
+      </label>
+    </div>
+
+    <div class="form-cols">
+      <label>Quantidade necessária
+        <input id="priceProductQty" type="number" min="0.01" step="0.01" value="1" required>
+      </label>
+      <label>Unidade comparável
+        <input id="priceProductUnit" required value="un." placeholder="un., kg, L, m, pacote">
+      </label>
+    </div>
+
+    <label>Marca, modelo ou especificação
+      <input id="priceProductSpec" placeholder="Ex.: lata 18 L, acabamento fosco">
+    </label>
+
+    <label>Observação
+      <textarea id="priceProductNotes" rows="3" placeholder="Detalhes importantes para comparar corretamente"></textarea>
+    </label>
+
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button id="priceProductSaveBtn" value="save" class="btn primary">Salvar produto</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="priceQuoteDialog">
+  <form method="dialog" id="priceQuoteForm" class="dialog-body price-dialog-large">
+    <h2>Adicionar cotação</h2>
+    <input id="priceQuoteId" type="hidden">
+
+    <label>Produto
+      <select id="priceQuoteProduct" required></select>
+    </label>
+
+    <div class="form-cols">
+      <label>Loja, mercado, fornecedor ou site
+        <input id="priceQuoteStore" required placeholder="Ex.: Depósito São José">
+      </label>
+      <label>Cidade ou origem
+        <input id="priceQuoteCity" required placeholder="Ex.: Varginha / Internet">
+      </label>
+    </div>
+
+    <div class="form-cols">
+      <label>Quantidade contida na oferta
+        <input id="priceQuotePackageQty" type="number" min="0.0001" step="0.0001" value="1" required>
+      </label>
+      <label>Valor da oferta
+        <input id="priceQuotePrice" type="number" min="0" step="0.01" value="0" required>
+      </label>
+    </div>
+
+    <div class="form-cols">
+      <label>Frete ou custo adicional
+        <input id="priceQuoteFreight" type="number" min="0" step="0.01" value="0">
+      </label>
+      <label>Data da cotação
+        <input id="priceQuoteDate" type="date" required>
+      </label>
+    </div>
+
+    <label>Link, telefone ou referência
+      <input id="priceQuoteLink" placeholder="https://... ou telefone do fornecedor">
+    </label>
+
+    <label>Observação
+      <textarea id="priceQuoteNotes" rows="3" placeholder="Prazo, disponibilidade, desconto à vista, marca..."></textarea>
+    </label>
+
+    <div id="priceQuotePreview" class="price-dialog-hint">
+      Informe quantidade e valor para calcular o preço por unidade.
+    </div>
+
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Salvar cotação</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="pricePurchaseDialog">
+  <form method="dialog" id="pricePurchaseForm" class="dialog-body price-dialog-large">
+    <h2>Registrar compra realizada</h2>
+
+    <label>Produto
+      <select id="pricePurchaseProduct" required></select>
+    </label>
+
+    <div class="form-cols">
+      <label>Onde foi comprado
+        <input id="pricePurchaseStore" required placeholder="Nome da loja ou fornecedor">
+      </label>
+      <label>Cidade
+        <input id="pricePurchaseCity" required placeholder="Cidade ou Internet">
+      </label>
+    </div>
+
+    <div class="form-cols">
+      <label>Quantidade comprada
+        <input id="pricePurchaseQty" type="number" min="0.01" step="0.01" value="1" required>
+      </label>
+      <label>Valor total pago
+        <input id="pricePurchasePaid" type="number" min="0" step="0.01" value="0" required>
+      </label>
+    </div>
+
+    <div class="form-cols">
+      <label>Data da compra
+        <input id="pricePurchaseDate" type="date" required>
+      </label>
+      <label>Forma de pagamento
+        <select id="pricePurchasePayment">
+          <option>Pix</option><option>Dinheiro</option><option>Cartão de débito</option>
+          <option>Cartão de crédito</option><option>Boleto</option><option>Transferência</option><option>Outro</option>
+        </select>
+      </label>
+    </div>
+
+    <label>Observação
+      <textarea id="pricePurchaseNotes" rows="3" placeholder="Desconto, parcelamento, entrega, nota fiscal..."></textarea>
+    </label>
+
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Registrar compra</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="houseCategoryDialog"><form method="dialog" id="houseCategoryForm" class="dialog-body">
+<h2 id="houseCategoryTitle">Categoria</h2><div class="form-grid"><label>Nome<input id="houseCategoryName" required></label></div>
+<div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Salvar</button></div>
+</form></dialog>
+
+<dialog id="houseItemDialog"><form method="dialog" id="houseItemForm" class="dialog-body">
+<h2 id="houseItemTitle">Item</h2><div class="form-grid">
+<label>Categoria<select id="houseItemCategory" required></select></label>
+<label>Nome do item<input id="houseItemName" required></label></div>
+<div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Salvar</button></div>
+</form></dialog>
+
+
+<dialog id="repairDialog"><form method="dialog" id="repairForm" class="dialog-body">
+<h2 id="repairDialogTitle">Novo reparo</h2>
+<div class="form-grid">
+  <label>Área
+    <select id="repairAreaInput" required>
+      <option>Telhado e calhas</option>
+      <option>Madeiras e estrutura</option>
+      <option>Paredes, teto e pisos</option>
+      <option>Portas e janelas</option>
+      <option>Elétrica e iluminação</option>
+      <option>Água e hidráulica</option>
+      <option>Fossa, esgoto e drenagem</option>
+      <option>Limpeza, umidade e pragas</option>
+      <option>Terreno e vegetação</option>
+      <option>Cercas e portões</option>
+      <option>Acesso e área externa</option>
+      <option>Segurança e prevenção</option>
+      <option>Outros</option>
+    </select>
+  </label>
+  <label>O que precisa ser feito
+    <input id="repairTaskInput" required placeholder="Ex.: trocar telha quebrada sobre o quarto">
+  </label>
+  <div class="form-cols">
+    <label>Prioridade
+      <select id="repairPriorityInput">
+        <option>Urgente</option><option>Alta</option><option selected>Média</option><option>Baixa</option>
+      </select>
+    </label>
+    <label>Situação
+      <select id="repairStatusInput">
+        <option>A verificar</option><option>Precisa reparar</option><option>Em andamento</option><option>Concluído</option>
+      </select>
+    </label>
+  </div>
+  <div class="form-cols">
+    <label>Prazo desejado<input id="repairDueInput" type="date"></label>
+    <label>Responsável<input id="repairOwnerInput" placeholder="Ex.: Paulo / pedreiro / eletricista"></label>
+  </div>
+  <label>Materiais necessários
+    <input id="repairMaterialsInput" placeholder="Ex.: 6 telhas, parafusos, manta, silicone">
+  </label>
+  <div class="form-cols">
+    <label>Custo estimado<input id="repairEstimatedInput" type="number" min="0" step="0.01" value="0"></label>
+    <label>Gasto real<input id="repairActualInput" type="number" min="0" step="0.01" value="0"></label>
+  </div>
+  <label>Observações
+    <textarea id="repairNoteInput" rows="3" placeholder="Local exato, medida, fornecedor, risco ou detalhe da execução"></textarea>
+  </label>
+</div>
+<div class="dialog-actions">
+  <button value="cancel" class="btn">Cancelar</button>
+  <button class="btn primary">Salvar</button>
+</div>
+</form></dialog>
+
+<dialog id="stockDialog"><form method="dialog" id="stockForm" class="dialog-body">
+<h2 id="stockDialogTitle">Adicionar produto</h2>
+<div class="form-grid">
+  <label>Produto<input id="stockNameInput" required placeholder="Ex.: Arroz 5 kg"></label>
+  <div class="form-cols">
+    <label>Categoria<select id="stockCategoryInput"><option>Alimentos</option><option>Limpeza</option><option>Higiene</option><option>Bebidas</option><option>Casa e outros</option></select></label>
+    <label>Unidade<input id="stockUnitInput" value="un." placeholder="un., kg, pacote, litro"></label>
+  </div>
+  <div class="form-cols">
+    <label>Quantidade em casa<input id="stockQtyInput" type="number" min="0" step="0.01" value="0"></label>
+    <label>Estoque mínimo<input id="stockMinInput" type="number" min="0" step="0.01" value="1"></label>
+  </div>
+</div>
+<div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Salvar</button></div>
+</form></dialog>
+
+<dialog id="manualBuyDialog"><form method="dialog" id="manualBuyForm" class="dialog-body">
+<h2>Adicionar item avulso</h2><div class="form-grid">
+<label>Item<input id="manualBuyName" required></label>
+<div class="form-cols"><label>Categoria<select id="manualBuyCategory"><option>Alimentos</option><option>Limpeza</option><option>Higiene</option><option>Bebidas</option><option>Casa e outros</option><option>Especial</option></select></label>
+<label>Unidade<input id="manualBuyUnit" value="un."></label></div>
+<label>Quantidade<input id="manualBuyQty" type="number" min="0.01" step="0.01" value="1"></label>
+</div><div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Adicionar</button></div>
+</form></dialog>
+
+<dialog id="eventDialog"><form method="dialog" id="eventForm" class="dialog-body">
+<h2>Novo especial</h2><div class="form-grid">
+<label>Tipo<select id="eventType"><option value="churrasco">Churrasco</option><option value="pizza">Pizza</option><option value="outro">Outro</option></select></label>
+<label>Nome<input id="eventName" required placeholder="Ex.: Churrasco de sábado"></label>
+<div class="form-cols"><label>Data<input id="eventDate" type="date"></label><label>Número de pessoas<input id="eventPeople" type="number" min="1" value="10"></label></div>
+</div><div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Criar lista</button></div>
+</form></dialog>
+
+<script>
+const BASE_DATA = [{"category": "1. Sala e convivência", "items": [{"id": 1, "name": "Sofá"}, {"id": 2, "name": "Poltrona"}, {"id": 3, "name": "Mesa de centro"}, {"id": 4, "name": "Mesa lateral"}, {"id": 5, "name": "Rack ou móvel para televisão"}, {"id": 6, "name": "Televisão"}, {"id": 7, "name": "Estante para livros"}, {"id": 8, "name": "Aparador"}, {"id": 9, "name": "Tapete"}, {"id": 10, "name": "Cortinas"}, {"id": 11, "name": "Cortinas blackout"}, {"id": 12, "name": "Luminária de chão"}, {"id": 13, "name": "Abajur"}, {"id": 14, "name": "Ventilador"}, {"id": 15, "name": "Aquecedor"}, {"id": 16, "name": "Mantas para o sofá"}, {"id": 17, "name": "Almofadas"}, {"id": 18, "name": "Caixa de som"}, {"id": 19, "name": "Filtro de linha para televisão e aparelhos"}, {"id": 20, "name": "Protetor contra surtos elétricos"}]}, {"category": "2. Sala de jantar", "items": [{"id": 21, "name": "Mesa de jantar"}, {"id": 22, "name": "Cadeiras"}, {"id": 23, "name": "Buffet ou armário"}, {"id": 24, "name": "Toalha de mesa"}, {"id": 25, "name": "Jogo americano"}, {"id": 26, "name": "Fruteira"}, {"id": 27, "name": "Garrafa térmica"}, {"id": 28, "name": "Bandejas"}, {"id": 29, "name": "Jarra para água ou suco"}, {"id": 30, "name": "Luminária sobre a mesa"}]}, {"category": "3. Cozinha — eletrodomésticos", "items": [{"id": 31, "name": "Geladeira"}, {"id": 32, "name": "Freezer horizontal"}, {"id": 33, "name": "Fogão"}, {"id": 34, "name": "Botijão de gás"}, {"id": 35, "name": "Botijão de gás reserva"}, {"id": 36, "name": "Forno elétrico"}, {"id": 37, "name": "Micro-ondas"}, {"id": 38, "name": "Air fryer"}, {"id": 39, "name": "Liquidificador"}, {"id": 40, "name": "Mixer"}, {"id": 41, "name": "Batedeira"}, {"id": 42, "name": "Processador de alimentos"}, {"id": 43, "name": "Cafeteira"}, {"id": 44, "name": "Chaleira elétrica"}, {"id": 45, "name": "Sanduicheira"}, {"id": 46, "name": "Grill elétrico"}, {"id": 47, "name": "Panela elétrica de arroz"}, {"id": 48, "name": "Panela de pressão elétrica"}, {"id": 49, "name": "Máquina de fazer pão"}, {"id": 50, "name": "Bebedouro"}, {"id": 51, "name": "Purificador de água"}, {"id": 52, "name": "Frigobar"}, {"id": 53, "name": "Máquina de gelo"}, {"id": 54, "name": "Exaustor ou depurador"}, {"id": 55, "name": "Balança de cozinha"}]}, {"category": "4. Cozinha — móveis e utensílios", "items": [{"id": 56, "name": "Armário de cozinha"}, {"id": 57, "name": "Balcão"}, {"id": 58, "name": "Bancada auxiliar"}, {"id": 59, "name": "Prateleiras"}, {"id": 60, "name": "Escorredor de louças"}, {"id": 61, "name": "Lixeira com tampa"}, {"id": 62, "name": "Jogo de panelas"}, {"id": 63, "name": "Panela de pressão"}, {"id": 64, "name": "Frigideiras"}, {"id": 65, "name": "Assadeiras"}, {"id": 66, "name": "Formas"}, {"id": 67, "name": "Chaleira"}, {"id": 68, "name": "Leiteira"}, {"id": 69, "name": "Facas de cozinha"}, {"id": 70, "name": "Tábua de corte"}, {"id": 71, "name": "Talheres"}, {"id": 72, "name": "Pratos"}, {"id": 73, "name": "Copos"}, {"id": 74, "name": "Xícaras"}, {"id": 75, "name": "Canecas"}, {"id": 76, "name": "Tigelas"}, {"id": 77, "name": "Potes com tampa"}, {"id": 78, "name": "Potes herméticos para mantimentos"}, {"id": 79, "name": "Peneira"}, {"id": 80, "name": "Escorredor de macarrão"}, {"id": 81, "name": "Abridor de latas e garrafas"}, {"id": 82, "name": "Saca-rolhas"}, {"id": 83, "name": "Conchas e espátulas"}, {"id": 84, "name": "Ralador"}, {"id": 85, "name": "Descascador"}, {"id": 86, "name": "Luvas térmicas"}, {"id": 87, "name": "Panos de prato"}, {"id": 88, "name": "Avental"}, {"id": 89, "name": "Suporte para temperos"}, {"id": 90, "name": "Porta-detergente"}, {"id": 91, "name": "Organizadores de gaveta"}, {"id": 92, "name": "Filtro de barro"}, {"id": 93, "name": "Garrafas para água"}, {"id": 94, "name": "Caixa térmica"}, {"id": 95, "name": "Carrinho auxiliar de cozinha"}]}, {"category": "5. Quarto principal", "items": [{"id": 96, "name": "Cama"}, {"id": 97, "name": "Colchão"}, {"id": 98, "name": "Cabeceira"}, {"id": 99, "name": "Guarda-roupa"}, {"id": 100, "name": "Cômoda"}, {"id": 101, "name": "Criado-mudo"}, {"id": 102, "name": "Abajur"}, {"id": 103, "name": "Travesseiros"}, {"id": 104, "name": "Lençóis"}, {"id": 105, "name": "Fronhas"}, {"id": 106, "name": "Cobertores"}, {"id": 107, "name": "Edredom"}, {"id": 108, "name": "Manta"}, {"id": 109, "name": "Protetor de colchão"}, {"id": 110, "name": "Cortina blackout"}, {"id": 111, "name": "Tapete"}, {"id": 112, "name": "Ventilador"}, {"id": 113, "name": "Aquecedor"}, {"id": 114, "name": "Cabideiro"}, {"id": 115, "name": "Sapateira"}, {"id": 116, "name": "Espelho"}, {"id": 117, "name": "Cesto de roupas"}, {"id": 118, "name": "Baú para cobertores"}, {"id": 119, "name": "Mosquiteiro"}, {"id": 120, "name": "Tela contra insetos na janela"}]}, {"category": "6. Quarto de hóspedes", "items": [{"id": 121, "name": "Cama ou sofá-cama"}, {"id": 122, "name": "Colchão"}, {"id": 123, "name": "Travesseiros"}, {"id": 124, "name": "Jogo de cama"}, {"id": 125, "name": "Cobertores"}, {"id": 126, "name": "Guarda-roupa ou arara"}, {"id": 127, "name": "Criado-mudo"}, {"id": 128, "name": "Abajur"}, {"id": 129, "name": "Cortina"}, {"id": 130, "name": "Ventilador"}, {"id": 131, "name": "Aquecedor"}, {"id": 132, "name": "Espelho"}, {"id": 133, "name": "Cabides"}, {"id": 134, "name": "Toalhas para hóspedes"}]}, {"category": "7. Banheiro", "items": [{"id": 135, "name": "Chuveiro"}, {"id": 136, "name": "Chuveiro reserva"}, {"id": 137, "name": "Armário de banheiro"}, {"id": 138, "name": "Espelho"}, {"id": 139, "name": "Prateleiras"}, {"id": 140, "name": "Toalhas de banho"}, {"id": 141, "name": "Toalhas de rosto"}, {"id": 142, "name": "Tapete antiderrapante"}, {"id": 143, "name": "Cortina ou box"}, {"id": 144, "name": "Lixeira com tampa"}, {"id": 145, "name": "Cesto de roupas"}, {"id": 146, "name": "Porta-sabonete"}, {"id": 147, "name": "Porta-escovas"}, {"id": 148, "name": "Suporte para papel higiênico"}, {"id": 149, "name": "Escova sanitária"}, {"id": 150, "name": "Rodo pequeno"}, {"id": 151, "name": "Desentupidor"}, {"id": 152, "name": "Secador de cabelo"}, {"id": 153, "name": "Aquecedor de ambiente"}, {"id": 154, "name": "Kit de primeiros socorros"}, {"id": 155, "name": "Tela para ralo"}, {"id": 156, "name": "Barras de apoio"}]}, {"category": "8. Lavanderia", "items": [{"id": 157, "name": "Máquina de lavar roupas"}, {"id": 158, "name": "Tanquinho"}, {"id": 159, "name": "Centrífuga"}, {"id": 160, "name": "Secadora"}, {"id": 161, "name": "Varal de chão"}, {"id": 162, "name": "Varal de teto"}, {"id": 163, "name": "Varal externo"}, {"id": 164, "name": "Pregadores"}, {"id": 165, "name": "Cesto de roupa suja"}, {"id": 166, "name": "Cesto para roupas limpas"}, {"id": 167, "name": "Tábua de passar"}, {"id": 168, "name": "Ferro de passar"}, {"id": 169, "name": "Armário para produtos de limpeza"}, {"id": 170, "name": "Baldes"}, {"id": 171, "name": "Bacias"}, {"id": 172, "name": "Mangueira"}, {"id": 173, "name": "Enrolador de mangueira"}, {"id": 174, "name": "Lavadora de alta pressão"}, {"id": 175, "name": "Aspirador de pó"}, {"id": 176, "name": "Aspirador de água e pó"}, {"id": 177, "name": "Mop"}, {"id": 178, "name": "Vassoura interna"}, {"id": 179, "name": "Vassoura para área externa"}, {"id": 180, "name": "Rodo"}, {"id": 181, "name": "Pá de lixo"}, {"id": 182, "name": "Escovas de limpeza"}, {"id": 183, "name": "Luvas de limpeza"}, {"id": 184, "name": "Panos de chão"}, {"id": 185, "name": "Lixeira externa com tampa"}]}, {"category": "9. Escritório e trabalho", "items": [{"id": 186, "name": "Escrivaninha"}, {"id": 187, "name": "Cadeira ergonômica"}, {"id": 188, "name": "Computador"}, {"id": 189, "name": "Monitor"}, {"id": 190, "name": "Impressora"}, {"id": 191, "name": "Estante"}, {"id": 192, "name": "Gaveteiro"}, {"id": 193, "name": "Luminária de mesa"}, {"id": 194, "name": "Filtro de linha"}, {"id": 195, "name": "Nobreak para computador"}, {"id": 196, "name": "Organizador de cabos"}, {"id": 197, "name": "Suporte para notebook"}, {"id": 198, "name": "Teclado e mouse"}, {"id": 199, "name": "Fones de ouvido"}, {"id": 200, "name": "Webcam"}, {"id": 201, "name": "Microfone"}, {"id": 202, "name": "Carregadores extras"}, {"id": 203, "name": "HD externo"}, {"id": 204, "name": "Pastas e organizadores"}]}, {"category": "10. Internet e comunicação", "items": [{"id": 205, "name": "Modem de internet"}, {"id": 206, "name": "Roteador de bom alcance"}, {"id": 207, "name": "Sistema Wi-Fi Mesh"}, {"id": 208, "name": "Repetidor de sinal"}, {"id": 209, "name": "Antena externa"}, {"id": 210, "name": "Internet via satélite"}, {"id": 211, "name": "Nobreak para modem e roteador"}, {"id": 212, "name": "Cabo de rede"}, {"id": 213, "name": "Power bank"}, {"id": 214, "name": "Rádio comunicador"}, {"id": 215, "name": "Celular reserva"}, {"id": 216, "name": "Carregador veicular"}, {"id": 217, "name": "Suporte para celular"}, {"id": 218, "name": "Campainha sem fio"}]}, {"category": "11. Água e abastecimento", "items": [{"id": 219, "name": "Caixa-d’água"}, {"id": 220, "name": "Caixa-d’água reserva"}, {"id": 221, "name": "Tampa segura para caixa-d’água"}, {"id": 222, "name": "Boia da caixa-d’água"}, {"id": 223, "name": "Sensor de nível"}, {"id": 224, "name": "Bomba d’água"}, {"id": 225, "name": "Pressurizador"}, {"id": 226, "name": "Pré-filtro lavável"}, {"id": 227, "name": "Filtro de sedimentos antes da caixa"}, {"id": 228, "name": "Filtro de 50 micras"}, {"id": 229, "name": "Filtro de 25 micras"}, {"id": 230, "name": "Filtro de 10 micras"}, {"id": 231, "name": "Filtro de 5 micras"}, {"id": 232, "name": "Purificador para água de beber"}, {"id": 233, "name": "Torneira com filtro"}, {"id": 234, "name": "Galões de água"}, {"id": 235, "name": "Reservatório portátil"}, {"id": 236, "name": "Kit para análise da água"}, {"id": 237, "name": "Conexões e registros reserva"}, {"id": 238, "name": "Fita veda-rosca"}, {"id": 239, "name": "Mangueira de jardim"}, {"id": 240, "name": "Regador"}]}, {"category": "12. Energia e iluminação de emergência", "items": [{"id": 241, "name": "Lanternas"}, {"id": 242, "name": "Lanternas recarregáveis"}, {"id": 243, "name": "Lâmpadas de emergência"}, {"id": 244, "name": "Velas"}, {"id": 245, "name": "Fósforos ou isqueiros"}, {"id": 246, "name": "Pilhas"}, {"id": 247, "name": "Pilhas recarregáveis"}, {"id": 248, "name": "Carregador de pilhas"}, {"id": 249, "name": "Extensões reforçadas"}, {"id": 250, "name": "Adaptadores de tomada"}, {"id": 251, "name": "Filtros de linha"}, {"id": 252, "name": "Protetores contra surtos"}, {"id": 253, "name": "Nobreak"}, {"id": 254, "name": "Gerador"}, {"id": 255, "name": "Estação de energia portátil"}, {"id": 256, "name": "Painel ou carregador solar"}, {"id": 257, "name": "Refletores solares"}, {"id": 258, "name": "Lâmpadas solares para caminhos"}, {"id": 259, "name": "Lâmpadas reserva"}, {"id": 260, "name": "Disjuntores reserva"}]}, {"category": "13. Segurança", "items": [{"id": 261, "name": "Câmeras externas"}, {"id": 262, "name": "Câmeras internas"}, {"id": 263, "name": "Gravador ou armazenamento para câmeras"}, {"id": 264, "name": "Alarme"}, {"id": 265, "name": "Sensor de presença"}, {"id": 266, "name": "Sensor de abertura de portas"}, {"id": 267, "name": "Refletores com sensor"}, {"id": 268, "name": "Trancas reforçadas"}, {"id": 269, "name": "Cadeados"}, {"id": 270, "name": "Fechadura eletrônica"}, {"id": 271, "name": "Interfone"}, {"id": 272, "name": "Campainha com câmera"}, {"id": 273, "name": "Portão automático"}, {"id": 274, "name": "Controle reserva do portão"}, {"id": 275, "name": "Cofre pequeno"}, {"id": 276, "name": "Extintor de incêndio"}, {"id": 277, "name": "Detector de fumaça"}, {"id": 278, "name": "Detector de gás"}, {"id": 279, "name": "Placas de sinalização"}, {"id": 280, "name": "Apito de emergência"}]}, {"category": "14. Proteção contra insetos e animais", "items": [{"id": 281, "name": "Telas mosquiteiras nas janelas"}, {"id": 282, "name": "Tela nas portas"}, {"id": 283, "name": "Mosquiteiro para cama"}, {"id": 284, "name": "Repelente elétrico"}, {"id": 285, "name": "Repelente corporal"}, {"id": 286, "name": "Raquete elétrica"}, {"id": 287, "name": "Armadilha para mosquitos"}, {"id": 288, "name": "Vedação inferior para portas"}, {"id": 289, "name": "Tela para ralos"}, {"id": 290, "name": "Potes herméticos"}, {"id": 291, "name": "Lixeiras vedadas"}, {"id": 292, "name": "Pinça para retirada de carrapatos"}, {"id": 293, "name": "Botas de borracha"}, {"id": 294, "name": "Perneiras de proteção"}, {"id": 295, "name": "Luvas resistentes"}, {"id": 296, "name": "Chapéu ou boné"}, {"id": 297, "name": "Lanterna de cabeça"}, {"id": 298, "name": "Armário fechado para alimentos"}, {"id": 299, "name": "Abrigo seguro para ração"}, {"id": 300, "name": "Kit para picadas e pequenos ferimentos"}]}, {"category": "15. Ferramentas e manutenção", "items": [{"id": 301, "name": "Caixa de ferramentas"}, {"id": 302, "name": "Furadeira"}, {"id": 303, "name": "Parafusadeira"}, {"id": 304, "name": "Brocas"}, {"id": 305, "name": "Martelo"}, {"id": 306, "name": "Alicates"}, {"id": 307, "name": "Chaves de fenda"}, {"id": 308, "name": "Chaves Phillips"}, {"id": 309, "name": "Chaves combinadas"}, {"id": 310, "name": "Chave inglesa"}, {"id": 311, "name": "Trena"}, {"id": 312, "name": "Nível"}, {"id": 313, "name": "Estilete"}, {"id": 314, "name": "Serrote"}, {"id": 315, "name": "Serra elétrica"}, {"id": 316, "name": "Escada"}, {"id": 317, "name": "Bancada de trabalho"}, {"id": 318, "name": "Parafusos e buchas"}, {"id": 319, "name": "Pregos"}, {"id": 320, "name": "Fita isolante"}, {"id": 321, "name": "Fita veda-rosca"}, {"id": 322, "name": "Abraçadeiras plásticas"}, {"id": 323, "name": "Arame"}, {"id": 324, "name": "Cordas"}, {"id": 325, "name": "Lonas"}, {"id": 326, "name": "Cola de contato"}, {"id": 327, "name": "Silicone"}, {"id": 328, "name": "Espuma expansiva"}, {"id": 329, "name": "Óleo lubrificante"}, {"id": 330, "name": "Extensão elétrica para área externa"}]}, {"category": "16. Jardim, terreno e área rural", "items": [{"id": 331, "name": "Roçadeira"}, {"id": 332, "name": "Cortador de grama"}, {"id": 333, "name": "Aparador de cerca-viva"}, {"id": 334, "name": "Enxada"}, {"id": 335, "name": "Enxadão"}, {"id": 336, "name": "Pá"}, {"id": 337, "name": "Rastelo"}, {"id": 338, "name": "Cavadeira"}, {"id": 339, "name": "Foice"}, {"id": 340, "name": "Machado"}, {"id": 341, "name": "Tesoura de poda"}, {"id": 342, "name": "Carrinho de mão"}, {"id": 343, "name": "Pulverizador"}, {"id": 344, "name": "Mangueira longa"}, {"id": 345, "name": "Esguicho para mangueira"}, {"id": 346, "name": "Composteira"}, {"id": 347, "name": "Lixeira externa"}, {"id": 348, "name": "Armário para ferramentas"}, {"id": 349, "name": "Caixa organizadora"}, {"id": 350, "name": "Botas de trabalho"}, {"id": 351, "name": "Luvas de jardinagem"}, {"id": 352, "name": "Óculos de proteção"}, {"id": 353, "name": "Protetor auricular"}, {"id": 354, "name": "Máscara de proteção"}, {"id": 355, "name": "Banco ou mesa para trabalhos externos"}]}, {"category": "17. Veículos e pequenos reparos", "items": [{"id": 356, "name": "Compressor de ar"}, {"id": 357, "name": "Calibrador de pneus"}, {"id": 358, "name": "Cabo para bateria"}, {"id": 359, "name": "Carregador de bateria"}, {"id": 360, "name": "Kit de ferramentas veiculares"}, {"id": 361, "name": "Macaco"}, {"id": 362, "name": "Chave de roda"}, {"id": 363, "name": "Triângulo"}, {"id": 364, "name": "Lanterna veicular"}, {"id": 365, "name": "Kit de reparo de pneus"}, {"id": 366, "name": "Galão apropriado para combustível"}, {"id": 367, "name": "Capa para veículo"}, {"id": 368, "name": "Aspirador veicular"}, {"id": 369, "name": "Organizador de porta-malas"}, {"id": 370, "name": "Corrente ou cinta de reboque"}]}, {"category": "18. Varanda e área externa", "items": [{"id": 371, "name": "Mesa externa"}, {"id": 372, "name": "Cadeiras externas"}, {"id": 373, "name": "Banco de madeira"}, {"id": 374, "name": "Poltronas para varanda"}, {"id": 375, "name": "Rede de descanso"}, {"id": 376, "name": "Suporte para rede"}, {"id": 377, "name": "Espreguiçadeiras"}, {"id": 378, "name": "Ombrelone"}, {"id": 379, "name": "Toldo"}, {"id": 380, "name": "Tapete externo"}, {"id": 381, "name": "Iluminação para varanda"}, {"id": 382, "name": "Refletor externo"}, {"id": 383, "name": "Caixa de som portátil"}, {"id": 384, "name": "Frigobar"}, {"id": 385, "name": "Caixa térmica"}, {"id": 386, "name": "Churrasqueira"}, {"id": 387, "name": "Grelha"}, {"id": 388, "name": "Espetos"}, {"id": 389, "name": "Mesa ou bancada para churrasqueira"}, {"id": 390, "name": "Fogão a lenha"}, {"id": 391, "name": "Forno de pizza"}, {"id": 392, "name": "Lenheiro"}, {"id": 393, "name": "Braseiro ou área para fogueira"}, {"id": 394, "name": "Vasos e jardineiras"}, {"id": 395, "name": "Horta elevada"}]}, {"category": "19. Conforto para frio e umidade", "items": [{"id": 396, "name": "Aquecedor elétrico"}, {"id": 397, "name": "Aquecedor a óleo"}, {"id": 398, "name": "Ar-condicionado quente e frio"}, {"id": 399, "name": "Desumidificador"}, {"id": 400, "name": "Higrômetro"}, {"id": 401, "name": "Termômetro de ambiente"}, {"id": 402, "name": "Cobertor elétrico"}, {"id": 403, "name": "Edredons pesados"}, {"id": 404, "name": "Mantas"}, {"id": 405, "name": "Tapetes"}, {"id": 406, "name": "Cortinas grossas"}, {"id": 407, "name": "Vedação para janelas"}, {"id": 408, "name": "Vedação para portas"}, {"id": 409, "name": "Secador de calçados"}, {"id": 410, "name": "Suporte para botas molhadas"}]}, {"category": "20. Organização geral", "items": [{"id": 411, "name": "Sapateira"}, {"id": 412, "name": "Cabideiro de entrada"}, {"id": 413, "name": "Capacho"}, {"id": 414, "name": "Bandeja para calçados com barro"}, {"id": 415, "name": "Guarda-chuvas"}, {"id": 416, "name": "Porta-guarda-chuvas"}, {"id": 417, "name": "Ganchos de parede"}, {"id": 418, "name": "Prateleiras"}, {"id": 419, "name": "Caixas plásticas com tampa"}, {"id": 420, "name": "Cestos organizadores"}, {"id": 421, "name": "Baús"}, {"id": 422, "name": "Organizadores de gaveta"}, {"id": 423, "name": "Etiquetas"}, {"id": 424, "name": "Armário multiuso"}, {"id": 425, "name": "Escada pequena"}, {"id": 426, "name": "Relógio de parede"}, {"id": 427, "name": "Calendário"}, {"id": 428, "name": "Quadro de avisos"}, {"id": 429, "name": "Porta-chaves"}, {"id": 430, "name": "Kit de costura"}]}, {"category": "21. Lazer e entretenimento", "items": [{"id": 431, "name": "Smart TV"}, {"id": 432, "name": "Antena de televisão"}, {"id": 433, "name": "Projetor"}, {"id": 434, "name": "Tela de projeção"}, {"id": 435, "name": "Caixa de som"}, {"id": 436, "name": "Jogos de tabuleiro"}, {"id": 437, "name": "Baralho"}, {"id": 438, "name": "Livros"}, {"id": 439, "name": "Estante de livros"}, {"id": 440, "name": "Mesa para jogos"}, {"id": 441, "name": "Violão ou instrumento musical"}, {"id": 442, "name": "Binóculo"}, {"id": 443, "name": "Bicicleta"}, {"id": 444, "name": "Balanço externo"}, {"id": 445, "name": "Rede de descanso"}]}, {"category": "22. Animais de estimação", "items": [{"id": 446, "name": "Potes de água e comida"}, {"id": 447, "name": "Reservatório automático de água"}, {"id": 448, "name": "Comedouro automático"}, {"id": 449, "name": "Cama para o animal"}, {"id": 450, "name": "Casinha externa"}, {"id": 451, "name": "Caixa de transporte"}, {"id": 452, "name": "Coleira"}, {"id": 453, "name": "Guia"}, {"id": 454, "name": "Identificação"}, {"id": 455, "name": "Armário para ração"}, {"id": 456, "name": "Kit de higiene"}, {"id": 457, "name": "Removedor de carrapatos"}, {"id": 458, "name": "Cercado"}, {"id": 459, "name": "Portão de proteção"}, {"id": 460, "name": "Toalhas para o animal"}]}, {"category": "23. Estoque e emergências", "items": [{"id": 461, "name": "Água potável reserva"}, {"id": 462, "name": "Alimentos não perecíveis"}, {"id": 463, "name": "Enlatados"}, {"id": 464, "name": "Leite de longa duração"}, {"id": 465, "name": "Café"}, {"id": 466, "name": "Açúcar"}, {"id": 467, "name": "Sal"}, {"id": 468, "name": "Óleo"}, {"id": 469, "name": "Arroz"}, {"id": 470, "name": "Feijão"}, {"id": 471, "name": "Macarrão"}, {"id": 472, "name": "Papel higiênico reserva"}, {"id": 473, "name": "Produtos de limpeza reserva"}, {"id": 474, "name": "Sacos de lixo"}, {"id": 475, "name": "Gás reserva"}, {"id": 476, "name": "Medicamentos de uso habitual"}, {"id": 477, "name": "Kit completo de primeiros socorros"}, {"id": 478, "name": "Lista de telefones de emergência"}, {"id": 479, "name": "Dinheiro em espécie para emergência"}, {"id": 480, "name": "Cópias de documentos importantes"}]}, {"category": "24. Melhorias futuras", "items": [{"id": 481, "name": "Cerca nova ou reparada"}, {"id": 482, "name": "Portão"}, {"id": 483, "name": "Iluminação no caminho"}, {"id": 484, "name": "Calçamento ou pedras no acesso"}, {"id": 485, "name": "Drenagem da chuva"}, {"id": 486, "name": "Calhas"}, {"id": 487, "name": "Reservatório para água da chuva"}, {"id": 488, "name": "Energia solar"}, {"id": 489, "name": "Aquecimento solar de água"}, {"id": 490, "name": "Sistema de câmeras completo"}, {"id": 491, "name": "Internet via satélite"}, {"id": 492, "name": "Área gourmet"}, {"id": 493, "name": "Oficina"}, {"id": 494, "name": "Depósito externo"}, {"id": 495, "name": "Horta"}, {"id": 496, "name": "Pomar"}, {"id": 497, "name": "Galinheiro"}, {"id": 498, "name": "Cobertura para veículos"}, {"id": 499, "name": "Quarto de hóspedes"}, {"id": 500, "name": "Banheiro externo"}]}];
+const DEFAULT_CHECKED = new Set([3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 21, 22, 23, 24, 27, 28, 29, 31, 33, 34, 37, 40, 60, 62, 63, 64, 65, 67, 68, 69, 70, 71, 72, 73, 75, 76, 79, 83, 84, 87, 88, 94, 96, 97, 98, 99, 100, 101, 103, 104, 106, 107, 108, 111, 112, 113, 114]);
+const KEY = "casa-cambuquira-controle-v4";
+const OLD_KEY = "casa-cambuquira-controle-v3";
+const OLDER_KEY = "casa-cambuquira-organizador-v2";
+
+const BASIC_STOCK = [
+["Arroz 5 kg","Alimentos","pacote",1],["Feijão 1 kg","Alimentos","pacote",2],["Macarrão","Alimentos","pacote",2],
+["Óleo de cozinha","Alimentos","garrafa",1],["Açúcar","Alimentos","pacote",1],["Sal","Alimentos","pacote",1],
+["Café","Alimentos","pacote",2],["Leite","Alimentos","litro",4],["Farinha de trigo","Alimentos","pacote",1],
+["Farinha de mandioca","Alimentos","pacote",1],["Molho de tomate","Alimentos","sachê",3],["Ovos","Alimentos","dúzia",1],
+["Manteiga ou margarina","Alimentos","pote",1],["Pão","Alimentos","pacote",1],["Queijo","Alimentos","kg",0.5],
+["Carne bovina","Alimentos","kg",1],["Frango","Alimentos","kg",1],["Legumes","Alimentos","kg",1],
+["Frutas","Alimentos","kg",2],["Temperos","Alimentos","kit",1],
+["Água mineral","Bebidas","garrafa",6],["Suco","Bebidas","litro",2],["Refrigerante","Bebidas","garrafa",1],
+["Detergente","Limpeza","frasco",2],["Sabão em pó ou líquido","Limpeza","un.",1],["Água sanitária","Limpeza","litro",2],
+["Desinfetante","Limpeza","litro",2],["Esponja","Limpeza","un.",3],["Sacos de lixo","Limpeza","rolo",2],
+["Panos de chão","Limpeza","un.",3],["Papel-toalha","Limpeza","rolo",2],["Álcool 70%","Limpeza","frasco",1],
+["Papel higiênico","Higiene","rolo",12],["Sabonete","Higiene","un.",4],["Pasta de dente","Higiene","un.",2],
+["Shampoo","Higiene","frasco",1],["Condicionador","Higiene","frasco",1],["Desodorante","Higiene","un.",2],
+["Gás de cozinha","Casa e outros","botijão",1],["Carvão","Casa e outros","saco",1],["Fósforos ou isqueiro","Casa e outros","un.",2],
+["Papel-alumínio","Casa e outros","rolo",1],["Filme plástico","Casa e outros","rolo",1],["Pilhas","Casa e outros","pacote",1]
+];
+
+const RURAL_REPAIR_TEMPLATE = [
+  ["Segurança e prevenção","Verificar estabilidade geral da casa e sinais de risco estrutural","Urgente"],
+  ["Segurança e prevenção","Identificar trincas largas, novas ou aumentando","Urgente"],
+  ["Segurança e prevenção","Verificar extintor, detector de fumaça e detector de gás","Alta"],
+  ["Segurança e prevenção","Revisar trancas, cadeados, fechaduras e iluminação externa","Alta"],
+
+  ["Telhado e calhas","Verificar telhas quebradas, soltas ou deslocadas","Urgente"],
+  ["Telhado e calhas","Procurar pontos de infiltração após chuva forte","Urgente"],
+  ["Telhado e calhas","Revisar cumeeira e acabamento superior do telhado","Alta"],
+  ["Telhado e calhas","Verificar rufos, encontros com paredes e chaminé","Alta"],
+  ["Telhado e calhas","Limpar calhas e retirar folhas, barro e ninhos","Alta"],
+  ["Telhado e calhas","Verificar vazamentos, emendas e inclinação das calhas","Alta"],
+  ["Telhado e calhas","Revisar descidas de água e direcionamento longe da fundação","Alta"],
+  ["Telhado e calhas","Verificar forro manchado, úmido ou cedendo","Urgente"],
+  ["Telhado e calhas","Verificar presença de cupins, morcegos ou aves no telhado","Alta"],
+
+  ["Madeiras e estrutura","Inspecionar vigas, caibros e ripas do telhado","Urgente"],
+  ["Madeiras e estrutura","Procurar cupim, broca, pó de madeira e partes ocas","Urgente"],
+  ["Madeiras e estrutura","Verificar madeira apodrecida por umidade","Urgente"],
+  ["Madeiras e estrutura","Aplicar tratamento contra cupim onde necessário","Alta"],
+  ["Madeiras e estrutura","Revisar pilares, varanda, deck, escadas e corrimãos de madeira","Alta"],
+  ["Madeiras e estrutura","Lixar e renovar proteção ou verniz das madeiras externas","Média"],
+
+  ["Paredes, teto e pisos","Mapear infiltrações, manchas e pintura descascando","Alta"],
+  ["Paredes, teto e pisos","Verificar mofo em quartos, banheiro e paredes frias","Alta"],
+  ["Paredes, teto e pisos","Avaliar trincas em paredes internas e externas","Alta"],
+  ["Paredes, teto e pisos","Verificar reboco solto ou oco","Média"],
+  ["Paredes, teto e pisos","Reparar buracos, fissuras e acabamento antes da pintura","Média"],
+  ["Paredes, teto e pisos","Verificar pisos soltos, quebrados ou escorregadios","Alta"],
+  ["Paredes, teto e pisos","Revisar rodapés, cantos e encontros com o chão","Média"],
+  ["Paredes, teto e pisos","Avaliar necessidade de pintura interna e externa","Baixa"],
+
+  ["Portas e janelas","Verificar portas empenadas, raspando ou sem fechar","Média"],
+  ["Portas e janelas","Revisar dobradiças, fechaduras, trincos e maçanetas","Média"],
+  ["Portas e janelas","Verificar janelas com entrada de chuva ou vento","Alta"],
+  ["Portas e janelas","Revisar vidros quebrados, soltos ou trincados","Urgente"],
+  ["Portas e janelas","Instalar ou reparar telas contra insetos","Média"],
+  ["Portas e janelas","Revisar vedação inferior das portas","Média"],
+
+  ["Elétrica e iluminação","Revisar quadro elétrico, disjuntores e identificação dos circuitos","Urgente"],
+  ["Elétrica e iluminação","Procurar tomadas quentes, frouxas, queimadas ou com faísca","Urgente"],
+  ["Elétrica e iluminação","Verificar aterramento e proteção contra surtos","Alta"],
+  ["Elétrica e iluminação","Revisar fiação exposta ou improvisada","Urgente"],
+  ["Elétrica e iluminação","Testar iluminação externa, varanda, portão e caminhos","Alta"],
+  ["Elétrica e iluminação","Verificar extensão externa e tomadas protegidas contra chuva","Alta"],
+  ["Elétrica e iluminação","Revisar alimentação de bomba d’água, portão e internet","Alta"],
+
+  ["Água e hidráulica","Verificar vazamentos em torneiras, registros e conexões","Alta"],
+  ["Água e hidráulica","Inspecionar caixa-d’água, tampa, boia e limpeza","Alta"],
+  ["Água e hidráulica","Verificar bomba d’água, pressurizador e ruídos anormais","Alta"],
+  ["Água e hidráulica","Revisar filtros, pré-filtros e datas de troca","Média"],
+  ["Água e hidráulica","Verificar pressão e vazão nos pontos mais distantes","Média"],
+  ["Água e hidráulica","Procurar tubulação externa exposta, rachada ou sem proteção","Alta"],
+  ["Água e hidráulica","Verificar qualidade, cheiro, cor e sedimentos da água","Alta"],
+  ["Água e hidráulica","Revisar mangueiras, registros externos e pontos de irrigação","Média"],
+
+  ["Fossa, esgoto e drenagem","Verificar nível, acesso e necessidade de limpeza da fossa","Urgente"],
+  ["Fossa, esgoto e drenagem","Procurar retorno de cheiro ou escoamento lento","Alta"],
+  ["Fossa, esgoto e drenagem","Revisar caixas de inspeção e gordura","Alta"],
+  ["Fossa, esgoto e drenagem","Limpar ralos externos e canais de drenagem","Alta"],
+  ["Fossa, esgoto e drenagem","Verificar água acumulando junto à casa","Urgente"],
+  ["Fossa, esgoto e drenagem","Criar ou corrigir caimento do terreno para afastar água da fundação","Urgente"],
+  ["Fossa, esgoto e drenagem","Verificar erosão causada por água de chuva","Alta"],
+
+  ["Limpeza, umidade e pragas","Fazer limpeza pesada de forro, cantos e áreas fechadas","Média"],
+  ["Limpeza, umidade e pragas","Remover mofo e corrigir a origem da umidade","Alta"],
+  ["Limpeza, umidade e pragas","Verificar sinais de rato, barata, formiga, escorpião e aranha","Alta"],
+  ["Limpeza, umidade e pragas","Eliminar entulho, madeira úmida e objetos acumulando água","Alta"],
+  ["Limpeza, umidade e pragas","Revisar telas de ralos e vedações contra animais","Média"],
+  ["Limpeza, umidade e pragas","Limpar caixa-d’água e registrar a data","Alta"],
+  ["Limpeza, umidade e pragas","Limpar calçadas, varanda, garagem e área de serviço","Baixa"],
+
+  ["Terreno e vegetação","Roçar mato alto ao redor da casa e dos caminhos","Alta"],
+  ["Terreno e vegetação","Retirar galhos secos ou árvores com risco de queda","Urgente"],
+  ["Terreno e vegetação","Podar vegetação encostando no telhado, parede ou fiação","Alta"],
+  ["Terreno e vegetação","Verificar erosões, buracos, desníveis e pontos escorregadios","Alta"],
+  ["Terreno e vegetação","Manter faixa limpa ao redor da casa contra fogo e animais","Alta"],
+  ["Terreno e vegetação","Revisar valas, canais e saída de água de chuva","Alta"],
+  ["Terreno e vegetação","Organizar ferramentas, lenha, materiais e produtos rurais","Média"],
+
+  ["Cercas e portões","Percorrer toda a cerca e localizar arames frouxos ou rompidos","Alta"],
+  ["Cercas e portões","Verificar mourões podres, inclinados ou soltos","Alta"],
+  ["Cercas e portões","Revisar porteiras, dobradiças, trancas e correntes","Alta"],
+  ["Cercas e portões","Verificar pontos por onde animais podem entrar ou sair","Urgente"],
+  ["Cercas e portões","Revisar portão automático, motor, controle e destravamento manual","Alta"],
+  ["Cercas e portões","Limpar vegetação encostando na cerca","Média"],
+  ["Cercas e portões","Verificar sinalização e numeração visível da propriedade","Média"],
+
+  ["Acesso e área externa","Verificar estrada de acesso, valetas e pontos de lama","Alta"],
+  ["Acesso e área externa","Corrigir buracos, pedras soltas e trechos com risco de atolamento","Alta"],
+  ["Acesso e área externa","Revisar iluminação do caminho entre portão e casa","Alta"],
+  ["Acesso e área externa","Verificar cobertura e piso da área de veículos","Média"],
+  ["Acesso e área externa","Revisar varanda, telhado externo, churrasqueira e área gourmet","Média"],
+  ["Acesso e área externa","Verificar muros, contenções, barrancos e taludes","Urgente"],
+  ["Acesso e área externa","Manter acesso livre para emergência, manutenção e entrega","Alta"]
+];
+
+
+
+function createSuggestedRepairs(){
+  return RURAL_REPAIR_TEMPLATE.map(([area,task,priority])=>({
+    id:uid(),
+    area,
+    task,
+    priority,
+    status:"A verificar",
+    due:"",
+    owner:"",
+    materials:"",
+    estimated:0,
+    actual:0,
+    note:"",
+    createdAt:today()
+  }));
+}
+
+function initialHouseData(){
+  return BASE_DATA.map((g,i)=>({uid:"cat-"+(i+1),category:g.category,items:g.items.map(x=>({...x}))}));
+}
+function freshState(){
+  const houseData=initialHouseData(), houseChecked={};
+  houseData.forEach(g=>g.items.forEach(i=>houseChecked[i.id]=DEFAULT_CHECKED.has(i.id)));
+  return {
+    houseData,houseChecked,houseNotes:{},nextHouseId:501,
+    inventory:[],manualBuys:[],events:[],repairs:createSuggestedRepairs(),photoGalleryUrl:"",otherCity:"Três Corações",hideBought:false
+  };
+}
+function loadState(){
+  try{
+    const current=localStorage.getItem(KEY);
+    if(current)return {...freshState(),...JSON.parse(current)};
+
+    const v3=localStorage.getItem(OLD_KEY);
+    if(v3)return {...freshState(),...JSON.parse(v3)};
+
+    const v2=localStorage.getItem(OLDER_KEY);
+    if(v2){
+      const p=JSON.parse(v2),s=freshState();
+      s.houseData=p.data||s.houseData;
+      s.houseChecked=p.checked||s.houseChecked;
+      s.houseNotes=p.notes||{};
+      s.nextHouseId=p.nextId||501;
+      (p.purchases||[]).forEach(x=>s.manualBuys.push({
+        id:uid(),name:x.name||"",category:x.category||"Casa e outros",qty:x.qty||1,unit:x.unit||"un.",
+        priceC:x.estimated||0,priceO:0,priceSP:x.actual||0,where:"best",bought:!!x.done
+      }));
+      return s;
+    }
+  }catch(e){
+    console.error("Falha ao carregar dados:",e);
+  }
+  return freshState();
+}
+let state=loadState();
+let houseOpen=new Set(),houseEdit=false,editingHouseCat=null,editingHouseItem=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
+function norm(v){return String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()}
+function num(v){return Number(v)||0}
+function brl(v){return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(num(v))}
+function today(){return new Date().toISOString().slice(0,10)}
+function daysUntil(date){
+  if(!date)return 99999;
+  const a=new Date();a.setHours(0,0,0,0);const b=new Date(date+"T00:00:00");
+  return Math.ceil((b-a)/86400000);
+}
+function lowestPrice(item){
+  const vals=[["Cambuquira",num(item.priceC)], [state.otherCity||"Outra cidade",num(item.priceO)], ["São Paulo",num(item.priceSP)]].filter(x=>x[1]>0);
+  if(!vals.length)return {city:"Sem preço",price:0};
+  vals.sort((a,b)=>a[1]-b[1]);return {city:vals[0][0],price:vals[0][1]};
+}
+function chosenPrice(item){
+  if(item.where==="Cambuquira")return num(item.priceC);
+  if(item.where==="other")return num(item.priceO);
+  if(item.where==="São Paulo")return num(item.priceSP);
+  return lowestPrice(item).price;
+}
+function updateCityLabels(){
+  document.querySelectorAll(".other-city-label").forEach(x=>x.textContent=state.otherCity||"Outra cidade");
+  document.getElementById("otherCityName").value=state.otherCity||"";
+}
+function openPanel(id){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.panel===id));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>openPanel(t.dataset.panel));
+
+function renderAll(){
+  updateCityLabels();renderHouse();renderRepairs();renderPhotoPanel();renderStock();renderShopping();renderEvents();renderDashboard();
+}
+
+/* CHECKLIST DA CASA */
+function renderHouse(){
+  document.body.classList.toggle("edit-mode",houseEdit);
+  const q=norm(document.getElementById("houseSearch").value),f=document.getElementById("houseFilter").value;
+  const app=document.getElementById("houseApp");app.innerHTML="";
+  let visible=0;
+  state.houseData.forEach(group=>{
+    const matches=group.items.filter(i=>{
+      const c=!!state.houseChecked[i.id];
+      return (f==="all"||(f==="checked"&&c)||(f==="unchecked"&&!c))&&(!q||norm(i.name).includes(q)||String(i.id).includes(q));
+    });
+    if(!matches.length&&!houseEdit)return;
+    visible+=matches.length;
+    const d=document.createElement("details");d.className="category";d.open=q||f!=="all"||houseOpen.has(group.uid);
+    d.ontoggle=()=>d.open?houseOpen.add(group.uid):houseOpen.delete(group.uid);
+    const s=document.createElement("summary");
+    const count=group.items.filter(i=>state.houseChecked[i.id]).length;
+    s.innerHTML=`<span>${esc(group.category)}</span><span class="category-count">${count}/${group.items.length}</span>
+    <span class="category-actions"><button class="btn small add-house-in">+ Item</button><button class="btn small rename-house-cat">Renomear</button><button class="btn small danger delete-house-cat">Excluir</button></span>`;
+    s.querySelector(".category-actions").onclick=e=>e.stopPropagation();
+    s.querySelector(".add-house-in").onclick=()=>openHouseItem(group.uid);
+    s.querySelector(".rename-house-cat").onclick=()=>openHouseCategory(group.uid);
+    s.querySelector(".delete-house-cat").onclick=()=>deleteHouseCategory(group.uid);
+    d.appendChild(s);
+    const box=document.createElement("div");box.className="items";
+    if(!matches.length)box.innerHTML='<div class="empty">Categoria sem itens.</div>';
+    matches.forEach(item=>{
+      const row=document.createElement("div");row.className="check-item"+(state.houseChecked[item.id]?" checked":"");row.dataset.id=item.id;
+      const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!state.houseChecked[item.id];
+      cb.onchange=()=>{state.houseChecked[item.id]=cb.checked;houseOpen.add(group.uid);save();renderAll()};
+      const name=document.createElement("div");name.className="check-name";name.textContent=item.name;name.onclick=()=>cb.click();
+      const right=document.createElement("div");right.className="check-right";
+      right.innerHTML=`<span class="muted">#${item.id}</span><span class="item-actions"><button class="btn small edit-house">Editar</button><button class="btn small danger del-house">Excluir</button></span>`;
+      right.querySelector(".edit-house").onclick=()=>openHouseItem(group.uid,item.id);
+      right.querySelector(".del-house").onclick=()=>deleteHouseItem(group.uid,item.id);
+      row.append(cb,name,right);box.appendChild(row);
+    });
+    d.appendChild(box);app.appendChild(d);
+  });
+  if(!visible&&!houseEdit)app.innerHTML='<div class="empty">Nenhum item encontrado.</div>';
+  const items=state.houseData.flatMap(g=>g.items),checked=items.filter(i=>state.houseChecked[i.id]).length,pct=items.length?Math.round(checked/items.length*100):0;
+  houseTotal.textContent=items.length;houseChecked.textContent=checked;houseUnchecked.textContent=items.length-checked;housePercent.textContent=pct+"%";houseProgress.style.width=pct+"%";
+}
+function fillHouseCats(selected){
+  houseItemCategory.innerHTML=state.houseData.map(g=>`<option value="${esc(g.uid)}">${esc(g.category)}</option>`).join("");
+  if(selected)houseItemCategory.value=selected;
+}
+function openHouseCategory(id=null){
+  editingHouseCat=id;houseCategoryTitle.textContent=id?"Renomear categoria":"Adicionar categoria";
+  houseCategoryName.value=state.houseData.find(g=>g.uid===id)?.category||"";houseCategoryDialog.showModal();
+}
+function openHouseItem(cat=null,id=null){
+  if(!state.houseData.length)return alert("Crie uma categoria primeiro.");
+  editingHouseItem=id;const g=state.houseData.find(x=>x.uid===cat)||state.houseData[0],i=g.items.find(x=>x.id===id);
+  houseItemTitle.textContent=id?"Editar item":"Adicionar item";fillHouseCats(g.uid);houseItemName.value=i?.name||"";houseItemDialog.showModal();
+}
+houseCategoryForm.onsubmit=e=>{
+  if(e.submitter?.value==="cancel")return;e.preventDefault();const name=houseCategoryName.value.trim();if(!name)return;
+  if(editingHouseCat)state.houseData.find(g=>g.uid===editingHouseCat).category=name;
+  else state.houseData.push({uid:uid(),category:name,items:[]});
+  save();renderAll();houseCategoryDialog.close();
+};
+houseItemForm.onsubmit=e=>{
+  if(e.submitter?.value==="cancel")return;e.preventDefault();const name=houseItemName.value.trim(),cat=houseItemCategory.value;if(!name)return;
+  if(editingHouseItem){
+    let old,item;state.houseData.forEach(g=>{const x=g.items.find(i=>i.id===editingHouseItem);if(x){old=g;item=x}});
+    item.name=name;if(old.uid!==cat){old.items=old.items.filter(i=>i.id!==item.id);state.houseData.find(g=>g.uid===cat).items.push(item)}
+  }else{const id=state.nextHouseId++;state.houseData.find(g=>g.uid===cat).items.push({id,name});state.houseChecked[id]=false}
+  save();renderAll();houseItemDialog.close();
+};
+function deleteHouseItem(cat,id){if(!confirm("Excluir este item?"))return;const g=state.houseData.find(x=>x.uid===cat);g.items=g.items.filter(i=>i.id!==id);delete state.houseChecked[id];save();renderAll()}
+function deleteHouseCategory(id){const g=state.houseData.find(x=>x.uid===id);if(!confirm(`Excluir "${g.category}" e todos os itens?`))return;g.items.forEach(i=>delete state.houseChecked[i.id]);state.houseData=state.houseData.filter(x=>x.uid!==id);save();renderAll()}
+houseSearch.oninput=renderHouse;houseFilter.onchange=renderHouse;
+addHouseCategory.onclick=()=>openHouseCategory();addHouseItem.onclick=()=>openHouseItem();
+houseEditMode.onclick=()=>{houseEdit=!houseEdit;houseEditMode.textContent=houseEdit?"Desativar edição":"Ativar edição";renderHouse()};
+houseExpand.onclick=()=>{const all=[...document.querySelectorAll("#houseApp details")],open=all.some(x=>!x.open);all.forEach(x=>x.open=open);houseExpand.textContent=open?"Fechar tudo":"Abrir tudo"};
+function markVisible(v){document.querySelectorAll("#houseApp .check-item").forEach(r=>state.houseChecked[num(r.dataset.id)]=v);save();renderAll()}
+houseMarkVisible.onclick=()=>markVisible(true);houseUnmarkVisible.onclick=()=>markVisible(false);
+
+
+/* REPAROS DA CASA RURAL */
+let editingRepairId=null;
+let onlyPendingRepairs=false;
+
+function repairPriorityClass(priority){
+  return priority==="Urgente"?"priority-urgent":
+    priority==="Alta"?"priority-high":
+    priority==="Média"?"priority-medium":"priority-low";
+}
+function repairStatusClass(status){
+  return status==="Concluído"?"status-done":
+    status==="Em andamento"?"status-progress":
+    status==="Precisa reparar"?"status-pending":"status-check";
+}
+function repairCardClass(item){
+  if(item.status==="Concluído")return "done";
+  if(item.priority==="Urgente")return "urgent";
+  if(item.priority==="Alta")return "high";
+  return "";
+}
+function repairAreas(){
+  return [...new Set(state.repairs.map(x=>x.area))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+}
+function updateRepairAreaFilter(){
+  const current=repairAreaFilter.value||"all";
+  repairAreaFilter.innerHTML='<option value="all">Todas as áreas</option>'+
+    repairAreas().map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join("");
+  repairAreaFilter.value=[...repairAreaFilter.options].some(o=>o.value===current)?current:"all";
+}
+function renderRepairs(){
+  if(!Array.isArray(state.repairs))state.repairs=[];
+  updateRepairAreaFilter();
+
+  const q=norm(repairSearch.value);
+  const area=repairAreaFilter.value;
+  const status=repairStatusFilter.value;
+  const priority=repairPriorityFilter.value;
+
+  let items=state.repairs.filter(x=>
+    (!q||norm(x.task+" "+x.area+" "+x.materials+" "+x.note).includes(q))&&
+    (area==="all"||x.area===area)&&
+    (status==="all"||x.status===status)&&
+    (priority==="all"||x.priority===priority)
+  );
+  if(onlyPendingRepairs)items=items.filter(x=>x.status!=="Concluído");
+
+  const orderPriority={"Urgente":0,"Alta":1,"Média":2,"Baixa":3};
+  const orderStatus={"Precisa reparar":0,"Em andamento":1,"A verificar":2,"Concluído":3};
+  items.sort((a,b)=>
+    (orderStatus[a.status]??9)-(orderStatus[b.status]??9) ||
+    (orderPriority[a.priority]??9)-(orderPriority[b.priority]??9) ||
+    a.area.localeCompare(b.area,"pt-BR")
+  );
+
+  repairList.innerHTML="";
+  items.forEach(item=>{
+    const card=document.createElement("article");
+    card.className="repair-card "+repairCardClass(item);
+    const difference=num(item.actual)-num(item.estimated);
+    card.innerHTML=`
+      <div class="repair-top">
+        <div class="repair-title">
+          <h3>${esc(item.task)}</h3>
+          <div class="repair-meta">
+            <span class="badge info">${esc(item.area)}</span>
+            <span class="badge ${repairPriorityClass(item.priority)}">${esc(item.priority)}</span>
+            <span class="badge ${repairStatusClass(item.status)}">${esc(item.status)}</span>
+          </div>
+        </div>
+        <button class="btn small edit-repair">Editar</button>
+      </div>
+      <div class="repair-body">
+        <div class="repair-field">
+          <label>Situação</label>
+          <select class="repair-status-inline">
+            ${["A verificar","Precisa reparar","Em andamento","Concluído"].map(v=>`<option ${item.status===v?"selected":""}>${v}</option>`).join("")}
+          </select>
+        </div>
+        <div class="repair-field">
+          <label>Prioridade</label>
+          <select class="repair-priority-inline">
+            ${["Urgente","Alta","Média","Baixa"].map(v=>`<option ${item.priority===v?"selected":""}>${v}</option>`).join("")}
+          </select>
+        </div>
+        <div class="repair-field">
+          <label>Prazo</label>
+          <input class="repair-due-inline" type="date" value="${esc(item.due||"")}">
+        </div>
+        <div class="repair-field">
+          <label>Responsável</label>
+          <input class="repair-owner-inline" value="${esc(item.owner||"")}" placeholder="Definir">
+        </div>
+        <div class="repair-field full">
+          <label>Materiais necessários</label>
+          <input class="repair-materials-inline" value="${esc(item.materials||"")}" placeholder="Ex.: telhas, parafusos, tinta...">
+        </div>
+        <div class="repair-field full">
+          <div class="repair-cost-line">
+            <span>Estimado: <strong>${brl(item.estimated)}</strong></span>
+            <span>Gasto: <strong>${brl(item.actual)}</strong></span>
+            <span>Diferença: <strong>${brl(difference)}</strong></span>
+          </div>
+        </div>
+        ${item.note?`<div class="repair-field full"><label>Observação</label><div>${esc(item.note)}</div></div>`:""}
+      </div>
+      <div class="repair-actions">
+        <button class="btn small add-materials-buy">Materiais → compras</button>
+        <button class="btn small duplicate-repair">Duplicar</button>
+        <button class="btn small danger delete-repair">Excluir</button>
+      </div>`;
+
+    card.querySelector(".edit-repair").onclick=()=>openRepairDialog(item.id);
+    card.querySelector(".repair-status-inline").onchange=e=>{item.status=e.target.value;save();renderAll()};
+    card.querySelector(".repair-priority-inline").onchange=e=>{item.priority=e.target.value;save();renderAll()};
+    card.querySelector(".repair-due-inline").onchange=e=>{item.due=e.target.value;save();renderAll()};
+    card.querySelector(".repair-owner-inline").onchange=e=>{item.owner=e.target.value;save();renderAll()};
+    card.querySelector(".repair-materials-inline").onchange=e=>{item.materials=e.target.value;save();renderAll()};
+    card.querySelector(".add-materials-buy").onclick=()=>addRepairMaterialsToShopping(item);
+    card.querySelector(".duplicate-repair").onclick=()=>{
+      state.repairs.push({...item,id:uid(),task:item.task+" — cópia",status:"A verificar",actual:0,createdAt:today()});
+      save();renderAll();
+    };
+    card.querySelector(".delete-repair").onclick=()=>{
+      if(confirm("Excluir este item de reparo?")){
+        state.repairs=state.repairs.filter(x=>x.id!==item.id);
+        save();renderAll();
+      }
+    };
+    repairList.appendChild(card);
+  });
+
+  if(!items.length)repairList.innerHTML='<div class="empty">Nenhum reparo encontrado com esses filtros.</div>';
+
+  const urgent=state.repairs.filter(x=>x.priority==="Urgente"&&x.status!=="Concluído").length;
+  const progress=state.repairs.filter(x=>x.status==="Em andamento").length;
+  const done=state.repairs.filter(x=>x.status==="Concluído").length;
+  repairTotal.textContent=state.repairs.length;
+  repairUrgent.textContent=urgent;
+  repairProgress.textContent=progress;
+  repairDone.textContent=done;
+  showPendingRepairsBtn.textContent=onlyPendingRepairs?"Mostrar todos":"Mostrar só pendentes";
+}
+function openRepairDialog(id=null){
+  editingRepairId=id;
+  const item=state.repairs.find(x=>x.id===id);
+  repairDialogTitle.textContent=id?"Editar reparo":"Novo reparo";
+  repairForm.reset();
+  repairAreaInput.value=item?.area||"Telhado e calhas";
+  repairTaskInput.value=item?.task||"";
+  repairPriorityInput.value=item?.priority||"Média";
+  repairStatusInput.value=item?.status||"A verificar";
+  repairDueInput.value=item?.due||"";
+  repairOwnerInput.value=item?.owner||"";
+  repairMaterialsInput.value=item?.materials||"";
+  repairEstimatedInput.value=num(item?.estimated);
+  repairActualInput.value=num(item?.actual);
+  repairNoteInput.value=item?.note||"";
+  repairDialog.showModal();
+}
+repairForm.onsubmit=e=>{
+  if(e.submitter?.value==="cancel")return;
+  e.preventDefault();
+  const payload={
+    area:repairAreaInput.value,
+    task:repairTaskInput.value.trim(),
+    priority:repairPriorityInput.value,
+    status:repairStatusInput.value,
+    due:repairDueInput.value,
+    owner:repairOwnerInput.value.trim(),
+    materials:repairMaterialsInput.value.trim(),
+    estimated:num(repairEstimatedInput.value),
+    actual:num(repairActualInput.value),
+    note:repairNoteInput.value.trim()
+  };
+  if(!payload.task)return;
+  if(editingRepairId){
+    const item=state.repairs.find(x=>x.id===editingRepairId);
+    Object.assign(item,payload);
+  }else{
+    state.repairs.push({id:uid(),createdAt:today(),...payload});
+  }
+  save();renderAll();repairDialog.close();
+};
+function addRepairMaterialsToShopping(item){
+  const materials=String(item.materials||"").split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean);
+  if(!materials.length){
+    alert("Digite os materiais necessários antes de enviar para compras.");
+    return;
+  }
+  let added=0;
+  const existing=new Set(state.manualBuys.filter(x=>!x.bought).map(x=>norm(x.name)));
+  materials.forEach(name=>{
+    if(!existing.has(norm(name))){
+      state.manualBuys.push({
+        id:uid(),name,category:"Casa e outros",qty:1,unit:"un.",
+        priceC:0,priceO:0,priceSP:0,where:"best",bought:false,
+        note:"Reparo: "+item.task
+      });
+      existing.add(norm(name));added++;
+    }
+  });
+  save();renderAll();
+  alert(`${added} material(is) adicionado(s) à lista de compras.`);
+}
+function restoreRepairTemplate(){
+  const existing=new Set(state.repairs.map(x=>norm(x.area+"|"+x.task)));
+  let added=0;
+  RURAL_REPAIR_TEMPLATE.forEach(([area,task,priority])=>{
+    const key=norm(area+"|"+task);
+    if(!existing.has(key)){
+      state.repairs.push({
+        id:uid(),area,task,priority,status:"A verificar",due:"",owner:"",
+        materials:"",estimated:0,actual:0,note:"",createdAt:today()
+      });
+      existing.add(key);added++;
+    }
+  });
+  save();renderAll();
+  alert(`${added} verificação(ões) adicionada(s). Itens existentes não foram duplicados.`);
+}
+addRepairBtn.onclick=()=>openRepairDialog();
+restoreRepairTemplateBtn.onclick=restoreRepairTemplate;
+showPendingRepairsBtn.onclick=()=>{onlyPendingRepairs=!onlyPendingRepairs;renderRepairs()};
+repairSearch.oninput=renderRepairs;
+repairAreaFilter.onchange=renderRepairs;
+repairStatusFilter.onchange=renderRepairs;
+repairPriorityFilter.onchange=renderRepairs;
+
+
+
+/* GALERIA DE FOTOS DO GOOGLE DRIVE */
+function normalizeAppsScriptUrl(value){
+  const url=String(value||"").trim();
+  if(!url)return "";
+  return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/(exec|dev)(\?.*)?$/i.test(url)?url:"";
+}
+function renderPhotoPanel(){
+  const url=state.photoGalleryUrl||"";
+  photoWebAppUrl.value=url;
+  if(url){
+    photoPlaceholder.hidden=true;
+    photoGalleryFrame.hidden=false;
+    if(!photoGalleryFrame.src)photoGalleryFrame.src=url;
+  }else{
+    photoPlaceholder.hidden=false;
+    photoGalleryFrame.hidden=true;
+    photoGalleryFrame.removeAttribute("src");
+  }
+}
+savePhotoUrlBtn.onclick=()=>{
+  const url=normalizeAppsScriptUrl(photoWebAppUrl.value);
+  if(!url){alert("Cole uma URL válida do Apps Script terminada em /exec.");return}
+  state.photoGalleryUrl=url;save();photoGalleryFrame.src=url+"?t="+Date.now();renderPhotoPanel();
+};
+reloadPhotoGalleryBtn.onclick=()=>{
+  const url=state.photoGalleryUrl||normalizeAppsScriptUrl(photoWebAppUrl.value);
+  if(!url){alert("Configure primeiro o endereço do Apps Script.");return}
+  photoGalleryFrame.src=url+(url.includes("?")?"&":"?")+"t="+Date.now();
+};
+openPhotoGalleryBtn.onclick=()=>{
+  const url=state.photoGalleryUrl||normalizeAppsScriptUrl(photoWebAppUrl.value);
+  if(!url){alert("Configure primeiro o endereço do Apps Script.");return}
+  window.open(url,"_blank","noopener,noreferrer");
+};
+
+
+/* ESTOQUE */
+function stockStatus(x){
+  if(num(x.qty)<=0)return {key:"out",label:"Zerado",cls:"danger"};
+  if(num(x.qty)<num(x.min))return {key:"low",label:"Baixo",cls:"warn"};
+  return {key:"ok",label:"Suficiente",cls:"ok"};
+}
+function renderStock(){
+  const q=norm(stockSearch.value),cat=stockCategoryFilter.value,status=stockStatusFilter.value;
+  stockBody.innerHTML="";
+  const filtered=state.inventory.filter(x=>{
+    const st=stockStatus(x).key,exp=daysUntil(x.expiry)<=30;
+    return (!q||norm(x.name).includes(q))&&(cat==="all"||x.category===cat)&&(status==="all"||st===status||(status==="expiring"&&exp));
+  });
+  filtered.forEach(x=>{
+    const st=stockStatus(x),low=lowestPrice(x),expDays=daysUntil(x.expiry);
+    const tr=document.createElement("tr");tr.className=st.key;
+    tr.innerHTML=`
+      <td><span class="badge ${st.cls}">${st.label}</span>${expDays<=30?`<div><span class="badge danger">${expDays<0?"Vencido":expDays+" dias"}</span></div>`:""}</td>
+      <td><input data-k="name" value="${esc(x.name)}"></td>
+      <td><select data-k="category">${["Alimentos","Limpeza","Higiene","Bebidas","Casa e outros"].map(v=>`<option ${x.category===v?"selected":""}>${v}</option>`).join("")}</select></td>
+      <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(x.qty)}"></td>
+      <td><input data-k="unit" value="${esc(x.unit)}"></td>
+      <td><input data-k="min" type="number" min="0" step="0.01" value="${num(x.min)}"></td>
+      <td><input data-k="expiry" type="date" value="${esc(x.expiry||"")}"></td>
+      <td><input data-k="priceC" type="number" min="0" step="0.01" value="${num(x.priceC)}" class="${low.city==="Cambuquira"&&low.price?"price-best":""}"></td>
+      <td><input data-k="priceO" type="number" min="0" step="0.01" value="${num(x.priceO)}" class="${low.city===state.otherCity&&low.price?"price-best":""}"></td>
+      <td><input data-k="priceSP" type="number" min="0" step="0.01" value="${num(x.priceSP)}" class="${low.city==="São Paulo"&&low.price?"price-best":""}"></td>
+      <td><span class="money">${low.price?brl(low.price):"—"}</span><div class="muted">${esc(low.city)}</div></td>
+      <td><input data-k="updated" type="date" value="${esc(x.updated||"")}"></td>
+      <td><input data-k="note" value="${esc(x.note||"")}" placeholder="Mercado, marca..."></td>
+      <td><button class="btn small danger del-stock">Excluir</button></td>`;
+    tr.querySelectorAll("[data-k]").forEach(inp=>inp.onchange=()=>{const k=inp.dataset.k;x[k]=["qty","min","priceC","priceO","priceSP"].includes(k)?num(inp.value):inp.value;save();renderAll()});
+    tr.querySelector(".del-stock").onclick=()=>{if(confirm("Excluir este produto do estoque?")){state.inventory=state.inventory.filter(i=>i.id!==x.id);save();renderAll()}};
+    stockBody.appendChild(tr);
+  });
+  if(!filtered.length)stockBody.innerHTML='<tr><td colspan="14"><div class="empty">Nenhum produto encontrado.</div></td></tr>';
+  const out=state.inventory.filter(x=>num(x.qty)<=0).length,low=state.inventory.filter(x=>num(x.qty)>0&&num(x.qty)<num(x.min)).length;
+  const exp=state.inventory.filter(x=>daysUntil(x.expiry)<=30).length;
+  const value=state.inventory.reduce((s,x)=>s+num(x.qty)*lowestPrice(x).price,0);
+  stockTotal.textContent=state.inventory.length;stockOut.textContent=out;stockLow.textContent=low;stockExpiry.textContent=exp;stockValue.textContent=brl(value);
+}
+stockSearch.oninput=renderStock;stockCategoryFilter.onchange=renderStock;stockStatusFilter.onchange=renderStock;
+otherCityName.onchange=()=>{state.otherCity=otherCityName.value.trim()||"Outra cidade";save();renderAll()};
+addStockBtn.onclick=()=>{stockForm.reset();stockUnitInput.value="un.";stockMinInput.value=1;stockDialog.showModal()};
+stockForm.onsubmit=e=>{
+  if(e.submitter?.value==="cancel")return;e.preventDefault();
+  state.inventory.push({id:uid(),name:stockNameInput.value.trim(),category:stockCategoryInput.value,qty:num(stockQtyInput.value),unit:stockUnitInput.value||"un.",min:num(stockMinInput.value),expiry:"",priceC:0,priceO:0,priceSP:0,updated:"",note:"",buyQty:0,bought:false,where:"best"});
+  save();renderAll();stockDialog.close();
+};
+basicStockBtn.onclick=()=>{
+  const names=new Set(state.inventory.map(x=>norm(x.name)));let added=0;
+  BASIC_STOCK.forEach(([name,category,unit,min])=>{if(!names.has(norm(name))){state.inventory.push({id:uid(),name,category,qty:0,unit,min,expiry:"",priceC:0,priceO:0,priceSP:0,updated:"",note:"",buyQty:min,bought:false,where:"best"});added++}});
+  save();renderAll();alert(`${added} produtos adicionados. Os itens que já existiam não foram duplicados.`);
+};
+
+/* COMPRAS */
+function shoppingItems(){
+  const auto=state.inventory.filter(x=>num(x.qty)<num(x.min)).map(x=>({...x,source:"stock",ref:x.id,buyQty:num(x.buyQty)>0?num(x.buyQty):Math.max(num(x.min)-num(x.qty),1)}));
+  const manual=state.manualBuys.map(x=>({...x,source:"manual",ref:x.id,buyQty:num(x.qty)}));
+  return [...auto,...manual];
+}
+function renderShopping(){
+  shoppingBody.innerHTML="";let items=shoppingItems();
+  if(state.hideBought)items=items.filter(x=>!x.bought);
+  items.forEach(x=>{
+    const total=chosenPrice(x)*num(x.buyQty),tr=document.createElement("tr");if(x.bought)tr.className="done";
+    tr.innerHTML=`
+      <td><input class="buy-done" type="checkbox" ${x.bought?"checked":""}></td>
+      <td>${esc(x.name)}</td><td>${esc(x.category)}</td>
+      <td><input class="buy-qty" type="number" min="0.01" step="0.01" value="${num(x.buyQty)}"></td>
+      <td>${esc(x.unit)}</td>
+      <td><input class="buy-pc" type="number" min="0" step="0.01" value="${num(x.priceC)}"></td>
+      <td><input class="buy-po" type="number" min="0" step="0.01" value="${num(x.priceO)}"></td>
+      <td><input class="buy-psp" type="number" min="0" step="0.01" value="${num(x.priceSP)}"></td>
+      <td><select class="buy-where"><option value="best" ${x.where==="best"?"selected":""}>Menor preço</option><option ${x.where==="Cambuquira"?"selected":""}>Cambuquira</option><option value="other" ${x.where==="other"?"selected":""}>${esc(state.otherCity)}</option><option ${x.where==="São Paulo"?"selected":""}>São Paulo</option></select></td>
+      <td class="money">${brl(total)}</td>
+      <td>${x.source==="stock"?`<button class="btn small good stock-entry" ${!x.bought?"disabled":""}>Dar entrada</button>`:"—"}</td>
+      <td>${x.source==="manual"?'<button class="btn small danger del-manual">Excluir</button>':""}</td>`;
+    function target(){return x.source==="stock"?state.inventory.find(i=>i.id===x.ref):state.manualBuys.find(i=>i.id===x.ref)}
+    tr.querySelector(".buy-done").onchange=e=>{target().bought=e.target.checked;save();renderAll()};
+    tr.querySelector(".buy-qty").onchange=e=>{const t=target();x.source==="stock"?t.buyQty=num(e.target.value):t.qty=num(e.target.value);save();renderAll()};
+    [[".buy-pc","priceC"],[".buy-po","priceO"],[".buy-psp","priceSP"]].forEach(([sel,k])=>tr.querySelector(sel).onchange=e=>{target()[k]=num(e.target.value);target().updated=today();save();renderAll()});
+    tr.querySelector(".buy-where").onchange=e=>{target().where=e.target.value;save();renderAll()};
+    tr.querySelector(".stock-entry")?.addEventListener("click",()=>{
+      const t=target();t.qty=num(t.qty)+num(t.buyQty||Math.max(num(t.min)-num(t.qty),1));t.buyQty=0;t.bought=false;save();renderAll();alert("Compra adicionada ao estoque.");
+    });
+    tr.querySelector(".del-manual")?.addEventListener("click",()=>{state.manualBuys=state.manualBuys.filter(i=>i.id!==x.ref);save();renderAll()});
+    shoppingBody.appendChild(tr);
+  });
+  if(!items.length)shoppingBody.innerHTML='<tr><td colspan="12"><div class="empty">Nenhum item precisa ser comprado.</div></td></tr>';
+  const all=shoppingItems().filter(x=>!x.bought),sum=k=>all.reduce((s,x)=>s+num(x.buyQty)*num(x[k]),0);
+  shoppingPending.textContent=all.length;shoppingCambTotal.textContent=brl(sum("priceC"));shoppingOtherTotal.textContent=brl(sum("priceO"));shoppingSpTotal.textContent=brl(sum("priceSP"));
+  shoppingBestTotal.textContent=brl(all.reduce((s,x)=>s+num(x.buyQty)*lowestPrice(x).price,0));
+}
+addManualBuyBtn.onclick=()=>{manualBuyForm.reset();manualBuyQty.value=1;manualBuyUnit.value="un.";manualBuyDialog.showModal()};
+manualBuyForm.onsubmit=e=>{
+  if(e.submitter?.value==="cancel")return;e.preventDefault();
+  state.manualBuys.push({id:uid(),name:manualBuyName.value.trim(),category:manualBuyCategory.value,qty:num(manualBuyQty.value),unit:manualBuyUnit.value||"un.",priceC:0,priceO:0,priceSP:0,where:"best",bought:false});
+  save();renderAll();manualBuyDialog.close();
+};
+removeBoughtBtn.onclick=()=>{state.hideBought=!state.hideBought;removeBoughtBtn.textContent=state.hideBought?"Mostrar comprados":"Ocultar comprados";save();renderShopping()};
+
+/* EVENTOS */
+function eventTemplate(type,people){
+  const p=Math.max(1,num(people));
+  if(type==="churrasco")return [
+    ["Carne bovina",Math.round(p*0.35*10)/10,"kg"],["Linguiça",Math.round(p*0.12*10)/10,"kg"],
+    ["Frango",Math.round(p*0.12*10)/10,"kg"],["Pão de alho",Math.ceil(p*0.7),"un."],
+    ["Arroz",Math.ceil(p/8),"kg"],["Farofa",Math.ceil(p/10),"pacote"],["Vinagrete",Math.ceil(p/8),"porção"],
+    ["Refrigerante",Math.ceil(p/4),"garrafa 2 L"],["Água",Math.ceil(p/2),"litro"],
+    ["Carvão",Math.ceil(p/4),"kg"],["Gelo",Math.ceil(p/3),"kg"],["Guardanapos",Math.ceil(p/10),"pacote"],
+    ["Copos e pratos descartáveis",p,"kit"]
+  ];
+  if(type==="pizza")return [
+    ["Pizzas ou massas",Math.ceil(p/3),"pizza"],["Molho de tomate",Math.ceil(p/6),"sachê"],
+    ["Queijo muçarela",Math.round(p*0.12*10)/10,"kg"],["Recheios variados",Math.round(p*0.12*10)/10,"kg"],
+    ["Azeitonas e temperos",Math.ceil(p/10),"kit"],["Refrigerante",Math.ceil(p/4),"garrafa 2 L"],
+    ["Água",Math.ceil(p/2),"litro"],["Guardanapos",Math.ceil(p/10),"pacote"],["Gás ou lenha",1,"reserva"]
+  ];
+  return [];
+}
+newEventBtn.onclick=()=>{eventForm.reset();eventPeople.value=10;eventDialog.showModal()};
+eventForm.onsubmit=e=>{
+  if(e.submitter?.value==="cancel")return;e.preventDefault();
+  const type=eventType.value,people=num(eventPeople.value);
+  state.events.push({id:uid(),type,name:eventName.value.trim(),date:eventDate.value,people,items:eventTemplate(type,people).map(([name,qty,unit])=>({id:uid(),name,qty,unit,bought:false,priceC:0,priceO:0,priceSP:0}))});
+  save();renderAll();eventDialog.close();
+};
+function renderEvents(){
+  eventsList.innerHTML="";
+  state.events.forEach(ev=>{
+    const card=document.createElement("div");card.className="event-card";
+    const totals={c:0,o:0,s:0,best:0};ev.items.forEach(i=>{totals.c+=num(i.qty)*num(i.priceC);totals.o+=num(i.qty)*num(i.priceO);totals.s+=num(i.qty)*num(i.priceSP);totals.best+=num(i.qty)*lowestPrice(i).price});
+    card.innerHTML=`<div class="event-head"><div><h3>${esc(ev.name)}</h3><div class="muted">${esc(ev.type)} • ${ev.people} pessoas ${ev.date?"• "+ev.date:""}</div>
+      <div class="muted">Cambuquira: ${brl(totals.c)} | ${esc(state.otherCity)}: ${brl(totals.o)} | SP: ${brl(totals.s)} | Menor combinação: ${brl(totals.best)}</div></div>
+      <div><button class="btn small add-event-item">+ Item</button> <button class="btn small danger del-event">Excluir evento</button></div></div>
+      <div class="event-body"><div class="table-wrap"><table><thead><tr><th>OK</th><th>Item</th><th>Qtd.</th><th>Unidade</th><th>Cambuquira</th><th>${esc(state.otherCity)}</th><th>São Paulo</th><th>Menor</th><th></th></tr></thead><tbody class="event-tbody"></tbody></table></div></div>`;
+    const tbody=card.querySelector(".event-tbody");
+    ev.items.forEach(i=>{
+      const low=lowestPrice(i),tr=document.createElement("tr");if(i.bought)tr.className="done";
+      tr.innerHTML=`<td><input data-k="bought" type="checkbox" ${i.bought?"checked":""}></td><td><input data-k="name" value="${esc(i.name)}"></td>
+      <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(i.qty)}"></td><td><input data-k="unit" value="${esc(i.unit)}"></td>
+      <td><input data-k="priceC" type="number" min="0" step="0.01" value="${num(i.priceC)}"></td><td><input data-k="priceO" type="number" min="0" step="0.01" value="${num(i.priceO)}"></td>
+      <td><input data-k="priceSP" type="number" min="0" step="0.01" value="${num(i.priceSP)}"></td><td><span class="money">${low.price?brl(low.price*num(i.qty)):"—"}</span><div class="muted">${esc(low.city)}</div></td>
+      <td><button class="btn small danger del-event-item">Excluir</button></td>`;
+      tr.querySelectorAll("[data-k]").forEach(inp=>inp.onchange=()=>{const k=inp.dataset.k;i[k]=k==="bought"?inp.checked:["qty","priceC","priceO","priceSP"].includes(k)?num(inp.value):inp.value;save();renderAll()});
+      tr.querySelector(".del-event-item").onclick=()=>{ev.items=ev.items.filter(x=>x.id!==i.id);save();renderAll()};
+      tbody.appendChild(tr);
+    });
+    if(!ev.items.length)tbody.innerHTML='<tr><td colspan="9"><div class="empty">Nenhum item.</div></td></tr>';
+    card.querySelector(".add-event-item").onclick=()=>{ev.items.push({id:uid(),name:"Novo item",qty:1,unit:"un.",bought:false,priceC:0,priceO:0,priceSP:0});save();renderAll()};
+    card.querySelector(".del-event").onclick=()=>{if(confirm("Excluir este evento e sua lista?")){state.events=state.events.filter(x=>x.id!==ev.id);save();renderAll()}};
+    eventsList.appendChild(card);
+  });
+  if(!state.events.length)eventsList.innerHTML='<div class="empty">Nenhuma lista especial criada.</div>';
+}
+
+/* RESUMO */
+function renderDashboard(){
+  const house=state.houseData.flatMap(g=>g.items),missing=house.filter(i=>!state.houseChecked[i.id]).length;
+  const low=state.inventory.filter(x=>num(x.qty)<num(x.min)).length,expiring=state.inventory.filter(x=>daysUntil(x.expiry)<=30).length;
+  const buys=shoppingItems().filter(x=>!x.bought),best=buys.reduce((s,x)=>s+num(x.buyQty)*lowestPrice(x).price,0);
+  dashHouseTotal.textContent=house.length;dashHouseMissing.textContent=missing;dashLowStock.textContent=low;dashExpiring.textContent=expiring;dashUrgentRepairs.textContent=state.repairs.filter(x=>x.priority==="Urgente"&&x.status!=="Concluído").length;dashBestTotal.textContent=brl(best);
+  dashShopping.innerHTML=buys.slice(0,8).map(x=>`<div class="summary-item"><span>${esc(x.name)} <span class="muted">(${num(x.buyQty)} ${esc(x.unit)})</span></span><strong>${lowestPrice(x).price?brl(num(x.buyQty)*lowestPrice(x).price):"Sem preço"}</strong></div>`).join("")||'<div class="empty">Nada pendente.</div>';
+  const exps=state.inventory.filter(x=>x.expiry&&daysUntil(x.expiry)<=30).sort((a,b)=>daysUntil(a.expiry)-daysUntil(b.expiry));
+  dashExpiry.innerHTML=exps.slice(0,8).map(x=>`<div class="summary-item"><span>${esc(x.name)}</span><strong>${daysUntil(x.expiry)<0?"Vencido":daysUntil(x.expiry)+" dias"}</strong></div>`).join("")||'<div class="empty">Nenhuma validade próxima.</div>';
+  const repairs=state.repairs.filter(x=>x.status!=="Concluído").sort((a,b)=>{
+    const p={"Urgente":0,"Alta":1,"Média":2,"Baixa":3};
+    return (p[a.priority]??9)-(p[b.priority]??9);
+  });
+  dashRepairs.innerHTML=repairs.slice(0,8).map(x=>`<div class="summary-item"><span>${esc(x.task)} <span class="muted">(${esc(x.area)})</span></span><strong>${esc(x.priority)}</strong></div>`).join("")||'<div class="empty">Nenhum reparo pendente.</div>';
+}
+
+/* CSV E BACKUP */
+function download(name,content,type="text/plain"){
+  const blob=new Blob(["\ufeff"+content],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);
+}
+function csv(rows){return rows.map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(";")).join("\n")}
+exportRepairsCsvBtn.onclick=()=>download("reparos-casa-rural-cambuquira.csv",csv([
+  ["Área","Reparo","Prioridade","Situação","Prazo","Responsável","Materiais","Estimado","Gasto real","Observações"],
+  ...state.repairs.map(x=>[x.area,x.task,x.priority,x.status,x.due,x.owner,x.materials,x.estimated,x.actual,x.note])
+]),"text/csv");
+exportStockCsv.onclick=()=>download("estoque-casa-cambuquira.csv",csv([["Produto","Categoria","Quantidade","Unidade","Mínimo","Validade","Cambuquira",state.otherCity,"São Paulo","Atualizado","Observação"],...state.inventory.map(x=>[x.name,x.category,x.qty,x.unit,x.min,x.expiry,x.priceC,x.priceO,x.priceSP,x.updated,x.note])]),"text/csv");
+exportShoppingCsv.onclick=()=>download("lista-de-compras.csv",csv([["Item","Categoria","Quantidade","Unidade","Cambuquira",state.otherCity,"São Paulo","Menor preço","Cidade mais barata"],...shoppingItems().filter(x=>!x.bought).map(x=>[x.name,x.category,x.buyQty,x.unit,x.priceC,x.priceO,x.priceSP,lowestPrice(x).price,lowestPrice(x).city])]),"text/csv");
+exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:3,exportedAt:new Date().toISOString(),state},null,2),"application/json");
+importBackupBtn.onclick=()=>backupFile.click();
+backupFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());state={...freshState(),...(p.state||p)};save();renderAll();alert("Backup importado com sucesso.")}catch(err){alert("Arquivo inválido.")}e.target.value=""};
+resetAllBtn.onclick=()=>{if(!confirm("Apagar todos os dados e restaurar a lista inicial?"))return;state=freshState();save();renderAll()};
+
+renderAll();
+</script>
+
+<script>
+(() => {
+  const PRICE_DB_KEY = "casa-cambuquira-price-db-v1";
+  const MAIN_DB_KEY = "casa-cambuquira-controle-v4";
+
+  const $ = id => document.getElementById(id);
+  const brlPriceDb = value =>
+    new Intl.NumberFormat("pt-BR", {style:"currency", currency:"BRL"})
+      .format(Number(value) || 0);
+
+  const numPriceDb = value => Number(value) || 0;
+  const uidPriceDb = () =>
+    Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+  const escPriceDb = value =>
+    String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;",
+      '"':"&quot;", "'":"&#039;"
+    }[char]));
+
+  const normPriceDb = value =>
+    String(value ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+  const todayPriceDb = () => new Date().toISOString().slice(0, 10);
+
+  const emptyDb = () => ({
+    version: 1,
+    products: [],
+    quotes: [],
+    purchases: []
+  });
+
+  function loadPriceDb(){
+    try{
+      const raw = localStorage.getItem(PRICE_DB_KEY);
+      if(!raw) return emptyDb();
+
+      const parsed = JSON.parse(raw);
+      return {
+        ...emptyDb(),
+        ...parsed,
+        products: Array.isArray(parsed.products) ? parsed.products : [],
+        quotes: Array.isArray(parsed.quotes) ? parsed.quotes : [],
+        purchases: Array.isArray(parsed.purchases) ? parsed.purchases : []
+      };
+    }catch(error){
+      console.error("Falha ao carregar banco de preços:", error);
+      return emptyDb();
+    }
+  }
+
+  let priceDb = loadPriceDb();
+
+  function savePriceDb(){
+    localStorage.setItem(PRICE_DB_KEY, JSON.stringify(priceDb));
+  }
+
+  function productById(id){
+    return priceDb.products.find(product => product.id === id);
+  }
+
+  function quotesFor(productId){
+    return priceDb.quotes.filter(quote => quote.productId === productId);
+  }
+
+  function quoteUnitPrice(quote){
+    const packageQty = numPriceDb(quote.packageQty);
+    if(packageQty <= 0) return 0;
+    return (numPriceDb(quote.price) + numPriceDb(quote.freight)) / packageQty;
+  }
+
+  function sortedQuotes(productId){
+    return quotesFor(productId)
+      .slice()
+      .sort((a, b) => {
+        const priceA = quoteUnitPrice(a) || Number.MAX_SAFE_INTEGER;
+        const priceB = quoteUnitPrice(b) || Number.MAX_SAFE_INTEGER;
+        return priceA - priceB;
+      });
+  }
+
+  function bestQuote(productId){
+    return sortedQuotes(productId).find(quote => quoteUnitPrice(quote) > 0) || null;
+  }
+
+  function highestQuote(productId){
+    const valid = quotesFor(productId)
+      .filter(quote => quoteUnitPrice(quote) > 0)
+      .sort((a, b) => quoteUnitPrice(b) - quoteUnitPrice(a));
+
+    return valid[0] || null;
+  }
+
+  function estimatedProductTotal(product){
+    const best = bestQuote(product.id);
+    return best
+      ? quoteUnitPrice(best) * numPriceDb(product.qtyNeeded)
+      : 0;
+  }
+
+  function productSavings(product){
+    const best = bestQuote(product.id);
+    const high = highestQuote(product.id);
+
+    if(!best || !high || best.id === high.id) return 0;
+
+    return Math.max(
+      0,
+      (quoteUnitPrice(high) - quoteUnitPrice(best)) *
+      numPriceDb(product.qtyNeeded)
+    );
+  }
+
+  function latestQuoteDate(productId){
+    const dates = quotesFor(productId)
+      .map(quote => new Date(quote.date || 0).getTime())
+      .filter(Number.isFinite);
+
+    return dates.length ? Math.max(...dates) : 0;
+  }
+
+  function formatDatePriceDb(value){
+    if(!value) return "—";
+    try{
+      return new Intl.DateTimeFormat("pt-BR")
+        .format(new Date(value + "T12:00:00"));
+    }catch(error){
+      return value;
+    }
+  }
+
+  function populateProductSelects(selectedId = ""){
+    const options = priceDb.products
+      .slice()
+      .sort((a,b) => a.name.localeCompare(b.name, "pt-BR"))
+      .map(product =>
+        `<option value="${escPriceDb(product.id)}" ${product.id === selectedId ? "selected" : ""}>` +
+        `${escPriceDb(product.name)} — ${escPriceDb(product.qtyNeeded)} ${escPriceDb(product.unit)}` +
+        `</option>`
+      ).join("");
+
+    $("priceQuoteProduct").innerHTML =
+      `<option value="">Selecione...</option>${options}`;
+
+    $("pricePurchaseProduct").innerHTML =
+      `<option value="">Selecione...</option>${options}`;
+  }
+
+  function updateCategoryFilter(){
+    const current = $("priceDbCategoryFilter").value;
+    const categories = [...new Set(
+      priceDb.products.map(product => product.category).filter(Boolean)
+    )].sort((a,b) => a.localeCompare(b, "pt-BR"));
+
+    $("priceDbCategoryFilter").innerHTML =
+      `<option value="all">Todas as categorias</option>` +
+      categories.map(category =>
+        `<option value="${escPriceDb(category)}">${escPriceDb(category)}</option>`
+      ).join("");
+
+    if(categories.includes(current)){
+      $("priceDbCategoryFilter").value = current;
+    }
+  }
+
+  function filteredProducts(){
+    const search = normPriceDb($("priceDbSearch").value);
+    const category = $("priceDbCategoryFilter").value;
+    const sort = $("priceDbSort").value;
+
+    const products = priceDb.products.filter(product => {
+      if(category !== "all" && product.category !== category) return false;
+
+      if(!search) return true;
+
+      const quoteText = quotesFor(product.id)
+        .map(quote => `${quote.store} ${quote.city}`)
+        .join(" ");
+
+      return normPriceDb(
+        `${product.name} ${product.category} ${product.spec || ""} ${quoteText}`
+      ).includes(search);
+    });
+
+    products.sort((a,b) => {
+      if(sort === "best"){
+        const av = bestQuote(a.id) ? quoteUnitPrice(bestQuote(a.id)) : Number.MAX_SAFE_INTEGER;
+        const bv = bestQuote(b.id) ? quoteUnitPrice(bestQuote(b.id)) : Number.MAX_SAFE_INTEGER;
+        return av - bv;
+      }
+
+      if(sort === "savings"){
+        return productSavings(b) - productSavings(a);
+      }
+
+      if(sort === "recent"){
+        return latestQuoteDate(b.id) - latestQuoteDate(a.id);
+      }
+
+      return a.name.localeCompare(b.name, "pt-BR");
+    });
+
+    return products;
+  }
+
+  function renderMetrics(){
+    const bestTotal = priceDb.products.reduce(
+      (sum, product) => sum + estimatedProductTotal(product),
+      0
+    );
+
+    const savings = priceDb.products.reduce(
+      (sum, product) => sum + productSavings(product),
+      0
+    );
+
+    const purchasesTotal = priceDb.purchases.reduce(
+      (sum, purchase) => sum + numPriceDb(purchase.paid),
+      0
+    );
+
+    $("priceDbProductCount").textContent = priceDb.products.length;
+    $("priceDbQuoteCount").textContent = priceDb.quotes.length;
+    $("priceDbBestTotal").textContent = brlPriceDb(bestTotal);
+    $("priceDbSavings").textContent = brlPriceDb(savings);
+    $("priceDbPurchaseTotal").textContent = brlPriceDb(purchasesTotal);
+  }
+
+  function renderProductList(){
+    const products = filteredProducts();
+    const container = $("priceDbList");
+
+    if(!products.length){
+      container.innerHTML = `
+        <div class="price-db-empty">
+          <strong>Nenhum produto encontrado.</strong>
+          Cadastre um produto ou importe os itens que estão faltando no estoque.
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = "";
+
+    products.forEach(product => {
+      const quotes = sortedQuotes(product.id);
+      const best = quotes.find(quote => quoteUnitPrice(quote) > 0);
+      const bestUnit = best ? quoteUnitPrice(best) : 0;
+      const estimated = bestUnit * numPriceDb(product.qtyNeeded);
+
+      const card = document.createElement("article");
+      card.className = "price-product";
+
+      const quoteRows = quotes.length
+        ? quotes.map((quote, index) => {
+            const unitPrice = quoteUnitPrice(quote);
+            const totalOffer = numPriceDb(quote.price) + numPriceDb(quote.freight);
+            const isBest = best && quote.id === best.id;
+
+            const link = quote.link
+              ? `<a class="price-link" href="${escPriceDb(quote.link)}" target="_blank" rel="noopener noreferrer">${escPriceDb(quote.link)}</a>`
+              : `<span class="price-quote-muted">${escPriceDb(quote.notes || "Sem referência")}</span>`;
+
+            return `
+              <div class="price-quote-row">
+                <div class="price-quote-store">
+                  <strong>${escPriceDb(quote.store)}</strong>
+                  ${link}
+                </div>
+                <div class="quote-city">
+                  ${escPriceDb(quote.city)}
+                </div>
+                <div>
+                  <span class="price-quote-muted">Oferta</span><br>
+                  <span class="price-quote-total">${brlPriceDb(totalOffer)}</span>
+                </div>
+                <div>
+                  <span class="price-quote-muted">Por ${escPriceDb(product.unit)}</span><br>
+                  <span class="price-quote-unit">${unitPrice ? brlPriceDb(unitPrice) : "—"}</span>
+                </div>
+                <div class="quote-date">
+                  ${formatDatePriceDb(quote.date)}
+                </div>
+                <div>
+                  ${isBest ? '<span class="price-best-tag">MAIS BARATO</span>' : ""}
+                  <button class="btn small danger quote-delete" data-id="${escPriceDb(quote.id)}">Excluir</button>
+                </div>
+              </div>`;
+          }).join("")
+        : `<div class="price-db-empty"><strong>Sem cotações.</strong>Adicione preços de lojas, cidades ou sites para comparar.</div>`;
+
+      card.innerHTML = `
+        <div class="price-product-head">
+          <div class="price-product-title">
+            <h3>${escPriceDb(product.name)}</h3>
+            <div>
+              ${escPriceDb(product.category)} • precisa de
+              <strong>${escPriceDb(product.qtyNeeded)} ${escPriceDb(product.unit)}</strong>
+              ${product.spec ? ` • ${escPriceDb(product.spec)}` : ""}
+            </div>
+          </div>
+
+          <div class="price-product-best">
+            <span>${best ? `${escPriceDb(best.store)} — ${escPriceDb(best.city)}` : "Sem preço"}</span>
+            <strong>${best ? `${brlPriceDb(estimated)} estimado` : "Adicionar cotação"}</strong>
+          </div>
+
+          <div class="price-product-actions">
+            <button class="btn small primary product-add-quote" data-id="${escPriceDb(product.id)}">+ Cotação</button>
+            <button class="btn small product-buy" data-id="${escPriceDb(product.id)}">Compra</button>
+            <button class="btn small product-edit" data-id="${escPriceDb(product.id)}">Editar</button>
+            <button class="btn small danger product-delete" data-id="${escPriceDb(product.id)}">Excluir</button>
+          </div>
+        </div>
+
+        <div class="price-quotes">${quoteRows}</div>
+      `;
+
+      container.appendChild(card);
+    });
+
+    container.querySelectorAll(".product-add-quote").forEach(button => {
+      button.onclick = () => openQuoteDialog(button.dataset.id);
+    });
+
+    container.querySelectorAll(".product-buy").forEach(button => {
+      button.onclick = () => openPurchaseDialog(button.dataset.id);
+    });
+
+    container.querySelectorAll(".product-edit").forEach(button => {
+      button.onclick = () => openProductDialog(button.dataset.id);
+    });
+
+    container.querySelectorAll(".product-delete").forEach(button => {
+      button.onclick = () => {
+        const product = productById(button.dataset.id);
+        if(!product) return;
+
+        if(!confirm(`Excluir "${product.name}" e todas as suas cotações?`)) return;
+
+        priceDb.products = priceDb.products.filter(item => item.id !== product.id);
+        priceDb.quotes = priceDb.quotes.filter(quote => quote.productId !== product.id);
+        savePriceDb();
+        renderPriceDb();
+      };
+    });
+
+    container.querySelectorAll(".quote-delete").forEach(button => {
+      button.onclick = () => {
+        if(!confirm("Excluir esta cotação?")) return;
+
+        priceDb.quotes = priceDb.quotes.filter(quote => quote.id !== button.dataset.id);
+        savePriceDb();
+        renderPriceDb();
+      };
+    });
+  }
+
+  function renderPurchaseHistory(){
+    const body = $("priceDbPurchaseBody");
+    const purchases = priceDb.purchases
+      .slice()
+      .sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+    if(!purchases.length){
+      body.innerHTML =
+        '<tr><td colspan="9"><div class="empty">Nenhuma compra registrada.</div></td></tr>';
+      return;
+    }
+
+    body.innerHTML = purchases.map(purchase => {
+      const product = productById(purchase.productId);
+
+      return `
+        <tr>
+          <td>${formatDatePriceDb(purchase.date)}</td>
+          <td>${escPriceDb(product?.name || purchase.productName || "Produto removido")}</td>
+          <td>${escPriceDb(purchase.store)}</td>
+          <td>${escPriceDb(purchase.city)}</td>
+          <td>${escPriceDb(purchase.qty)} ${escPriceDb(product?.unit || "")}</td>
+          <td class="money">${brlPriceDb(purchase.paid)}</td>
+          <td>${escPriceDb(purchase.payment)}</td>
+          <td>${escPriceDb(purchase.notes || "")}</td>
+          <td><button class="btn small danger purchase-delete" data-id="${escPriceDb(purchase.id)}">Excluir</button></td>
+        </tr>`;
+    }).join("");
+
+    body.querySelectorAll(".purchase-delete").forEach(button => {
+      button.onclick = () => {
+        if(!confirm("Excluir este registro de compra?")) return;
+
+        priceDb.purchases = priceDb.purchases.filter(
+          purchase => purchase.id !== button.dataset.id
+        );
+
+        savePriceDb();
+        renderPriceDb();
+      };
+    });
+  }
+
+  function renderPriceDb(){
+    updateCategoryFilter();
+    populateProductSelects();
+    renderMetrics();
+    renderProductList();
+    renderPurchaseHistory();
+  }
+
+  function openProductDialog(productId = ""){
+    $("priceProductForm").reset();
+    $("priceProductId").value = "";
+    $("priceProductQty").value = 1;
+    $("priceProductUnit").value = "un.";
+    $("priceProductDialogTitle").textContent = "Novo produto";
+
+    if(productId){
+      const product = productById(productId);
+      if(!product) return;
+
+      $("priceProductDialogTitle").textContent = "Editar produto";
+      $("priceProductId").value = product.id;
+      $("priceProductName").value = product.name;
+      $("priceProductCategory").value = product.category;
+      $("priceProductQty").value = product.qtyNeeded;
+      $("priceProductUnit").value = product.unit;
+      $("priceProductSpec").value = product.spec || "";
+      $("priceProductNotes").value = product.notes || "";
+    }
+
+    $("priceProductDialog").showModal();
+  }
+
+  function openQuoteDialog(productId = ""){
+    if(!priceDb.products.length){
+      alert("Cadastre primeiro um produto.");
+      openProductDialog();
+      return;
+    }
+
+    $("priceQuoteForm").reset();
+    $("priceQuoteId").value = "";
+    $("priceQuotePackageQty").value = 1;
+    $("priceQuotePrice").value = 0;
+    $("priceQuoteFreight").value = 0;
+    $("priceQuoteDate").value = todayPriceDb();
+
+    populateProductSelects(productId);
+    updateQuotePreview();
+    $("priceQuoteDialog").showModal();
+  }
+
+  function openPurchaseDialog(productId = ""){
+    if(!priceDb.products.length){
+      alert("Cadastre primeiro um produto.");
+      return;
+    }
+
+    $("pricePurchaseForm").reset();
+    $("pricePurchaseQty").value = 1;
+    $("pricePurchasePaid").value = 0;
+    $("pricePurchaseDate").value = todayPriceDb();
+
+    populateProductSelects(productId);
+
+    const best = bestQuote(productId);
+    if(best){
+      $("pricePurchaseStore").value = best.store;
+      $("pricePurchaseCity").value = best.city;
+      const product = productById(productId);
+
+      if(product){
+        $("pricePurchaseQty").value = product.qtyNeeded;
+        $("pricePurchasePaid").value =
+          (quoteUnitPrice(best) * numPriceDb(product.qtyNeeded)).toFixed(2);
+      }
+    }
+
+    $("pricePurchaseDialog").showModal();
+  }
+
+  function updateQuotePreview(){
+    const product = productById($("priceQuoteProduct").value);
+    const packageQty = numPriceDb($("priceQuotePackageQty").value);
+    const price = numPriceDb($("priceQuotePrice").value);
+    const freight = numPriceDb($("priceQuoteFreight").value);
+
+    if(!product || packageQty <= 0){
+      $("priceQuotePreview").textContent =
+        "Informe produto, quantidade e valor para calcular o preço por unidade.";
+      return;
+    }
+
+    const unitPrice = (price + freight) / packageQty;
+    const estimated = unitPrice * numPriceDb(product.qtyNeeded);
+
+    $("priceQuotePreview").innerHTML =
+      `<strong>${brlPriceDb(unitPrice)} por ${escPriceDb(product.unit)}</strong>` +
+      ` • estimativa para ${escPriceDb(product.qtyNeeded)} ${escPriceDb(product.unit)}: ` +
+      `<strong>${brlPriceDb(estimated)}</strong>`;
+  }
+
+  $("priceProductForm").addEventListener("submit", event => {
+    if(event.submitter?.value === "cancel") return;
+    event.preventDefault();
+
+    const id = $("priceProductId").value;
+    const data = {
+      name: $("priceProductName").value.trim(),
+      category: $("priceProductCategory").value.trim(),
+      qtyNeeded: numPriceDb($("priceProductQty").value),
+      unit: $("priceProductUnit").value.trim() || "un.",
+      spec: $("priceProductSpec").value.trim(),
+      notes: $("priceProductNotes").value.trim()
+    };
+
+    if(id){
+      const product = productById(id);
+      Object.assign(product, data);
+    }else{
+      priceDb.products.push({
+        id: uidPriceDb(),
+        createdAt: new Date().toISOString(),
+        ...data
+      });
+    }
+
+    savePriceDb();
+    renderPriceDb();
+    $("priceProductDialog").close();
+  });
+
+  $("priceQuoteForm").addEventListener("submit", event => {
+    if(event.submitter?.value === "cancel") return;
+    event.preventDefault();
+
+    const productId = $("priceQuoteProduct").value;
+    if(!productId) return;
+
+    priceDb.quotes.push({
+      id: uidPriceDb(),
+      productId,
+      store: $("priceQuoteStore").value.trim(),
+      city: $("priceQuoteCity").value.trim(),
+      packageQty: numPriceDb($("priceQuotePackageQty").value),
+      price: numPriceDb($("priceQuotePrice").value),
+      freight: numPriceDb($("priceQuoteFreight").value),
+      date: $("priceQuoteDate").value,
+      link: $("priceQuoteLink").value.trim(),
+      notes: $("priceQuoteNotes").value.trim(),
+      createdAt: new Date().toISOString()
+    });
+
+    savePriceDb();
+    renderPriceDb();
+    $("priceQuoteDialog").close();
+  });
+
+  $("pricePurchaseForm").addEventListener("submit", event => {
+    if(event.submitter?.value === "cancel") return;
+    event.preventDefault();
+
+    const productId = $("pricePurchaseProduct").value;
+    const product = productById(productId);
+    if(!product) return;
+
+    priceDb.purchases.push({
+      id: uidPriceDb(),
+      productId,
+      productName: product.name,
+      store: $("pricePurchaseStore").value.trim(),
+      city: $("pricePurchaseCity").value.trim(),
+      qty: numPriceDb($("pricePurchaseQty").value),
+      paid: numPriceDb($("pricePurchasePaid").value),
+      date: $("pricePurchaseDate").value,
+      payment: $("pricePurchasePayment").value,
+      notes: $("pricePurchaseNotes").value.trim(),
+      createdAt: new Date().toISOString()
+    });
+
+    savePriceDb();
+    renderPriceDb();
+    $("pricePurchaseDialog").close();
+  });
+
+  [
+    "priceQuoteProduct",
+    "priceQuotePackageQty",
+    "priceQuotePrice",
+    "priceQuoteFreight"
+  ].forEach(id => {
+    $(id).addEventListener("input", updateQuotePreview);
+    $(id).addEventListener("change", updateQuotePreview);
+  });
+
+  $("priceDbAddProductBtn").onclick = () => openProductDialog();
+  $("priceDbAddQuoteBtn").onclick = () => openQuoteDialog();
+  $("priceDbAddPurchaseBtn").onclick = () => openPurchaseDialog();
+
+  $("priceDbSearch").oninput = renderProductList;
+  $("priceDbCategoryFilter").onchange = renderProductList;
+  $("priceDbSort").onchange = renderProductList;
+
+  $("priceDbClearFilters").onclick = () => {
+    $("priceDbSearch").value = "";
+    $("priceDbCategoryFilter").value = "all";
+    $("priceDbSort").value = "name";
+    renderProductList();
+  };
+
+  $("priceDbImportStockBtn").onclick = () => {
+    let mainState;
+
+    try{
+      mainState = JSON.parse(localStorage.getItem(MAIN_DB_KEY) || "{}");
+    }catch(error){
+      alert("Não foi possível ler o estoque atual.");
+      return;
+    }
+
+    const inventory = Array.isArray(mainState.inventory)
+      ? mainState.inventory
+      : [];
+
+    const candidates = inventory.filter(item =>
+      numPriceDb(item.buyQty) > 0 ||
+      numPriceDb(item.qty) < numPriceDb(item.min)
+    );
+
+    if(!candidates.length){
+      alert("Nenhum item abaixo do estoque mínimo foi encontrado.");
+      return;
+    }
+
+    let added = 0;
+    let quotesAdded = 0;
+
+    candidates.forEach(item => {
+      let product = priceDb.products.find(existing =>
+        normPriceDb(existing.name) === normPriceDb(item.name)
+      );
+
+      if(!product){
+        product = {
+          id: uidPriceDb(),
+          name: item.name || "Produto",
+          category: item.category || "Casa e outros",
+          qtyNeeded:
+            numPriceDb(item.buyQty) ||
+            Math.max(numPriceDb(item.min) - numPriceDb(item.qty), 1),
+          unit: item.unit || "un.",
+          spec: "",
+          notes: "Importado da aba Estoque.",
+          createdAt: new Date().toISOString()
+        };
+
+        priceDb.products.push(product);
+        added++;
+      }
+
+      const legacyQuotes = [
+        ["Cambuquira", "Preço antigo do estoque", numPriceDb(item.priceC)],
+        [mainState.otherCity || "Outra cidade", "Preço antigo do estoque", numPriceDb(item.priceO)],
+        ["São Paulo", "Preço antigo do estoque", numPriceDb(item.priceSP)]
+      ];
+
+      legacyQuotes.forEach(([city, store, price]) => {
+        if(price <= 0) return;
+
+        const exists = priceDb.quotes.some(quote =>
+          quote.productId === product.id &&
+          quote.city === city &&
+          numPriceDb(quote.price) === price
+        );
+
+        if(exists) return;
+
+        priceDb.quotes.push({
+          id: uidPriceDb(),
+          productId: product.id,
+          store,
+          city,
+          packageQty: 1,
+          price,
+          freight: 0,
+          date: item.updated || todayPriceDb(),
+          link: "",
+          notes: "Importado do modelo antigo de três cidades.",
+          createdAt: new Date().toISOString()
+        });
+
+        quotesAdded++;
+      });
+    });
+
+    savePriceDb();
+    renderPriceDb();
+
+    alert(
+      `${added} produto(s) adicionado(s) e ` +
+      `${quotesAdded} preço(s) antigo(s) importado(s).`
+    );
+  };
+
+  $("priceDbExportBtn").onclick = () => {
+    const blob = new Blob(
+      [JSON.stringify(priceDb, null, 2)],
+      {type:"application/json"}
+    );
+
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `casa-cambuquira-banco-precos-${todayPriceDb()}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
+  $("priceDbImportBtn").onclick = () => $("priceDbImportFile").click();
+
+  $("priceDbImportFile").onchange = async event => {
+    const file = event.target.files?.[0];
+    if(!file) return;
+
+    try{
+      const parsed = JSON.parse(await file.text());
+
+      if(!Array.isArray(parsed.products) ||
+         !Array.isArray(parsed.quotes) ||
+         !Array.isArray(parsed.purchases)){
+        throw new Error("Estrutura incompatível.");
+      }
+
+      priceDb = {
+        ...emptyDb(),
+        ...parsed
+      };
+
+      savePriceDb();
+      renderPriceDb();
+      alert("Base importada com sucesso.");
+    }catch(error){
+      alert("Arquivo inválido: " + error.message);
+    }finally{
+      event.target.value = "";
+    }
+  };
+
+  renderPriceDb();
+})();
+</script>
+
+</body>
+</html>
