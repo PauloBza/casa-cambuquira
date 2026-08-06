@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Netflix</title>
+<title>Casa Cambuquira — Painel Completo</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -553,6 +553,119 @@ footer{
   .price-inline{grid-template-columns:1fr}
 }
 
+
+/* ===== FOTOS LIMPA + SUPORTE ===== */
+.photos-clean-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:12px;
+  padding:4px 1px;
+}
+.photos-clean-header h2{margin:0;font-size:21px}
+.photos-clean-header p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.photos-clean-actions{display:flex;gap:8px;flex-wrap:wrap}
+.photos-clean-frame{
+  min-height:680px!important;
+  border-radius:18px!important;
+  background:#0c0f15!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.25)!important;
+}
+.photos-clean-frame .photo-frame{
+  min-height:760px!important;
+  background:#090b10!important;
+}
+.support-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
+}
+.support-card{
+  padding:15px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.035),transparent),
+    #13161d;
+  box-shadow:0 12px 30px rgba(0,0,0,.20);
+}
+.support-card-wide{grid-column:1/-1}
+.support-card h2,.support-card h3{margin:0 0 6px}
+.support-card h3{font-size:15px}
+.support-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.55;
+}
+.support-card-title{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:13px;
+}
+.support-status{
+  display:inline-flex;
+  min-height:28px;
+  align-items:center;
+  padding:0 9px;
+  border-radius:999px;
+  background:#2b2010;
+  color:#ffd166;
+  border:1px solid rgba(245,158,11,.22);
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.support-status.ok{
+  background:#102118;
+  color:#8ef1b3;
+  border-color:rgba(46,204,113,.22);
+}
+.support-status.error{
+  background:#301519;
+  color:#ff9a9f;
+  border-color:rgba(255,92,92,.22);
+}
+.support-url-row{
+  display:grid;
+  grid-template-columns:minmax(280px,1fr) auto auto auto;
+  gap:8px;
+  align-items:end;
+}
+.support-url-row label{
+  display:grid;
+  gap:5px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+}
+.support-steps{
+  margin:8px 0 0;
+  padding-left:18px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+.legacy-shopping-panel{display:none!important}
+@media(max-width:900px){
+  .support-url-row{grid-template-columns:1fr 1fr}
+  .support-url-row label{grid-column:1/-1}
+}
+@media(max-width:700px){
+  .photos-clean-header{align-items:flex-start;flex-direction:column}
+  .photos-clean-actions{width:100%}
+  .photos-clean-actions .btn{flex:1}
+  .support-grid{grid-template-columns:1fr}
+  .support-card-wide{grid-column:auto}
+  .support-url-row{grid-template-columns:1fr}
+  .support-url-row label{grid-column:auto}
+  .photos-clean-frame{min-height:600px!important}
+  .photos-clean-frame .photo-frame{min-height:680px!important}
+}
+
 </style>
 </head>
 <body>
@@ -569,6 +682,7 @@ footer{
     <button class="tab" data-panel="priceDbPanel">Preços & Compras</button>
     <button class="tab" data-panel="eventsPanel">Especiais</button>
     <button class="tab" data-panel="backupPanel">Backup</button>
+    <button class="tab" data-panel="supportPanel">Suporte</button>
   </div>
 </div>
 </header>
@@ -679,28 +793,35 @@ footer{
 
 
 <section id="photosPanel" class="panel">
-  <div class="help">
-    As fotos continuam no Google Drive. Esta aba exibe a galeria criada pelo Google Apps Script. Ao subir imagens novas, clique em “Atualizar galeria”.
-  </div>
-  <div class="photo-steps">
-    <div class="photo-step"><strong>1. Pasta exclusiva</strong>Crie uma pasta no Drive somente para fotos da casa.</div>
-    <div class="photo-step"><strong>2. Apps Script</strong>Publique o código fornecido como aplicativo da Web.</div>
-    <div class="photo-step"><strong>3. Cole a URL</strong>Informe abaixo o endereço terminado em <code>/exec</code>.</div>
-    <div class="photo-step"><strong>4. Atualize</strong>As novas imagens aparecem ao recarregar a galeria.</div>
-  </div>
-  <div class="photo-setup card">
-    <label>URL do aplicativo da Web do Google Apps Script
-      <input id="photoWebAppUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec">
-    </label>
-    <button id="savePhotoUrlBtn" class="btn primary">Salvar endereço</button>
-    <button id="reloadPhotoGalleryBtn" class="btn">Atualizar galeria</button>
-    <button id="openPhotoGalleryBtn" class="btn">Abrir separada</button>
-  </div>
-  <div class="photo-frame-wrap">
-    <div id="photoPlaceholder" class="photo-placeholder">
-      <div><strong>Galeria ainda não configurada</strong>Cole acima o endereço publicado pelo Google Apps Script.</div>
+  <div class="photos-clean-header">
+    <div>
+      <h2>Fotos da casa</h2>
+      <p>Galeria organizada pela data em que cada foto foi tirada.</p>
     </div>
-    <iframe id="photoGalleryFrame" class="photo-frame" title="Fotos da Casa Cambuquira" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen" hidden></iframe>
+
+    <div class="photos-clean-actions">
+      <button id="reloadPhotoGalleryBtn" class="btn primary">Atualizar fotos</button>
+      <button id="openPhotoGalleryBtn" class="btn">Abrir em tela cheia</button>
+    </div>
+  </div>
+
+  <div class="photo-frame-wrap photos-clean-frame">
+    <div id="photoPlaceholder" class="photo-placeholder">
+      <div>
+        <strong>Galeria temporariamente indisponível</strong>
+        A configuração técnica pode ser verificada na aba Suporte.
+      </div>
+    </div>
+
+    <iframe
+      id="photoGalleryFrame"
+      class="photo-frame"
+      title="Fotos da Casa Cambuquira"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      allow="fullscreen"
+      hidden>
+    </iframe>
   </div>
 </section>
 
@@ -751,7 +872,7 @@ footer{
   </div>
 </section>
 
-<section id="shoppingPanel" class="panel">
+<section id="shoppingPanel" class="panel legacy-shopping-panel" hidden aria-hidden="true">
   <div class="help">
     A lista é formada automaticamente pelos produtos abaixo do estoque mínimo. Você também pode adicionar itens avulsos. Os totais comparam as três cidades.
   </div>
@@ -861,6 +982,68 @@ footer{
       <button id="importBackupBtn" class="btn">Importar backup</button>
       <button id="resetAllBtn" class="btn danger">Apagar e restaurar tudo</button>
       <input id="backupFile" type="file" accept=".json,application/json" hidden>
+    </div>
+  </div>
+</section>
+<section id="supportPanel" class="panel">
+  <div class="support-grid">
+    <div class="support-card support-card-wide">
+      <div class="support-card-title">
+        <div>
+          <h2>Configuração da galeria</h2>
+          <p>Área técnica. A aba Fotos permanece limpa para o uso cotidiano.</p>
+        </div>
+        <span id="supportPhotoStatus" class="support-status">Verificando</span>
+      </div>
+
+      <div class="support-url-row">
+        <label>
+          URL do aplicativo Web do Google Apps Script
+          <input
+            id="photoWebAppUrl"
+            type="url"
+            value="https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGcIj666E1QHhjR8s1s60xLITcA/exec"
+            placeholder="https://script.google.com/macros/s/.../exec">
+        </label>
+
+        <button id="savePhotoUrlBtn" class="btn primary">Salvar URL</button>
+        <button id="copyPhotoUrlBtn" class="btn">Copiar URL</button>
+        <button id="resetPhotoUrlBtn" class="btn">Restaurar padrão</button>
+      </div>
+    </div>
+
+    <div class="support-card">
+      <h3>Fotos novas</h3>
+      <p>
+        Envie as imagens para a pasta configurada no Google Drive.
+        Depois abra Fotos e clique em <strong>Atualizar fotos</strong>.
+      </p>
+    </div>
+
+    <div class="support-card">
+      <h3>Publicação</h3>
+      <p>
+        O site principal está no Render. A galeria funciona separadamente
+        pelo Google Apps Script e é exibida dentro da aba Fotos.
+      </p>
+    </div>
+
+    <div class="support-card">
+      <h3>Dados do painel</h3>
+      <p>
+        Checklists, estoque e banco de preços ficam salvos neste navegador.
+        Use a aba Backup e a exportação da base de preços antes de trocar de computador.
+      </p>
+    </div>
+
+    <div class="support-card">
+      <h3>Diagnóstico rápido</h3>
+      <ol class="support-steps">
+        <li>Abra a URL da galeria separadamente.</li>
+        <li>Confirme se as fotos aparecem.</li>
+        <li>Verifique se a URL termina em <code>/exec</code>.</li>
+        <li>Atualize a implantação do Apps Script após alterar o código.</li>
+      </ol>
     </div>
   </div>
 </section>
@@ -1262,7 +1445,7 @@ function freshState(){
   houseData.forEach(g=>g.items.forEach(i=>houseChecked[i.id]=DEFAULT_CHECKED.has(i.id)));
   return {
     houseData,houseChecked,houseNotes:{},nextHouseId:501,
-    inventory:[],manualBuys:[],events:[],repairs:createSuggestedRepairs(),photoGalleryUrl:"",otherCity:"Três Corações",hideBought:false
+    inventory:[],manualBuys:[],events:[],repairs:createSuggestedRepairs(),photoGalleryUrl:"https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGcIj666E1QHhjR8s1s60xLITcA/exec",otherCity:"Três Corações",hideBought:false
   };
 }
 function loadState(){
@@ -1642,19 +1825,41 @@ repairPriorityFilter.onchange=renderRepairs;
 
 
 
+const DEFAULT_PHOTO_GALLERY_URL="https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGcIj666E1QHhjR8s1s60xLITcA/exec";
+
 /* GALERIA DE FOTOS DO GOOGLE DRIVE */
 function normalizeAppsScriptUrl(value){
   const url=String(value||"").trim();
   if(!url)return "";
   return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/(exec|dev)(\?.*)?$/i.test(url)?url:"";
 }
+function currentPhotoGalleryUrl(){
+  return normalizeAppsScriptUrl(state.photoGalleryUrl) || DEFAULT_PHOTO_GALLERY_URL;
+}
+function updatePhotoSupportStatus(url){
+  if(!supportPhotoStatus)return;
+  const valid=normalizeAppsScriptUrl(url);
+  supportPhotoStatus.textContent=valid?"Galeria configurada":"URL inválida";
+  supportPhotoStatus.className="support-status "+(valid?"ok":"error");
+}
 function renderPhotoPanel(){
-  const url=state.photoGalleryUrl||"";
+  const url=currentPhotoGalleryUrl();
+
+  if(!state.photoGalleryUrl){
+    state.photoGalleryUrl=url;
+    save();
+  }
+
   photoWebAppUrl.value=url;
+  updatePhotoSupportStatus(url);
+
   if(url){
     photoPlaceholder.hidden=true;
     photoGalleryFrame.hidden=false;
-    if(!photoGalleryFrame.src)photoGalleryFrame.src=url;
+
+    if(!photoGalleryFrame.getAttribute("src")){
+      photoGalleryFrame.src=url;
+    }
   }else{
     photoPlaceholder.hidden=false;
     photoGalleryFrame.hidden=true;
@@ -1663,18 +1868,55 @@ function renderPhotoPanel(){
 }
 savePhotoUrlBtn.onclick=()=>{
   const url=normalizeAppsScriptUrl(photoWebAppUrl.value);
-  if(!url){alert("Cole uma URL válida do Apps Script terminada em /exec.");return}
-  state.photoGalleryUrl=url;save();photoGalleryFrame.src=url+"?t="+Date.now();renderPhotoPanel();
+
+  if(!url){
+    alert("Cole uma URL válida do Apps Script terminada em /exec.");
+    updatePhotoSupportStatus("");
+    return;
+  }
+
+  state.photoGalleryUrl=url;
+  save();
+  photoGalleryFrame.src=url+(url.includes("?")?"&":"?")+"t="+Date.now();
+  renderPhotoPanel();
 };
 reloadPhotoGalleryBtn.onclick=()=>{
-  const url=state.photoGalleryUrl||normalizeAppsScriptUrl(photoWebAppUrl.value);
-  if(!url){alert("Configure primeiro o endereço do Apps Script.");return}
+  const url=currentPhotoGalleryUrl();
+
+  if(!url){
+    alert("A galeria ainda não está configurada. Abra a aba Suporte.");
+    return;
+  }
+
   photoGalleryFrame.src=url+(url.includes("?")?"&":"?")+"t="+Date.now();
 };
 openPhotoGalleryBtn.onclick=()=>{
-  const url=state.photoGalleryUrl||normalizeAppsScriptUrl(photoWebAppUrl.value);
-  if(!url){alert("Configure primeiro o endereço do Apps Script.");return}
+  const url=currentPhotoGalleryUrl();
+
+  if(!url){
+    alert("A galeria ainda não está configurada. Abra a aba Suporte.");
+    return;
+  }
+
   window.open(url,"_blank","noopener,noreferrer");
+};
+copyPhotoUrlBtn.onclick=async()=>{
+  const url=currentPhotoGalleryUrl();
+
+  try{
+    await navigator.clipboard.writeText(url);
+    copyPhotoUrlBtn.textContent="Copiado";
+    setTimeout(()=>copyPhotoUrlBtn.textContent="Copiar URL",1200);
+  }catch(error){
+    prompt("Copie a URL:",url);
+  }
+};
+resetPhotoUrlBtn.onclick=()=>{
+  state.photoGalleryUrl=DEFAULT_PHOTO_GALLERY_URL;
+  save();
+  photoWebAppUrl.value=DEFAULT_PHOTO_GALLERY_URL;
+  photoGalleryFrame.src=DEFAULT_PHOTO_GALLERY_URL+"?t="+Date.now();
+  renderPhotoPanel();
 };
 
 
