@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.6 Especiais com Rateio</title>
+<title>Casa Cambuquira — V10.7 Comparação por Unidade</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1514,6 +1514,71 @@ footer{
   .event-calc-title{align-items:flex-start;flex-direction:column}
   .event-calc-grid{grid-template-columns:1fr 1fr}
   .event-calc-card>strong{font-size:18px}
+}
+
+
+/* ===== V10.7 — COMPARAÇÃO NORMALIZADA POR UNIDADE ===== */
+.price-region-card.best-region{
+  border-color:rgba(46,204,113,.38)!important;
+  box-shadow:0 0 0 1px rgba(46,204,113,.08),0 12px 28px rgba(0,0,0,.18);
+}
+.price-region-tags{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.price-region-original{
+  margin-top:8px;
+  min-height:16px;
+  color:#dfe6f3;
+  font-size:10px;
+  font-weight:700;
+}
+.price-region-equivalent{
+  margin-top:6px;
+  padding:6px 7px;
+  border-radius:8px;
+  background:#11151c;
+  color:var(--muted);
+  font-size:9px;
+}
+.price-region-equivalent strong{color:#fff}
+.price-compare-summary{
+  display:grid;
+  grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);
+  gap:8px;
+  padding:0 13px 13px;
+}
+.price-compare-summary-main,
+.price-compare-saving{
+  padding:10px 11px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  background:#151922;
+}
+.price-compare-summary-main{
+  border-color:rgba(46,204,113,.22);
+  background:linear-gradient(180deg,rgba(46,204,113,.06),transparent),#151922;
+}
+.price-compare-summary span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  text-transform:uppercase;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+.price-compare-summary strong{
+  display:block;
+  margin-top:4px;
+  color:#fff;
+  font-size:14px;
+}
+.price-compare-summary-main strong{color:#8ef1b3}
+.price-compare-summary small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:9px;
+}
+@media(max-width:720px){
+  .price-compare-summary{grid-template-columns:1fr}
 }
 
 </style>
@@ -3390,10 +3455,10 @@ footer{
     </div>
 
     <div class="form-cols">
-      <label>Preço
+      <label>Preço total (R$)
         <input id="priceQuotePrice" type="number" min="0" step="0.01" value="0" required>
       </label>
-      <label>Quantidade que esse preço compra
+      <label>Quantidade correspondente a esse preço
         <input id="priceQuotePackageQty" type="number" min="0.0001" step="0.0001" value="1" required>
       </label>
     </div>
@@ -5216,6 +5281,46 @@ renderAll();
     return region;
   }
 
+  function comparisonBaseQty(productId){
+    const qs=quotesFor(productId).filter(q=>numPriceDb(q.packageQty)>0 && quoteUnitPrice(q)>0);
+    if(!qs.length)return 1;
+    return Math.max(...qs.map(q=>numPriceDb(q.packageQty)));
+  }
+
+  function distinctRegionBestQuotes(productId){
+    return ["Cambuquira","São Paulo","Outra cidade","Internet"]
+      .map(region=>bestQuoteForRegion(productId,region))
+      .filter(Boolean)
+      .sort((a,b)=>quoteUnitPrice(a)-quoteUnitPrice(b));
+  }
+
+  function comparisonSummary(product){
+    const ranked=distinctRegionBestQuotes(product.id);
+    if(!ranked.length)return "";
+    const best=ranked[0];
+    const second=ranked[1]||null;
+    const baseQty=comparisonBaseQty(product.id);
+    const bestEq=quoteUnitPrice(best)*baseQty;
+
+    let html=`<div class="price-compare-summary-main">
+      <span>Melhor compra</span>
+      <strong>${escPriceDb(quoteRegion(best))} — ${brlPriceDb(quoteUnitPrice(best))}/${escPriceDb(product.unit)}</strong>
+      <small>Equivalente a ${formatQtyPriceDb(baseQty,product.unit)} ${escPriceDb(product.unit)}: ${brlPriceDb(bestEq)}</small>
+    </div>`;
+
+    if(second){
+      const secondEq=quoteUnitPrice(second)*baseQty;
+      const saving=Math.max(0,secondEq-bestEq);
+      const savingPct=secondEq>0 ? (saving/secondEq)*100 : 0;
+      html+=`<div class="price-compare-saving">
+        <span>Economia sobre a 2ª melhor opção</span>
+        <strong>${brlPriceDb(saving)}</strong>
+        <small>${savingPct.toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:2})}% em ${formatQtyPriceDb(baseQty,product.unit)} ${escPriceDb(product.unit)}</small>
+      </div>`;
+    }
+    return html;
+  }
+
   function sortedQuotes(productId){
     return quotesFor(productId)
       .slice()
@@ -5395,18 +5500,34 @@ renderAll();
       const bestUnit = best ? quoteUnitPrice(best) : 0;
       const estimated = bestUnit * numPriceDb(product.qtyNeeded);
 
+      const baseQty=comparisonBaseQty(product.id);
+      const overallBest=bestQuote(product.id);
       const regionCards=regions.map(region=>{
         const q=bestQuoteForRegion(product.id,region);
         const unit=q ? quoteUnitPrice(q) : 0;
+        const originalTotal=q ? (numPriceDb(q.price)+numPriceDb(q.freight)) : 0;
+        const equivalent=q ? unit*baseQty : 0;
+        const isOverallBest=q && overallBest && q.id===overallBest.id;
         return `
-          <div class="price-region-card ${q ? "has-price" : ""}">
+          <div class="price-region-card ${q ? "has-price" : ""} ${isOverallBest ? "best-region" : ""}">
             <div class="price-region-top">
               <strong>${escPriceDb(regionShortLabel(region))}</strong>
-              ${q?.kind==="pago" ? '<span class="price-paid-tag">PAGUEI</span>' : ""}
+              <div class="price-region-tags">
+                ${q?.kind==="pago" ? '<span class="price-paid-tag">PAGUEI</span>' : ""}
+                ${isOverallBest ? '<span class="price-best-tag">MELHOR</span>' : ""}
+              </div>
             </div>
-            <div class="price-region-value">${q ? brlPriceDb(unit) : "—"}</div>
-            <div class="price-region-unit">${q ? `por ${escPriceDb(product.unit)}` : "sem preço"}</div>
-            <div class="price-region-store">${q ? escPriceDb(q.store||"Sem loja") : "&nbsp;"}</div>
+            ${q ? `
+              <div class="price-region-original">${brlPriceDb(originalTotal)} por ${formatQtyPriceDb(q.packageQty,product.unit)} ${escPriceDb(product.unit)}</div>
+              <div class="price-region-value">${brlPriceDb(unit)}</div>
+              <div class="price-region-unit">por ${escPriceDb(product.unit)}</div>
+              <div class="price-region-equivalent">Equiv. ${formatQtyPriceDb(baseQty,product.unit)} ${escPriceDb(product.unit)}: <strong>${brlPriceDb(equivalent)}</strong></div>
+              <div class="price-region-store">${escPriceDb(q.store||"Sem loja")}</div>
+            ` : `
+              <div class="price-region-value">—</div>
+              <div class="price-region-unit">sem preço</div>
+              <div class="price-region-store">&nbsp;</div>
+            `}
             <button class="btn small region-add-price" data-id="${escPriceDb(product.id)}" data-region="${escPriceDb(region)}">
               ${q ? "Adicionar outro" : "+ Adicionar"}
             </button>
@@ -5478,6 +5599,7 @@ renderAll();
         </div>
 
         <div class="price-region-grid">${regionCards}</div>
+        ${quotes.length ? `<div class="price-compare-summary">${comparisonSummary(product)}</div>` : ""}
 
         <details class="price-product-details" ${quotes.length && quotes.length<=2 ? "open" : ""}>
           <summary>Histórico de preços <span>${quotes.length}</span></summary>
@@ -5620,7 +5742,7 @@ renderAll();
     $("priceQuoteProduct").value=productId;
     $("priceQuoteProductName").textContent=product.name;
     $("priceQuoteProductMeta").textContent=
-      `${product.category} • ${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${product.unit}`;
+      `${product.category} • comparação por ${product.unit}. Ex.: R$ 32 por 5 ${product.unit} = R$ 6,40/${product.unit}`;
     $("priceQuoteTitle").textContent=`Adicionar preço — ${product.name}`;
 
     if(quoteId){
@@ -5693,7 +5815,7 @@ renderAll();
 
     if(!product || packageQty <= 0){
       $("priceQuotePreview").textContent =
-        "Informe quantidade e preço para calcular o valor comparável.";
+        `Digite o preço total e a quantidade correspondente. O sistema calcula automaticamente o preço por ${product?.unit||"unidade"} para comparar embalagens diferentes.`;
       return;
     }
 
@@ -5702,7 +5824,8 @@ renderAll();
 
     $("priceQuotePreview").innerHTML =
       `<strong>${brlPriceDb(unitPrice)} por ${escPriceDb(product.unit)}</strong>` +
-      ` • estimativa para ${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${escPriceDb(product.unit)}: ` +
+      ` • ${brlPriceDb(price + freight)} por ${formatQtyPriceDb(packageQty,product.unit)} ${escPriceDb(product.unit)}` +
+      ` • equivalente a ${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${escPriceDb(product.unit)}: ` +
       `<strong>${brlPriceDb(estimated)}</strong>`;
   }
 
