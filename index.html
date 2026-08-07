@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Completo — V10 Banco Compartilhado</title>
+<title>Casa Cambuquira — V10.2 Estoque Legível</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1174,6 +1174,68 @@ footer{
   .cloud-row>input,.cloud-row>button{width:100%;min-width:0}
 }
 
+
+/* ===== ESTOQUE LEGÍVEL — V10.2 ===== */
+#stockPanel .city-setting{display:none!important}
+#stockPanel .stock-group table{min-width:1380px!important;table-layout:auto!important}
+
+/* Preços ficam na aba Preços & Compras; no Estoque priorizamos leitura. */
+#stockPanel .stock-group th:nth-child(9),
+#stockPanel .stock-group td:nth-child(9),
+#stockPanel .stock-group th:nth-child(10),
+#stockPanel .stock-group td:nth-child(10),
+#stockPanel .stock-group th:nth-child(11),
+#stockPanel .stock-group td:nth-child(11),
+#stockPanel .stock-group th:nth-child(12),
+#stockPanel .stock-group td:nth-child(12){display:none!important}
+
+#stockPanel .stock-group th:nth-child(1),
+#stockPanel .stock-group td:nth-child(1){min-width:92px;width:92px}
+#stockPanel .stock-group th:nth-child(2),
+#stockPanel .stock-group td:nth-child(2){min-width:250px;width:250px}
+#stockPanel .stock-group th:nth-child(3),
+#stockPanel .stock-group td:nth-child(3){min-width:190px;width:190px}
+#stockPanel .stock-group th:nth-child(4),
+#stockPanel .stock-group td:nth-child(4){min-width:190px;width:190px}
+#stockPanel .stock-group th:nth-child(5),
+#stockPanel .stock-group td:nth-child(5){min-width:95px;width:95px}
+#stockPanel .stock-group th:nth-child(6),
+#stockPanel .stock-group td:nth-child(6){min-width:110px;width:110px}
+#stockPanel .stock-group th:nth-child(7),
+#stockPanel .stock-group td:nth-child(7){min-width:95px;width:95px}
+#stockPanel .stock-group th:nth-child(8),
+#stockPanel .stock-group td:nth-child(8){min-width:135px;width:135px}
+#stockPanel .stock-group th:nth-child(13),
+#stockPanel .stock-group td:nth-child(13){min-width:135px;width:135px}
+#stockPanel .stock-group th:nth-child(14),
+#stockPanel .stock-group td:nth-child(14){min-width:230px;width:230px}
+
+#stockPanel .stock-group td:nth-child(2) input{min-width:230px;font-weight:700}
+#stockPanel .stock-group td:nth-child(3) select{min-width:175px}
+#stockPanel .stock-group td:nth-child(4) select{min-width:175px}
+#stockPanel .stock-group td:nth-child(14) input{min-width:210px}
+
+/* Situação e Produto permanecem visíveis durante a rolagem horizontal. */
+#stockPanel .stock-group th:nth-child(1),
+#stockPanel .stock-group td:nth-child(1){position:sticky;left:0;z-index:4}
+#stockPanel .stock-group th:nth-child(2),
+#stockPanel .stock-group td:nth-child(2){position:sticky;left:92px;z-index:4;box-shadow:8px 0 14px rgba(0,0,0,.18)}
+#stockPanel .stock-group th:nth-child(1),
+#stockPanel .stock-group th:nth-child(2){background:#181c24!important;z-index:6}
+#stockPanel .stock-group td:nth-child(1),
+#stockPanel .stock-group td:nth-child(2){background:#12151b!important}
+#stockPanel .stock-group tr.low td:nth-child(1),
+#stockPanel .stock-group tr.low td:nth-child(2){background:#211b10!important}
+#stockPanel .stock-group tr.out td:nth-child(1),
+#stockPanel .stock-group tr.out td:nth-child(2){background:#241215!important}
+
+@media(max-width:760px){
+  #stockPanel .stock-group table{min-width:1180px!important}
+  #stockPanel .stock-group th:nth-child(2),
+  #stockPanel .stock-group td:nth-child(2){min-width:220px;width:220px}
+  #stockPanel .stock-group td:nth-child(2) input{min-width:200px}
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -1186,7 +1248,7 @@ footer{
   <h1>Casa Cambuquira</h1>
   <div class="subtitle">Painel visual da casa: reparos, fotos, estoque, compras e organização rural.</div>
   <div class="tabs">
-    <button class="tab active" data-panel="dashboardPanel">Resumo</button>
+    <button class="tab" data-panel="dashboardPanel">Resumo</button>
     <button class="tab" data-panel="checklistPanel">Checklist da casa</button>
     <button class="tab" data-panel="repairsPanel">Reparos</button>
     <button class="tab" data-panel="photosPanel">Fotos</button>
@@ -1194,14 +1256,14 @@ footer{
     <button class="tab" data-panel="priceDbPanel">Preços &amp; Compras</button>
     <button class="tab" data-panel="financePanel">Financeiro</button>
     <button class="tab" data-panel="eventsPanel">Especiais</button>
-    <button class="tab" data-panel="backupPanel">Backup</button>
+    <button class="tab active" data-panel="backupPanel">Backup</button>
     <button class="tab" data-panel="supportPanel">Suporte</button>
   </div>
 </div>
 </header>
 
 <main>
-<section id="dashboardPanel" class="panel active">
+<section id="dashboardPanel" class="panel">
   <div class="cards">
     <div class="metric"><span>Itens da casa</span><strong id="dashHouseTotal">339</strong></div>
     <div class="metric alert"><span>Faltando na casa</span><strong id="dashHouseMissing">164</strong></div>
@@ -1672,6 +1734,7 @@ footer{
       <option>Alimentos</option>
       <option>Bebidas e líquidos</option>
       <option>Limpeza</option>
+      <option>Descartáveis e papéis</option>
       <option>Higiene</option>
       <option>Manutenção e reparos</option>
       <option>Outros</option>
@@ -1701,7 +1764,7 @@ footer{
     <button id="exportStockCsv" class="btn">Exportar estoque CSV</button>
   </div>
   <div class="stock-storage-note">
-    Seções: alimentos de armário, geladeira, freezer, bebidas/líquidos, limpeza, higiene, manutenção/reparos e outros.
+    Seções: alimentos de armário, geladeira, freezer, bebidas/líquidos, limpeza, descartáveis/papéis, higiene, manutenção/reparos e outros.
   </div>
   <div id="stockGroups" class="stock-groups"><details class="stock-group" data-group="food-pantry" open=""><summary>
       <span class="stock-group-title"><strong>🥫 Alimentos — Armário / Despensa</strong></span>
@@ -1719,7 +1782,7 @@ footer{
           <tbody><tr class="ok">
     <td><span class="badge ok">Suficiente</span></td>
     <td><input data-k="name" value="Farinha de Trigo Tipo 1"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="1"></td>
     <td><input data-k="unit" value="Pacote"></td>
@@ -1734,7 +1797,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="ok">
     <td><span class="badge ok">Suficiente</span></td>
     <td><input data-k="name" value="Arroz"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="1"></td>
     <td><input data-k="unit" value="Pacote"></td>
@@ -1749,7 +1812,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="ok">
     <td><span class="badge ok">Suficiente</span></td>
     <td><input data-k="name" value="Farofa"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="1.5"></td>
     <td><input data-k="unit" value="Pacote"></td>
@@ -1764,7 +1827,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="ok">
     <td><span class="badge ok">Suficiente</span></td>
     <td><input data-k="name" value="Açúcar"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="1"></td>
     <td><input data-k="unit" value="Pacote"></td>
@@ -1779,7 +1842,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="low">
     <td><span class="badge warn">Baixo</span></td>
     <td><input data-k="name" value="Óleo"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="0.8"></td>
     <td><input data-k="unit" value="Garrafa"></td>
@@ -1794,7 +1857,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="ok">
     <td><span class="badge ok">Suficiente</span></td>
     <td><input data-k="name" value="Milho Verde em Conserva"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="1"></td>
     <td><input data-k="unit" value="Lata"></td>
@@ -1809,7 +1872,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="ok">
     <td><span class="badge ok">Suficiente</span></td>
     <td><input data-k="name" value="Legumes em Conserva"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="1"></td>
     <td><input data-k="unit" value="Lata"></td>
@@ -1824,7 +1887,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="ok">
     <td><span class="badge ok">Suficiente</span></td>
     <td><input data-k="name" value="Sardinha"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="2"></td>
     <td><input data-k="unit" value="Lata"></td>
@@ -1839,7 +1902,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="low">
     <td><span class="badge warn">Baixo</span></td>
     <td><input data-k="name" value="Café"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="0.4"></td>
     <td><input data-k="unit" value="Pacote"></td>
@@ -1854,7 +1917,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="low">
     <td><span class="badge warn">Baixo</span></td>
     <td><input data-k="name" value="Azeite"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="0.1"></td>
     <td><input data-k="unit" value="Garrafa"></td>
@@ -1869,7 +1932,7 @@ footer{
     <td><button class="btn small danger del-stock">Excluir</button></td></tr><tr class="low">
     <td><span class="badge warn">Baixo</span></td>
     <td><input data-k="name" value="Vinagre de Maçã"></td>
-    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
+    <td><select data-k="category"><option selected="">Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option></select></td>
     <td><select data-k="location"><option selected="">Despensa / Armário</option><option>Geladeira</option><option>Freezer</option><option>Área de serviço</option><option>Banheiro</option><option>Oficina / Ferramentas</option><option>Área externa / Depósito</option><option>Outro</option></select></td>
     <td><input data-k="qty" type="number" min="0" step="0.01" value="0.2"></td>
     <td><input data-k="unit" value="Garrafa"></td>
@@ -2571,7 +2634,7 @@ footer{
   <div id="eventsList"><div class="empty">Nenhuma lista especial criada.</div></div>
 </section>
 
-<section id="backupPanel" class="panel">
+<section id="backupPanel" class="panel active">
   <div class="card" style="margin-bottom:12px">
     <div class="section-title"><h2>Banco compartilhado automático</h2></div>
     <p>Na V10, todos os aparelhos usam a <strong>mesma base no Supabase</strong>. Não há login. Ao abrir a página, os dados são carregados automaticamente; ao alterar algo, a mudança é enviada para a nuvem e os outros aparelhos recebem a atualização.</p>
@@ -3202,6 +3265,7 @@ footer{
       <option>Alimentos</option>
       <option>Bebidas e líquidos</option>
       <option>Limpeza</option>
+      <option>Descartáveis e papéis</option>
       <option>Higiene</option>
       <option>Manutenção e reparos</option>
       <option>Outros</option>
@@ -3233,7 +3297,7 @@ footer{
 <dialog id="manualBuyDialog"><form method="dialog" id="manualBuyForm" class="dialog-body">
 <h2>Adicionar item avulso</h2><div class="form-grid">
 <label>Item<input id="manualBuyName" required=""></label>
-<div class="form-cols"><label>Categoria<select id="manualBuyCategory"><option>Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option><option>Especial</option></select></label>
+<div class="form-cols"><label>Categoria<select id="manualBuyCategory"><option>Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option><option>Especial</option></select></label>
 <label>Unidade<input id="manualBuyUnit" value="un."></label></div>
 <label>Quantidade<input id="manualBuyQty" type="number" min="0.01" step="0.01" value="1"></label>
 </div><div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Adicionar</button></div>
@@ -3285,7 +3349,7 @@ const BASIC_STOCK = [
 ["Esponja","Limpeza","Área de serviço","un.",3],
 ["Sacos de lixo","Limpeza","Área de serviço","rolo",2],
 ["Panos de chão","Limpeza","Área de serviço","un.",3],
-["Papel-toalha","Limpeza","Área de serviço","rolo",2],
+["Papel-toalha","Descartáveis e papéis","Despensa / Armário","rolo",2],
 ["Álcool 70%","Limpeza","Área de serviço","frasco",1],
 ["Papel higiênico","Higiene","Banheiro","rolo",12],
 ["Sabonete","Higiene","Banheiro","un.",4],
@@ -3297,8 +3361,8 @@ const BASIC_STOCK = [
 ["Gás de cozinha","Outros","Área externa / Depósito","botijão",1],
 ["Carvão","Outros","Área externa / Depósito","saco",1],
 ["Fósforos ou isqueiro","Outros","Despensa / Armário","un.",2],
-["Papel-alumínio","Outros","Despensa / Armário","rolo",1],
-["Filme plástico","Outros","Despensa / Armário","rolo",1]
+["Papel-alumínio","Descartáveis e papéis","Despensa / Armário","rolo",1],
+["Filme plástico","Descartáveis e papéis","Despensa / Armário","rolo",1]
 ];
 
 const RURAL_REPAIR_TEMPLATE = [
@@ -3950,7 +4014,7 @@ document.addEventListener("webkitfullscreenchange",updatePhotoFullscreenButton);
 
 
 /* ESTOQUE */
-const STOCK_CATEGORIES = ["Alimentos","Bebidas e líquidos","Limpeza","Higiene","Manutenção e reparos","Outros"];
+const STOCK_CATEGORIES = ["Alimentos","Bebidas e líquidos","Limpeza","Descartáveis e papéis","Higiene","Manutenção e reparos","Outros"];
 const STOCK_LOCATIONS = ["Despensa / Armário","Geladeira","Freezer","Área de serviço","Banheiro","Oficina / Ferramentas","Área externa / Depósito","Outro"];
 const STOCK_GROUPS = [
   {id:"food-pantry",title:"🥫 Alimentos — Armário / Despensa",match:x=>x.category==="Alimentos"&&x.location==="Despensa / Armário"},
@@ -3959,6 +4023,7 @@ const STOCK_GROUPS = [
   {id:"food-other",title:"🍽️ Alimentos — Outros locais",match:x=>x.category==="Alimentos"&&!["Despensa / Armário","Geladeira","Freezer"].includes(x.location)},
   {id:"beverages",title:"🥤 Bebidas e líquidos",match:x=>x.category==="Bebidas e líquidos"},
   {id:"cleaning",title:"🧹 Limpeza",match:x=>x.category==="Limpeza"},
+  {id:"disposables",title:"🍽️ Descartáveis e papéis",match:x=>x.category==="Descartáveis e papéis"},
   {id:"hygiene",title:"🧴 Higiene",match:x=>x.category==="Higiene"},
   {id:"maintenance",title:"🛠️ Manutenção e reparos",match:x=>x.category==="Manutenção e reparos"},
   {id:"others",title:"📦 Outros",match:x=>x.category==="Outros"}
@@ -3972,9 +4037,12 @@ function stockStatus(x){
 }
 function inferStockCategory(item){
   const old=String(item.category||"");
+  const n=norm(item.name);
+  if(/prato.*descart|copo.*descart|talher.*descart|garfo.*descart|faca.*descart|colher.*descart|guardanap|papel.?toalha|papel.?aluminio|filme plastico|saco.*zip|saco.*freezer/.test(n)){
+    return "Descartáveis e papéis";
+  }
   if(old==="Bebidas")return "Bebidas e líquidos";
   if(old==="Casa e outros"){
-    const n=norm(item.name);
     if(/pilha|lampad|parafus|bucha|fita isol|veda rosca|silicone|cola|ferrament|fusivel|extensao|tomada/.test(n))return "Manutenção e reparos";
     return "Outros";
   }
@@ -3990,6 +4058,7 @@ function inferStockLocation(item){
   }
   if(cat==="Bebidas e líquidos")return "Despensa / Armário";
   if(cat==="Limpeza")return "Área de serviço";
+  if(cat==="Descartáveis e papéis")return "Despensa / Armário";
   if(cat==="Higiene")return "Banheiro";
   if(cat==="Manutenção e reparos")return "Oficina / Ferramentas";
   if(/gas|carvao/.test(n))return "Área externa / Depósito";
@@ -4131,6 +4200,7 @@ otherCityName.onchange=()=>{state.otherCity=otherCityName.value.trim()||"Outra c
 
 function suggestedLocationForCategory(category){
   if(category==="Limpeza")return "Área de serviço";
+  if(category==="Descartáveis e papéis")return "Despensa / Armário";
   if(category==="Higiene")return "Banheiro";
   if(category==="Manutenção e reparos")return "Oficina / Ferramentas";
   if(category==="Outros")return "Outro";
