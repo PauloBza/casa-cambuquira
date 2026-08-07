@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Completo — V5</title>
+<title>Casa Cambuquira — Painel Completo — V6</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -895,8 +895,122 @@ footer{
   .finance-bill-actions{grid-column:1/-1;justify-content:flex-start}
 }
 
+
+/* ===== FAVORECIDOS / FORMAS DE PAGAMENTO — V6 ===== */
+.finance-payee-section{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:17px;
+  background:#12151b;
+  overflow:hidden;
+}
+.finance-payee-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  padding:14px 15px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),transparent);
+}
+.finance-payee-head h3{margin:0 0 4px;font-size:16px}
+.finance-payee-head p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}
+.finance-payee-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  padding:12px 14px 14px;
+}
+.finance-payee-card{
+  padding:12px 13px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.07);
+  background:#171b23;
+}
+.finance-payee-card-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+.finance-payee-card h4{margin:0 0 3px;font-size:14px}
+.finance-payee-card .finance-payee-type{color:var(--muted);font-size:10px}
+.finance-payee-lines{
+  display:grid;
+  gap:5px;
+  margin-top:9px;
+  color:#dbe2ee;
+  font-size:11px;
+}
+.finance-payee-line{
+  display:grid;
+  grid-template-columns:82px minmax(0,1fr) auto;
+  gap:7px;
+  align-items:center;
+}
+.finance-payee-line span:first-child{
+  color:var(--muted);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.finance-payee-value{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.finance-payee-actions{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.finance-payment-box{
+  display:grid;
+  gap:7px;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  background:#161b24;
+  color:#dce4f1;
+  font-size:11px;
+}
+.finance-payment-box[hidden]{display:none!important}
+.finance-payment-box strong{color:#fff}
+.finance-payment-box-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+.finance-payment-box-row span:first-child{color:var(--muted)}
+.finance-payment-box-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.finance-payee-select-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:end;
+}
+.finance-payee-select-row label{min-width:0}
+.finance-bill-payment-note{
+  display:block;
+  margin-top:3px;
+  color:#9cc1ff!important;
+  font-size:9px!important;
+}
+@media(max-width:860px){
+  .finance-payee-list{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .finance-payee-head{flex-direction:column}
+  .finance-payee-head .btn{width:100%}
+  .finance-payee-line{grid-template-columns:70px minmax(0,1fr)}
+  .finance-payee-line .btn{grid-column:2}
+  .finance-payee-select-row{grid-template-columns:1fr}
+}
+
 </style>
-<!-- GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
+<!-- CASA CAMBUQUIRA V6 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 </head>
 <body>
 <header>
@@ -1262,6 +1376,18 @@ footer{
       </div>
     </div>
 
+
+    <div class="finance-payee-section">
+      <div class="finance-payee-head">
+        <div>
+          <h3>Favorecidos, contatos e formas de pagamento</h3>
+          <p>Guarde PIX, banco, telefone, WhatsApp, e-mail e instruções de pagamento. Depois vincule o favorecido a cada conta.</p>
+        </div>
+        <button id="financeAddPayeeBtn" class="btn primary">+ Favorecido / contato</button>
+      </div>
+      <div id="financePayeeList" class="finance-payee-list"></div>
+    </div>
+
     <div class="finance-section-title">
       <h3>Contas a pagar e despesas</h3>
       <span>Água, luz, internet, terreno, IPTU, cartório, advogados e outros.</span>
@@ -1388,6 +1514,115 @@ footer{
 
 
 
+
+<datalist id="financePaymentMethods">
+  <option value="Pix">
+  <option value="Boleto">
+  <option value="Débito automático">
+  <option value="Transferência bancária">
+  <option value="Dinheiro">
+  <option value="Cartão de débito">
+  <option value="Cartão de crédito">
+  <option value="Link de pagamento">
+  <option value="Cheque">
+  <option value="Outro">
+</datalist>
+
+
+<dialog id="financePayeeDialog">
+  <form method="dialog" id="financePayeeForm" class="dialog-body finance-dialog-large">
+    <h2 id="financePayeeDialogTitle">Novo favorecido / contato</h2>
+    <input id="financePayeeId" type="hidden">
+
+    <div class="form-grid">
+      <div class="form-cols">
+        <label>Nome / favorecido
+          <input id="financePayeeName" required placeholder="Ex.: CEMIG, Mara, jardineiro, cartório">
+        </label>
+        <label>Tipo
+          <select id="financePayeeType">
+            <option>Pessoa</option>
+            <option>Empresa</option>
+            <option>Serviço público</option>
+            <option>Profissional / prestador</option>
+            <option>Outro</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-cols">
+        <label>Contato / responsável
+          <input id="financePayeeContactName" placeholder="Nome de quem atende">
+        </label>
+        <label>Forma de pagamento preferida
+          <input id="financePayeePreferredMethod" list="financePaymentMethods" placeholder="Pix, boleto, transferência...">
+        </label>
+      </div>
+
+      <div class="form-cols">
+        <label>Telefone
+          <input id="financePayeePhone" type="tel" placeholder="(35) 0000-0000">
+        </label>
+        <label>WhatsApp
+          <input id="financePayeeWhatsapp" type="tel" placeholder="55 35 99999-9999">
+        </label>
+      </div>
+
+      <label>E-mail
+        <input id="financePayeeEmail" type="email" placeholder="contato@exemplo.com">
+      </label>
+
+      <div class="form-cols">
+        <label>Tipo da chave PIX
+          <select id="financePayeePixType">
+            <option value="">Sem PIX cadastrado</option>
+            <option>CPF</option>
+            <option>CNPJ</option>
+            <option>Celular</option>
+            <option>E-mail</option>
+            <option>Chave aleatória</option>
+            <option>Outro</option>
+          </select>
+        </label>
+        <label>Chave PIX
+          <input id="financePayeePixKey" placeholder="CPF, telefone, e-mail ou chave aleatória">
+        </label>
+      </div>
+
+      <div class="form-cols">
+        <label>Banco
+          <input id="financePayeeBank" placeholder="Nome do banco">
+        </label>
+        <label>Titular da conta
+          <input id="financePayeeAccountHolder" placeholder="Nome do titular">
+        </label>
+      </div>
+
+      <div class="form-cols">
+        <label>Agência
+          <input id="financePayeeAgency" placeholder="Agência">
+        </label>
+        <label>Conta
+          <input id="financePayeeAccount" placeholder="Conta / operação">
+        </label>
+      </div>
+
+      <label>Link / código / instruções de pagamento
+        <textarea id="financePayeePaymentInstructions" rows="3" placeholder="Site para emitir boleto, dados adicionais, instruções específicas..."></textarea>
+      </label>
+
+      <label>Observações
+        <textarea id="financePayeeNotes" rows="3" placeholder="Horário de atendimento, detalhes de contato, referência..."></textarea>
+      </label>
+    </div>
+
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Salvar favorecido</button>
+    </div>
+  </form>
+</dialog>
+
 <dialog id="financeAgreementDialog">
   <form method="dialog" id="financeAgreementForm" class="dialog-body finance-dialog-large">
     <h2>Editar acordo da compra da casa</h2>
@@ -1442,13 +1677,7 @@ footer{
       </div>
 
       <label>Forma de pagamento
-        <select id="financeHousePaymentMethod">
-          <option>Pix</option>
-          <option>Transferência</option>
-          <option>Dinheiro</option>
-          <option>Boleto</option>
-          <option>Outro</option>
-        </select>
+        <input id="financeHousePaymentMethod" list="financePaymentMethods" placeholder="Pix, transferência, dinheiro...">
       </label>
 
       <label>Observação
@@ -1490,8 +1719,19 @@ footer{
           </select>
         </label>
 
-        <label>Fornecedor / pessoa
-          <input id="financeBillProvider" placeholder="Ex.: Cemig, Saae, jardineiro, cartório...">
+        <label>Favorecido / contato cadastrado
+          <select id="financeBillPayee">
+            <option value="">Sem vínculo / preencher manualmente</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-cols">
+        <label>Fornecedor / pessoa (texto livre)
+          <input id="financeBillProvider" placeholder="Usado quando não houver favorecido cadastrado">
+        </label>
+        <label>Forma prevista de pagamento
+          <input id="financeBillExpectedMethod" list="financePaymentMethods" placeholder="Pix, boleto, débito automático...">
         </label>
       </div>
 
@@ -1548,17 +1788,11 @@ footer{
         </label>
       </div>
 
-      <label>Forma de pagamento
-        <select id="financePayBillMethod">
-          <option>Pix</option>
-          <option>Débito automático</option>
-          <option>Cartão</option>
-          <option>Transferência</option>
-          <option>Dinheiro</option>
-          <option>Boleto</option>
-          <option>Outro</option>
-        </select>
+      <label>Forma de pagamento usada
+        <input id="financePayBillMethod" list="financePaymentMethods" placeholder="Digite ou escolha uma forma de pagamento">
       </label>
+
+      <div id="financePayBillPayeeInfo" class="finance-payment-box" hidden></div>
 
       <label class="finance-checkbox">
         <input id="financeCreateNextRecurring" type="checkbox" checked>
@@ -1977,7 +2211,8 @@ function freshState(){
         notes:""
       },
       housePayments:[],
-      bills:[]
+      bills:[],
+      payees:[]
     },
     photoGalleryUrl:"https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec",otherCity:"Três Corações",hideBought:false
   };
@@ -2668,7 +2903,7 @@ exportRepairsCsvBtn.onclick=()=>download("reparos-casa-rural-cambuquira.csv",csv
 ]),"text/csv");
 exportStockCsv.onclick=()=>download("estoque-casa-cambuquira.csv",csv([["Produto","Categoria","Quantidade","Unidade","Mínimo","Validade","Cambuquira",state.otherCity,"São Paulo","Atualizado","Observação"],...state.inventory.map(x=>[x.name,x.category,x.qty,x.unit,x.min,x.expiry,x.priceC,x.priceO,x.priceSP,x.updated,x.note])]),"text/csv");
 exportShoppingCsv.onclick=()=>download("lista-de-compras.csv",csv([["Item","Categoria","Quantidade","Unidade","Cambuquira",state.otherCity,"São Paulo","Menor preço","Cidade mais barata"],...shoppingItems().filter(x=>!x.bought).map(x=>[x.name,x.category,x.buyQty,x.unit,x.priceC,x.priceO,x.priceSP,lowestPrice(x).price,lowestPrice(x).city])]),"text/csv");
-exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:5,exportedAt:new Date().toISOString(),state},null,2),"application/json");
+exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:6,exportedAt:new Date().toISOString(),state},null,2),"application/json");
 importBackupBtn.onclick=()=>backupFile.click();
 backupFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());state={...freshState(),...(p.state||p)};save();renderAll();alert("Backup importado com sucesso.")}catch(err){alert("Arquivo inválido.")}e.target.value=""};
 resetAllBtn.onclick=()=>{if(!confirm("Apagar todos os dados e restaurar a lista inicial?"))return;state=freshState();save();renderAll()};
@@ -3462,6 +3697,10 @@ renderAll();
     if(!Array.isArray(state.finance.bills)){
       state.finance.bills=[];
     }
+
+    if(!Array.isArray(state.finance.payees)){
+      state.finance.payees=[];
+    }
   }
 
   function fnum(value){
@@ -3563,6 +3802,279 @@ renderAll();
 
   function billIsOverdue(bill){
     return !billIsPaid(bill) && bill.due && daysTo(bill.due)<0;
+  }
+
+
+  function getPayee(id){
+    if(!id)return null;
+    return state.finance.payees.find(payee=>payee.id===id)||null;
+  }
+
+  function payeeDisplayName(bill){
+    const payee=getPayee(bill.payeeId);
+    return payee?.name || bill.provider || "—";
+  }
+
+  async function copyFinanceText(value,label="Informação"){
+    const text=String(value||"").trim();
+    if(!text)return;
+
+    try{
+      await navigator.clipboard.writeText(text);
+      alert(`${label} copiado.`);
+    }catch(error){
+      const area=document.createElement("textarea");
+      area.value=text;
+      area.style.position="fixed";
+      area.style.opacity="0";
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      area.remove();
+      alert(`${label} copiado.`);
+    }
+  }
+
+  function whatsappUrl(value){
+    const digits=String(value||"").replace(/\D/g,"");
+    return digits ? `https://wa.me/${digits}` : "";
+  }
+
+  function populatePayeeSelects(selectedId=""){
+    const options=[
+      '<option value="">Sem vínculo / preencher manualmente</option>',
+      ...state.finance.payees
+        .slice()
+        .sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"pt-BR"))
+        .map(payee=>`<option value="${fesc(payee.id)}">${fesc(payee.name)}</option>`)
+    ].join("");
+
+    const select=$f("financeBillPayee");
+    if(select){
+      select.innerHTML=options;
+      select.value=selectedId||"";
+    }
+  }
+
+  function renderPayees(){
+    ensureFinance();
+
+    const list=$f("financePayeeList");
+    if(!list)return;
+
+    const payees=state.finance.payees
+      .slice()
+      .sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"pt-BR"));
+
+    if(!payees.length){
+      list.innerHTML=`
+        <div class="finance-empty" style="grid-column:1/-1">
+          <strong>Nenhum favorecido cadastrado.</strong>
+          Cadastre quem recebe os pagamentos para guardar PIX, banco e contatos.
+        </div>`;
+      populatePayeeSelects();
+      return;
+    }
+
+    list.innerHTML=payees.map(payee=>{
+      const pix=payee.pixKey||"";
+      const phone=payee.whatsapp||payee.phone||"";
+      const method=payee.preferredMethod||"—";
+      const bankParts=[payee.bank,payee.agency?`Ag. ${payee.agency}`:"",payee.account?`Conta ${payee.account}`:""]
+        .filter(Boolean).join(" • ");
+
+      return `
+        <article class="finance-payee-card">
+          <div class="finance-payee-card-top">
+            <div>
+              <h4>${fesc(payee.name)}</h4>
+              <div class="finance-payee-type">${fesc(payee.type||"")}${payee.contactName?` • ${fesc(payee.contactName)}`:""}</div>
+            </div>
+            <div class="finance-payee-actions">
+              <button class="btn small finance-edit-payee" data-id="${fesc(payee.id)}">Editar</button>
+              <button class="btn small danger finance-delete-payee" data-id="${fesc(payee.id)}">Excluir</button>
+            </div>
+          </div>
+
+          <div class="finance-payee-lines">
+            <div class="finance-payee-line">
+              <span>Pagamento</span>
+              <div class="finance-payee-value">${fesc(method)}</div>
+            </div>
+
+            ${pix?`
+              <div class="finance-payee-line">
+                <span>PIX</span>
+                <div class="finance-payee-value">${fesc(payee.pixType?`${payee.pixType}: ${pix}`:pix)}</div>
+                <button class="btn small finance-copy-pix" data-id="${fesc(payee.id)}">Copiar</button>
+              </div>`:""}
+
+            ${bankParts?`
+              <div class="finance-payee-line">
+                <span>Banco</span>
+                <div class="finance-payee-value">${fesc(bankParts)}</div>
+              </div>`:""}
+
+            ${phone?`
+              <div class="finance-payee-line">
+                <span>Contato</span>
+                <div class="finance-payee-value">${fesc(phone)}</div>
+                ${payee.whatsapp?`<button class="btn small finance-open-whatsapp" data-id="${fesc(payee.id)}">WhatsApp</button>`:""}
+              </div>`:""}
+
+            ${payee.email?`
+              <div class="finance-payee-line">
+                <span>E-mail</span>
+                <div class="finance-payee-value">${fesc(payee.email)}</div>
+              </div>`:""}
+          </div>
+        </article>`;
+    }).join("");
+
+    list.querySelectorAll(".finance-edit-payee").forEach(button=>{
+      button.onclick=()=>openPayee(button.dataset.id);
+    });
+
+    list.querySelectorAll(".finance-delete-payee").forEach(button=>{
+      button.onclick=()=>{
+        const payee=getPayee(button.dataset.id);
+        if(!payee)return;
+
+        const linked=state.finance.bills.filter(bill=>bill.payeeId===payee.id).length;
+        const message=linked
+          ? `Este favorecido está ligado a ${linked} conta(s). Excluir mesmo assim? As contas manterão o nome em texto.`
+          : "Excluir este favorecido / contato?";
+
+        if(!confirm(message))return;
+
+        state.finance.bills.forEach(bill=>{
+          if(bill.payeeId===payee.id){
+            if(!bill.provider)bill.provider=payee.name;
+            bill.payeeId="";
+          }
+        });
+
+        state.finance.payees=state.finance.payees.filter(item=>item.id!==payee.id);
+        save();
+        renderFinance();
+      };
+    });
+
+    list.querySelectorAll(".finance-copy-pix").forEach(button=>{
+      button.onclick=()=>{
+        const payee=getPayee(button.dataset.id);
+        if(payee?.pixKey)copyFinanceText(payee.pixKey,"Chave PIX");
+      };
+    });
+
+    list.querySelectorAll(".finance-open-whatsapp").forEach(button=>{
+      button.onclick=()=>{
+        const payee=getPayee(button.dataset.id);
+        const url=whatsappUrl(payee?.whatsapp);
+        if(url)window.open(url,"_blank","noopener,noreferrer");
+      };
+    });
+
+    populatePayeeSelects();
+  }
+
+  function paymentInfoHtml(bill){
+    const payee=getPayee(bill?.payeeId);
+    if(!payee)return "";
+
+    const bankParts=[
+      payee.bank,
+      payee.agency?`Agência ${payee.agency}`:"",
+      payee.account?`Conta ${payee.account}`:"",
+      payee.accountHolder?`Titular: ${payee.accountHolder}`:""
+    ].filter(Boolean).join(" • ");
+
+    const wa=whatsappUrl(payee.whatsapp);
+
+    return `
+      <strong>${fesc(payee.name)}</strong>
+      ${payee.preferredMethod?`
+        <div class="finance-payment-box-row">
+          <span>Forma preferida</span><strong>${fesc(payee.preferredMethod)}</strong>
+        </div>`:""}
+      ${payee.pixKey?`
+        <div class="finance-payment-box-row">
+          <span>PIX</span><strong>${fesc(payee.pixType?`${payee.pixType}: ${payee.pixKey}`:payee.pixKey)}</strong>
+        </div>`:""}
+      ${bankParts?`
+        <div class="finance-payment-box-row">
+          <span>Banco</span><strong>${fesc(bankParts)}</strong>
+        </div>`:""}
+      ${(payee.phone||payee.whatsapp)?`
+        <div class="finance-payment-box-row">
+          <span>Contato</span><strong>${fesc(payee.whatsapp||payee.phone)}</strong>
+        </div>`:""}
+      ${payee.email?`
+        <div class="finance-payment-box-row">
+          <span>E-mail</span><strong>${fesc(payee.email)}</strong>
+        </div>`:""}
+      ${payee.paymentInstructions?`
+        <div class="finance-payment-box-row">
+          <span>Instruções</span><strong>${fesc(payee.paymentInstructions)}</strong>
+        </div>`:""}
+
+      <div class="finance-payment-box-actions">
+        ${payee.pixKey?`<button type="button" id="financePayDialogCopyPix" class="btn small">Copiar PIX</button>`:""}
+        ${wa?`<button type="button" id="financePayDialogWhatsapp" class="btn small">Abrir WhatsApp</button>`:""}
+        ${payee.email?`<button type="button" id="financePayDialogEmail" class="btn small">E-mail</button>`:""}
+      </div>`;
+  }
+
+  function bindPayDialogActions(bill){
+    const payee=getPayee(bill?.payeeId);
+    if(!payee)return;
+
+    const copy=$f("financePayDialogCopyPix");
+    if(copy)copy.onclick=()=>copyFinanceText(payee.pixKey,"Chave PIX");
+
+    const wa=$f("financePayDialogWhatsapp");
+    if(wa)wa.onclick=()=>{
+      const url=whatsappUrl(payee.whatsapp);
+      if(url)window.open(url,"_blank","noopener,noreferrer");
+    };
+
+    const email=$f("financePayDialogEmail");
+    if(email)email.onclick=()=>{
+      window.location.href=`mailto:${encodeURIComponent(payee.email)}`;
+    };
+  }
+
+  function openPayee(payeeId=""){
+    ensureFinance();
+
+    $f("financePayeeForm").reset();
+    $f("financePayeeId").value="";
+    $f("financePayeeDialogTitle").textContent="Novo favorecido / contato";
+
+    if(payeeId){
+      const payee=getPayee(payeeId);
+      if(!payee)return;
+
+      $f("financePayeeDialogTitle").textContent="Editar favorecido / contato";
+      $f("financePayeeId").value=payee.id;
+      $f("financePayeeName").value=payee.name||"";
+      $f("financePayeeType").value=payee.type||"Pessoa";
+      $f("financePayeeContactName").value=payee.contactName||"";
+      $f("financePayeePreferredMethod").value=payee.preferredMethod||"";
+      $f("financePayeePhone").value=payee.phone||"";
+      $f("financePayeeWhatsapp").value=payee.whatsapp||"";
+      $f("financePayeeEmail").value=payee.email||"";
+      $f("financePayeePixType").value=payee.pixType||"";
+      $f("financePayeePixKey").value=payee.pixKey||"";
+      $f("financePayeeBank").value=payee.bank||"";
+      $f("financePayeeAccountHolder").value=payee.accountHolder||"";
+      $f("financePayeeAgency").value=payee.agency||"";
+      $f("financePayeeAccount").value=payee.account||"";
+      $f("financePayeePaymentInstructions").value=payee.paymentInstructions||"";
+      $f("financePayeeNotes").value=payee.notes||"";
+    }
+
+    $f("financePayeeDialog").showModal();
   }
 
   function renderFinanceMetrics(){
@@ -3686,9 +4198,11 @@ renderAll();
         }
 
         if(search){
+          const payee=getPayee(bill.payeeId);
           const haystack=fnorm(
             `${bill.title} ${bill.category} ${bill.provider||""} `+
-            `${bill.reference||""} ${bill.notes||""}`
+            `${payee?.name||""} ${payee?.phone||""} ${payee?.whatsapp||""} `+
+            `${bill.expectedPaymentMethod||""} ${bill.reference||""} ${bill.notes||""}`
           );
           if(!haystack.includes(search))return false;
         }
@@ -3749,8 +4263,9 @@ renderAll();
           </div>
 
           <div class="finance-bill-cell finance-provider">
-            Fornecedor
-            <strong>${fesc(bill.provider||"—")}</strong>
+            Favorecido
+            <strong>${fesc(payeeDisplayName(bill))}</strong>
+            ${bill.expectedPaymentMethod?`<span class="finance-bill-payment-note">${fesc(bill.expectedPaymentMethod)}</span>`:""}
           </div>
 
           <div class="finance-bill-cell finance-due">
@@ -3812,6 +4327,7 @@ renderAll();
     ensureFinance();
     renderFinanceMetrics();
     renderAgreement();
+    renderPayees();
     renderBills();
   }
 
@@ -3864,6 +4380,8 @@ renderAll();
     $f("financeBillAmount").value=0;
     $f("financeBillDue").value=todayLocal();
     $f("financeBillRecurrence").value="Única";
+    $f("financeBillExpectedMethod").value="";
+    populatePayeeSelects("");
 
     if(presetCategory){
       $f("financeBillCategory").value=presetCategory;
@@ -3878,7 +4396,9 @@ renderAll();
       $f("financeBillId").value=bill.id;
       $f("financeBillTitle").value=bill.title||"";
       $f("financeBillCategory").value=bill.category||"Outros";
+      populatePayeeSelects(bill.payeeId||"");
       $f("financeBillProvider").value=bill.provider||"";
+      $f("financeBillExpectedMethod").value=bill.expectedPaymentMethod||"";
       $f("financeBillAmount").value=fnum(bill.amount);
       $f("financeBillDue").value=bill.due||todayLocal();
       $f("financeBillRecurrence").value=bill.recurrence||"Única";
@@ -3897,12 +4417,64 @@ renderAll();
     $f("financePayBillId").value=bill.id;
     $f("financePayBillDate").value=todayLocal();
     $f("financePayBillAmount").value=fnum(bill.amount);
-    $f("financePayBillMethod").value="Pix";
+
+    const payee=getPayee(bill.payeeId);
+    $f("financePayBillMethod").value=
+      bill.expectedPaymentMethod ||
+      payee?.preferredMethod ||
+      "Pix";
+
+    const info=$f("financePayBillPayeeInfo");
+    const infoHtml=paymentInfoHtml(bill);
+    info.hidden=!infoHtml;
+    info.innerHTML=infoHtml;
+
     $f("financeCreateNextRecurring").checked=
       !!bill.recurrence && bill.recurrence!=="Única";
 
     $f("financePayBillDialog").showModal();
+    bindPayDialogActions(bill);
   }
+
+
+  $f("financePayeeForm").addEventListener("submit",event=>{
+    if(event.submitter?.value==="cancel")return;
+    event.preventDefault();
+
+    const id=$f("financePayeeId").value;
+    const data={
+      name:$f("financePayeeName").value.trim(),
+      type:$f("financePayeeType").value,
+      contactName:$f("financePayeeContactName").value.trim(),
+      preferredMethod:$f("financePayeePreferredMethod").value.trim(),
+      phone:$f("financePayeePhone").value.trim(),
+      whatsapp:$f("financePayeeWhatsapp").value.trim(),
+      email:$f("financePayeeEmail").value.trim(),
+      pixType:$f("financePayeePixType").value,
+      pixKey:$f("financePayeePixKey").value.trim(),
+      bank:$f("financePayeeBank").value.trim(),
+      accountHolder:$f("financePayeeAccountHolder").value.trim(),
+      agency:$f("financePayeeAgency").value.trim(),
+      account:$f("financePayeeAccount").value.trim(),
+      paymentInstructions:$f("financePayeePaymentInstructions").value.trim(),
+      notes:$f("financePayeeNotes").value.trim()
+    };
+
+    if(id){
+      const payee=getPayee(id);
+      if(payee)Object.assign(payee,data);
+    }else{
+      state.finance.payees.push({
+        id:uid(),
+        ...data,
+        createdAt:new Date().toISOString()
+      });
+    }
+
+    save();
+    renderFinance();
+    $f("financePayeeDialog").close();
+  });
 
   $f("financeAgreementForm").addEventListener("submit",event=>{
     if(event.submitter?.value==="cancel")return;
@@ -3959,7 +4531,9 @@ renderAll();
     const data={
       title:$f("financeBillTitle").value.trim(),
       category:$f("financeBillCategory").value,
+      payeeId:$f("financeBillPayee").value,
       provider:$f("financeBillProvider").value.trim(),
+      expectedPaymentMethod:$f("financeBillExpectedMethod").value.trim(),
       amount:fnum($f("financeBillAmount").value),
       due:$f("financeBillDue").value,
       recurrence:$f("financeBillRecurrence").value,
@@ -4038,6 +4612,18 @@ renderAll();
     $f("financePayBillDialog").close();
   });
 
+  $f("financeAddPayeeBtn").onclick=()=>openPayee();
+
+  $f("financeBillPayee").onchange=()=>{
+    const payee=getPayee($f("financeBillPayee").value);
+    if(!payee)return;
+
+    $f("financeBillProvider").value=payee.name||"";
+    if(!$f("financeBillExpectedMethod").value){
+      $f("financeBillExpectedMethod").value=payee.preferredMethod||"";
+    }
+  };
+
   $f("financeEditAgreementBtn").onclick=openAgreement;
   $f("financeHousePaymentBtn").onclick=()=>openHousePayment();
   $f("financeAddHousePaymentBtn").onclick=()=>openHousePayment();
@@ -4083,7 +4669,9 @@ renderAll();
         id:uid(),
         title,
         category,
+        payeeId:"",
         provider:"",
+        expectedPaymentMethod:"",
         amount:0,
         due:todayLocal(),
         recurrence,
