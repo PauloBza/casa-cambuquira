@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Completo — V4</title>
+<title>Casa Cambuquira — Painel Completo — V5</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -727,6 +727,174 @@ footer{
   }
 }
 
+
+/* ===== FINANCEIRO DA CASA — V5 ===== */
+.finance-shell{display:grid;gap:12px}
+.finance-hero{
+  display:flex;justify-content:space-between;gap:14px;align-items:center;
+  padding:15px 16px;border-radius:17px;
+  border:1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 15% 0%,rgba(229,9,20,.17),transparent 40%),
+    linear-gradient(180deg,rgba(255,255,255,.035),transparent),
+    #12151b;
+}
+.finance-hero h2{margin:0 0 4px;font-size:21px}
+.finance-hero p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+.finance-hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+.finance-metrics{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px
+}
+.finance-metric{
+  padding:13px;border-radius:15px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#13161d;color:var(--muted);font-size:11px
+}
+.finance-metric strong{display:block;margin-top:5px;color:#fff;font-size:19px}
+.finance-metric.good strong{color:#8ef1b3}
+.finance-metric.warn strong{color:#ffd166}
+.finance-metric.danger strong{color:#ff8d8d}
+
+.finance-house-card{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:17px;background:#12151b;overflow:hidden;
+  box-shadow:0 14px 34px rgba(0,0,0,.20)
+}
+.finance-house-head{
+  display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
+  padding:14px 15px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),transparent);
+  border-bottom:1px solid rgba(255,255,255,.06)
+}
+.finance-house-head h3{margin:0 0 4px;font-size:17px}
+.finance-house-head p{margin:0;color:var(--muted);font-size:11px}
+.finance-house-actions{display:flex;gap:7px;flex-wrap:wrap}
+.finance-house-numbers{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;
+  padding:12px 14px 4px
+}
+.finance-number{
+  padding:10px 11px;border-radius:12px;background:#171b23;
+  border:1px solid rgba(255,255,255,.06);font-size:10px;color:var(--muted)
+}
+.finance-number strong{display:block;color:#fff;font-size:16px;margin-top:4px}
+.finance-progress-wrap{padding:8px 14px 12px}
+.finance-progress-meta{
+  display:flex;justify-content:space-between;gap:10px;
+  font-size:11px;color:var(--muted);margin-bottom:6px
+}
+.finance-progress{
+  height:12px;border-radius:999px;overflow:hidden;background:#20242d
+}
+.finance-progress > div{
+  height:100%;width:0;
+  background:linear-gradient(90deg,#e50914,#ff5a64);
+  transition:width .25s ease
+}
+.finance-house-note{
+  padding:0 14px 12px;color:var(--muted);font-size:11px
+}
+.finance-payments{padding:0 14px 14px}
+.finance-payments h4{margin:4px 0 8px;font-size:13px}
+
+.finance-toolbar{
+  display:grid;
+  grid-template-columns:minmax(210px,1fr) 180px 160px auto;
+  gap:8px
+}
+.finance-list{display:grid;gap:9px}
+.finance-bill{
+  display:grid;grid-template-columns:minmax(220px,1.5fr) 130px 120px 120px auto;
+  gap:10px;align-items:center;
+  padding:12px 13px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#12151b
+}
+.finance-bill.overdue{
+  border-left:5px solid var(--danger);
+  background:linear-gradient(90deg,rgba(255,92,92,.08),transparent 30%),#12151b
+}
+.finance-bill.paid{
+  border-left:5px solid var(--ok);
+  opacity:.85
+}
+.finance-bill-title{min-width:0}
+.finance-bill-title strong{
+  display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.finance-bill-title span{
+  display:block;margin-top:4px;color:var(--muted);font-size:10px
+}
+.finance-bill-cell{font-size:11px;color:var(--muted)}
+.finance-bill-cell strong{display:block;color:#fff;font-size:13px;margin-top:3px}
+.finance-bill-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}
+.finance-recurring{
+  display:inline-flex;padding:4px 7px;border-radius:999px;
+  background:#202530;color:#cbd5e1;font-size:9px;font-weight:800
+}
+.finance-empty{
+  padding:26px;text-align:center;border-radius:14px;
+  border:1px dashed rgba(255,255,255,.12);
+  background:#11141a;color:var(--muted)
+}
+.finance-empty strong{display:block;color:#fff;margin-bottom:5px}
+.finance-section-title{
+  display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.finance-section-title h3{margin:0;font-size:16px}
+.finance-section-title span{color:var(--muted);font-size:11px}
+.finance-dialog-large{width:min(720px,calc(100vw - 24px))}
+.finance-checkbox{
+  display:flex!important;grid-template-columns:auto 1fr!important;
+  align-items:center;gap:8px!important;font-size:12px!important
+}
+.finance-checkbox input{width:18px;height:18px;min-height:18px}
+.finance-table-wrap{overflow:auto;border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+.finance-table-wrap table{min-width:850px}
+.finance-table-wrap th{top:0}
+
+#photoFrameWrap:fullscreen,
+#photoFrameWrap:-webkit-full-screen{
+  width:100vw!important;height:100vh!important;
+  max-width:none!important;max-height:none!important;
+  margin:0!important;border-radius:0!important;background:#000!important;
+}
+#photoFrameWrap:fullscreen .photo-frame,
+#photoFrameWrap:-webkit-full-screen .photo-frame{
+  width:100%!important;height:100vh!important;min-height:100vh!important;
+}
+.photo-fullscreen-exit{
+  display:none!important;
+  position:absolute;z-index:20;top:12px;right:12px;
+  min-height:38px!important;
+  background:rgba(0,0,0,.72)!important;
+  border-color:rgba(255,255,255,.20)!important;
+}
+#photoFrameWrap:fullscreen .photo-fullscreen-exit,
+#photoFrameWrap:-webkit-full-screen .photo-fullscreen-exit{
+  display:block!important;
+}
+
+@media(max-width:1100px){
+  .finance-metrics{grid-template-columns:repeat(3,1fr)}
+  .finance-house-numbers{grid-template-columns:repeat(3,1fr)}
+  .finance-bill{grid-template-columns:1fr 120px 110px auto}
+  .finance-bill .finance-provider{display:none}
+}
+@media(max-width:760px){
+  .finance-hero{align-items:flex-start;flex-direction:column}
+  .finance-hero-actions{width:100%}
+  .finance-hero-actions .btn{flex:1}
+  .finance-metrics{grid-template-columns:1fr 1fr}
+  .finance-house-head{flex-direction:column}
+  .finance-house-numbers{grid-template-columns:1fr 1fr}
+  .finance-toolbar{grid-template-columns:1fr}
+  .finance-bill{grid-template-columns:1fr auto}
+  .finance-bill .finance-provider,
+  .finance-bill .finance-due{display:block}
+  .finance-bill-actions{grid-column:1/-1;justify-content:flex-start}
+}
+
 </style>
 <!-- GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 </head>
@@ -742,6 +910,7 @@ footer{
     <button class="tab" data-panel="photosPanel">Fotos</button>
     <button class="tab" data-panel="stockPanel">Estoque</button>
     <button class="tab" data-panel="priceDbPanel">Preços & Compras</button>
+    <button class="tab" data-panel="financePanel">Financeiro</button>
     <button class="tab" data-panel="eventsPanel">Especiais</button>
     <button class="tab" data-panel="backupPanel">Backup</button>
     <button class="tab" data-panel="supportPanel">Suporte</button>
@@ -873,6 +1042,7 @@ footer{
   </div>
 
   <div id="photoFrameWrap" class="photo-frame-wrap photos-clean-frame" hidden>
+    <button id="exitPhotoFullscreenBtn" class="btn photo-fullscreen-exit" type="button">Sair da tela cheia</button>
     <iframe
       id="photoGalleryFrame"
       class="photo-frame"
@@ -1022,6 +1192,111 @@ footer{
   </div>
 </section>
 
+
+<section id="financePanel" class="panel">
+  <div class="finance-shell">
+    <div class="finance-hero">
+      <div>
+        <h2>Financeiro da casa</h2>
+        <p>Controle do saldo da compra da casa, pagamentos à Mara, contas recorrentes, terreno, impostos, documentação e outros gastos.</p>
+      </div>
+      <div class="finance-hero-actions">
+        <button id="financeAddBillBtn" class="btn primary">+ Conta a pagar</button>
+        <button id="financeAddHousePaymentBtn" class="btn">+ Pagamento da casa</button>
+        <button id="financeTemplatesBtn" class="btn">Adicionar contas padrão</button>
+      </div>
+    </div>
+
+    <div class="finance-metrics">
+      <div class="finance-metric danger"><span>Saldo da casa</span><strong id="financeHouseBalance">R$ 0,00</strong></div>
+      <div class="finance-metric good"><span>Pago pela casa</span><strong id="financeHousePaid">R$ 0,00</strong></div>
+      <div class="finance-metric warn"><span>Contas pendentes</span><strong id="financePendingTotal">R$ 0,00</strong></div>
+      <div class="finance-metric danger"><span>Contas vencidas</span><strong id="financeOverdueTotal">R$ 0,00</strong></div>
+      <div class="finance-metric warn"><span>Próximos 30 dias</span><strong id="financeNext30Total">R$ 0,00</strong></div>
+      <div class="finance-metric good"><span>Pago neste mês</span><strong id="financePaidMonth">R$ 0,00</strong></div>
+    </div>
+
+    <div class="finance-house-card">
+      <div class="finance-house-head">
+        <div>
+          <h3>Compra da casa — <span id="financeSellerName">Mara</span></h3>
+          <p id="financeHouseSubtitle">Configure o valor total do acordo e o que já foi pago antes deste controle.</p>
+        </div>
+        <div class="finance-house-actions">
+          <button id="financeEditAgreementBtn" class="btn small">Editar acordo</button>
+          <button id="financeHousePaymentBtn" class="btn small primary">Registrar pagamento</button>
+        </div>
+      </div>
+
+      <div class="finance-house-numbers">
+        <div class="finance-number"><span>Valor total</span><strong id="financeAgreementTotal">R$ 0,00</strong></div>
+        <div class="finance-number"><span>Pago antes do sistema</span><strong id="financeOpeningPaid">R$ 0,00</strong></div>
+        <div class="finance-number"><span>Pagamentos registrados</span><strong id="financeRecordedPaid">R$ 0,00</strong></div>
+        <div class="finance-number"><span>Parcela de referência</span><strong id="financeReferenceInstallment">R$ 0,00</strong></div>
+        <div class="finance-number"><span>Próximo pagamento</span><strong id="financeNextHouseDue">—</strong></div>
+      </div>
+
+      <div class="finance-progress-wrap">
+        <div class="finance-progress-meta">
+          <span id="financeProgressText">0% quitado</span>
+          <span id="financeRemainingText">Falta R$ 0,00</span>
+        </div>
+        <div class="finance-progress"><div id="financeHouseProgressBar"></div></div>
+      </div>
+
+      <div id="financeAgreementNotes" class="finance-house-note"></div>
+
+      <div class="finance-payments">
+        <div class="finance-section-title">
+          <h3>Histórico de pagamentos da casa</h3>
+          <span id="financeHousePaymentCount">0 pagamento(s)</span>
+        </div>
+        <div class="finance-table-wrap">
+          <table>
+            <thead>
+              <tr><th>Data</th><th>Valor</th><th>Forma</th><th>Observação</th><th></th></tr>
+            </thead>
+            <tbody id="financeHousePaymentsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="finance-section-title">
+      <h3>Contas a pagar e despesas</h3>
+      <span>Água, luz, internet, terreno, IPTU, cartório, advogados e outros.</span>
+    </div>
+
+    <div class="finance-toolbar">
+      <input id="financeSearch" type="search" placeholder="Buscar conta, fornecedor ou observação...">
+      <select id="financeCategoryFilter">
+        <option value="all">Todas as categorias</option>
+        <option>Água</option>
+        <option>Luz</option>
+        <option>Internet</option>
+        <option>Terreno — Capinagem</option>
+        <option>Terreno — Podas</option>
+        <option>Terreno — Pulverização</option>
+        <option>IPTU</option>
+        <option>Cartório</option>
+        <option>Advogado</option>
+        <option>Documentação</option>
+        <option>Outros</option>
+      </select>
+      <select id="financeStatusFilter">
+        <option value="pending">Pendentes</option>
+        <option value="all">Todas</option>
+        <option value="overdue">Vencidas</option>
+        <option value="next30">Próximos 30 dias</option>
+        <option value="paid">Pagas</option>
+      </select>
+      <button id="financeClearFiltersBtn" class="btn">Limpar filtros</button>
+    </div>
+
+    <div id="financeBillList" class="finance-list"></div>
+  </div>
+</section>
+
 <section id="eventsPanel" class="panel">
   <div class="help">
     Crie listas separadas para churrasco, pizza, festa, almoço, viagem ou qualquer outra ocasião. As quantidades iniciais dos modelos são apenas sugestões e podem ser alteradas.
@@ -1111,6 +1386,192 @@ footer{
 
 <footer>Os preços não são pesquisados automaticamente. Preencha os valores encontrados em mercados, lojas ou sites e informe a data da consulta.</footer>
 
+
+
+<dialog id="financeAgreementDialog">
+  <form method="dialog" id="financeAgreementForm" class="dialog-body finance-dialog-large">
+    <h2>Editar acordo da compra da casa</h2>
+    <div class="form-grid">
+      <div class="form-cols">
+        <label>Vendedora / credora
+          <input id="financeSellerInput" value="Mara" required>
+        </label>
+        <label>Valor total negociado
+          <input id="financeAgreementTotalInput" type="number" min="0" step="0.01" value="0" required>
+        </label>
+      </div>
+
+      <div class="form-cols">
+        <label>Valor já pago antes deste controle
+          <input id="financePaidBeforeInput" type="number" min="0" step="0.01" value="0">
+        </label>
+        <label>Parcela de referência
+          <input id="financeReferenceInstallmentInput" type="number" min="0" step="0.01" value="0">
+        </label>
+      </div>
+
+      <label>Próxima data prevista de pagamento
+        <input id="financeNextHouseDueInput" type="date">
+      </label>
+
+      <label>Observações do acordo
+        <textarea id="financeAgreementNotesInput" rows="3" placeholder="Condições combinadas, observações sobre parcelas ou saldo..."></textarea>
+      </label>
+    </div>
+
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Salvar acordo</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="financeHousePaymentDialog">
+  <form method="dialog" id="financeHousePaymentForm" class="dialog-body finance-dialog-large">
+    <h2 id="financeHousePaymentDialogTitle">Registrar pagamento da casa</h2>
+    <input id="financeHousePaymentId" type="hidden">
+
+    <div class="form-grid">
+      <div class="form-cols">
+        <label>Data do pagamento
+          <input id="financeHousePaymentDate" type="date" required>
+        </label>
+        <label>Valor pago
+          <input id="financeHousePaymentAmount" type="number" min="0.01" step="0.01" required>
+        </label>
+      </div>
+
+      <label>Forma de pagamento
+        <select id="financeHousePaymentMethod">
+          <option>Pix</option>
+          <option>Transferência</option>
+          <option>Dinheiro</option>
+          <option>Boleto</option>
+          <option>Outro</option>
+        </select>
+      </label>
+
+      <label>Observação
+        <textarea id="financeHousePaymentNote" rows="3" placeholder="Parcela, comprovante, combinação feita com a Mara..."></textarea>
+      </label>
+    </div>
+
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Salvar pagamento</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="financeBillDialog">
+  <form method="dialog" id="financeBillForm" class="dialog-body finance-dialog-large">
+    <h2 id="financeBillDialogTitle">Nova conta a pagar</h2>
+    <input id="financeBillId" type="hidden">
+
+    <div class="form-grid">
+      <label>Descrição
+        <input id="financeBillTitle" required placeholder="Ex.: Conta de luz agosto">
+      </label>
+
+      <div class="form-cols">
+        <label>Categoria
+          <select id="financeBillCategory" required>
+            <option>Água</option>
+            <option>Luz</option>
+            <option>Internet</option>
+            <option>Terreno — Capinagem</option>
+            <option>Terreno — Podas</option>
+            <option>Terreno — Pulverização</option>
+            <option>IPTU</option>
+            <option>Cartório</option>
+            <option>Advogado</option>
+            <option>Documentação</option>
+            <option>Outros</option>
+          </select>
+        </label>
+
+        <label>Fornecedor / pessoa
+          <input id="financeBillProvider" placeholder="Ex.: Cemig, Saae, jardineiro, cartório...">
+        </label>
+      </div>
+
+      <div class="form-cols">
+        <label>Valor
+          <input id="financeBillAmount" type="number" min="0" step="0.01" value="0" required>
+        </label>
+        <label>Vencimento / data prevista
+          <input id="financeBillDue" type="date" required>
+        </label>
+      </div>
+
+      <div class="form-cols">
+        <label>Recorrência
+          <select id="financeBillRecurrence">
+            <option>Única</option>
+            <option>Mensal</option>
+            <option>Bimestral</option>
+            <option>Trimestral</option>
+            <option>Semestral</option>
+            <option>Anual</option>
+          </select>
+        </label>
+
+        <label>Referência
+          <input id="financeBillReference" placeholder="Ex.: Agosto/2026, exercício 2026">
+        </label>
+      </div>
+
+      <label>Observações
+        <textarea id="financeBillNotes" rows="3" placeholder="Número da conta, detalhes do serviço, documentos, telefone..."></textarea>
+      </label>
+    </div>
+
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Salvar conta</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="financePayBillDialog">
+  <form method="dialog" id="financePayBillForm" class="dialog-body finance-dialog-large">
+    <h2>Pagar conta</h2>
+    <input id="financePayBillId" type="hidden">
+
+    <div class="form-grid">
+      <div class="form-cols">
+        <label>Data do pagamento
+          <input id="financePayBillDate" type="date" required>
+        </label>
+        <label>Valor efetivamente pago
+          <input id="financePayBillAmount" type="number" min="0" step="0.01" required>
+        </label>
+      </div>
+
+      <label>Forma de pagamento
+        <select id="financePayBillMethod">
+          <option>Pix</option>
+          <option>Débito automático</option>
+          <option>Cartão</option>
+          <option>Transferência</option>
+          <option>Dinheiro</option>
+          <option>Boleto</option>
+          <option>Outro</option>
+        </select>
+      </label>
+
+      <label class="finance-checkbox">
+        <input id="financeCreateNextRecurring" type="checkbox" checked>
+        <span>Criar automaticamente a próxima conta se esta despesa for recorrente.</span>
+      </label>
+    </div>
+
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Confirmar pagamento</button>
+    </div>
+  </form>
+</dialog>
 
 <dialog id="priceProductDialog">
   <form method="dialog" id="priceProductForm" class="dialog-body price-dialog-large">
@@ -1505,7 +1966,20 @@ function freshState(){
   houseData.forEach(g=>g.items.forEach(i=>houseChecked[i.id]=DEFAULT_CHECKED.has(i.id)));
   return {
     houseData,houseChecked,houseNotes:{},nextHouseId:501,
-    inventory:[],manualBuys:[],events:[],repairs:createSuggestedRepairs(),photoGalleryUrl:"https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec",otherCity:"Três Corações",hideBought:false
+    inventory:[],manualBuys:[],events:[],repairs:createSuggestedRepairs(),
+    finance:{
+      agreement:{
+        seller:"Mara",
+        totalValue:0,
+        paidBefore:0,
+        referenceInstallment:0,
+        nextDue:"",
+        notes:""
+      },
+      housePayments:[],
+      bills:[]
+    },
+    photoGalleryUrl:"https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec",otherCity:"Três Corações",hideBought:false
   };
 }
 function loadState(){
@@ -1957,6 +2431,59 @@ resetPhotoUrlBtn.onclick=()=>{
 };
 
 
+/* CONTROLES DA GALERIA */
+function reloadPhotoGallery(){
+  const url=currentPhotoGalleryUrl();
+  if(!url)return;
+
+  const sep=url.includes("?")?"&":"?";
+  photoGalleryFrame.src=url+sep+"_reload="+Date.now();
+}
+
+async function togglePhotoFullscreen(){
+  const url=currentPhotoGalleryUrl();
+  if(!url)return;
+
+  const wrap=document.getElementById("photoFrameWrap");
+
+  try{
+    if(document.fullscreenElement || document.webkitFullscreenElement){
+      if(document.exitFullscreen)await document.exitFullscreen();
+      else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+      return;
+    }
+
+    const request=
+      wrap.requestFullscreen ||
+      wrap.webkitRequestFullscreen ||
+      wrap.msRequestFullscreen;
+
+    if(request){
+      const result=request.call(wrap);
+      if(result && typeof result.then==="function")await result;
+    }else{
+      window.open(url,"_blank","noopener,noreferrer");
+    }
+  }catch(error){
+    console.warn("Fullscreen indisponível; abrindo em nova guia.",error);
+    window.open(url,"_blank","noopener,noreferrer");
+  }
+}
+
+function updatePhotoFullscreenButton(){
+  const active=!!(document.fullscreenElement || document.webkitFullscreenElement);
+  if(openPhotoGalleryBtn){
+    openPhotoGalleryBtn.textContent=active?"Sair da tela cheia":"Abrir em tela cheia";
+  }
+}
+
+reloadPhotoGalleryBtn.onclick=reloadPhotoGallery;
+openPhotoGalleryBtn.onclick=togglePhotoFullscreen;
+exitPhotoFullscreenBtn.onclick=togglePhotoFullscreen;
+document.addEventListener("fullscreenchange",updatePhotoFullscreenButton);
+document.addEventListener("webkitfullscreenchange",updatePhotoFullscreenButton);
+
+
 /* ESTOQUE */
 function stockStatus(x){
   if(num(x.qty)<=0)return {key:"out",label:"Zerado",cls:"danger"};
@@ -2141,7 +2668,7 @@ exportRepairsCsvBtn.onclick=()=>download("reparos-casa-rural-cambuquira.csv",csv
 ]),"text/csv");
 exportStockCsv.onclick=()=>download("estoque-casa-cambuquira.csv",csv([["Produto","Categoria","Quantidade","Unidade","Mínimo","Validade","Cambuquira",state.otherCity,"São Paulo","Atualizado","Observação"],...state.inventory.map(x=>[x.name,x.category,x.qty,x.unit,x.min,x.expiry,x.priceC,x.priceO,x.priceSP,x.updated,x.note])]),"text/csv");
 exportShoppingCsv.onclick=()=>download("lista-de-compras.csv",csv([["Item","Categoria","Quantidade","Unidade","Cambuquira",state.otherCity,"São Paulo","Menor preço","Cidade mais barata"],...shoppingItems().filter(x=>!x.bought).map(x=>[x.name,x.category,x.buyQty,x.unit,x.priceC,x.priceO,x.priceSP,lowestPrice(x).price,lowestPrice(x).city])]),"text/csv");
-exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:3,exportedAt:new Date().toISOString(),state},null,2),"application/json");
+exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:5,exportedAt:new Date().toISOString(),state},null,2),"application/json");
 importBackupBtn.onclick=()=>backupFile.click();
 backupFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());state={...freshState(),...(p.state||p)};save();renderAll();alert("Backup importado com sucesso.")}catch(err){alert("Arquivo inválido.")}e.target.value=""};
 resetAllBtn.onclick=()=>{if(!confirm("Apagar todos os dados e restaurar a lista inicial?"))return;state=freshState();save();renderAll()};
@@ -2900,6 +3427,693 @@ renderAll();
   };
 
   renderPriceDb();
+})();
+</script>
+
+
+
+<script>
+(() => {
+  const $f = id => document.getElementById(id);
+
+  function ensureFinance(){
+    if(!state.finance || typeof state.finance!=="object"){
+      state.finance={};
+    }
+
+    if(!state.finance.agreement || typeof state.finance.agreement!=="object"){
+      state.finance.agreement={};
+    }
+
+    state.finance.agreement={
+      seller:"Mara",
+      totalValue:0,
+      paidBefore:0,
+      referenceInstallment:0,
+      nextDue:"",
+      notes:"",
+      ...state.finance.agreement
+    };
+
+    if(!Array.isArray(state.finance.housePayments)){
+      state.finance.housePayments=[];
+    }
+
+    if(!Array.isArray(state.finance.bills)){
+      state.finance.bills=[];
+    }
+  }
+
+  function fnum(value){
+    return Number(value)||0;
+  }
+
+  function fbrl(value){
+    return new Intl.NumberFormat("pt-BR",{
+      style:"currency",
+      currency:"BRL"
+    }).format(fnum(value));
+  }
+
+  function fesc(value){
+    return String(value??"").replace(/[&<>"']/g,c=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",
+      '"':"&quot;","'":"&#039;"
+    }[c]));
+  }
+
+  function fnorm(value){
+    return String(value??"")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g,"")
+      .toLowerCase();
+  }
+
+  function fdate(value){
+    if(!value)return "—";
+    try{
+      return new Intl.DateTimeFormat("pt-BR")
+        .format(new Date(value+"T12:00:00"));
+    }catch(error){
+      return value;
+    }
+  }
+
+  function dateOnly(date){
+    const copy=new Date(date);
+    copy.setHours(0,0,0,0);
+    return copy;
+  }
+
+  function daysTo(value){
+    if(!value)return 999999;
+    const now=dateOnly(new Date());
+    const due=dateOnly(new Date(value+"T12:00:00"));
+    return Math.round((due-now)/86400000);
+  }
+
+  function monthKey(value){
+    if(!value)return "";
+    return String(value).slice(0,7);
+  }
+
+  function todayLocal(){
+    const d=new Date();
+    const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+    return local.toISOString().slice(0,10);
+  }
+
+  function nextDueDate(date,recurrence){
+    if(!date || recurrence==="Única")return "";
+
+    const d=new Date(date+"T12:00:00");
+
+    if(recurrence==="Mensal")d.setMonth(d.getMonth()+1);
+    else if(recurrence==="Bimestral")d.setMonth(d.getMonth()+2);
+    else if(recurrence==="Trimestral")d.setMonth(d.getMonth()+3);
+    else if(recurrence==="Semestral")d.setMonth(d.getMonth()+6);
+    else if(recurrence==="Anual")d.setFullYear(d.getFullYear()+1);
+    else return "";
+
+    const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+    return local.toISOString().slice(0,10);
+  }
+
+  function agreementPaidRecorded(){
+    return state.finance.housePayments.reduce(
+      (sum,payment)=>sum+fnum(payment.amount),
+      0
+    );
+  }
+
+  function agreementPaidTotal(){
+    return fnum(state.finance.agreement.paidBefore)+agreementPaidRecorded();
+  }
+
+  function agreementBalance(){
+    return Math.max(
+      0,
+      fnum(state.finance.agreement.totalValue)-agreementPaidTotal()
+    );
+  }
+
+  function billIsPaid(bill){
+    return bill.status==="Pago";
+  }
+
+  function billIsOverdue(bill){
+    return !billIsPaid(bill) && bill.due && daysTo(bill.due)<0;
+  }
+
+  function renderFinanceMetrics(){
+    ensureFinance();
+
+    const pending=state.finance.bills.filter(bill=>!billIsPaid(bill));
+    const overdue=pending.filter(bill=>billIsOverdue(bill));
+    const next30=pending.filter(bill=>{
+      const days=daysTo(bill.due);
+      return days>=0 && days<=30;
+    });
+
+    const currentMonth=todayLocal().slice(0,7);
+    const paidMonth=state.finance.bills
+      .filter(bill=>billIsPaid(bill) && monthKey(bill.paidDate)===currentMonth)
+      .reduce((sum,bill)=>sum+fnum(bill.paidAmount||bill.amount),0);
+
+    $f("financeHouseBalance").textContent=fbrl(agreementBalance());
+    $f("financeHousePaid").textContent=fbrl(agreementPaidTotal());
+    $f("financePendingTotal").textContent=fbrl(
+      pending.reduce((sum,bill)=>sum+fnum(bill.amount),0)
+    );
+    $f("financeOverdueTotal").textContent=fbrl(
+      overdue.reduce((sum,bill)=>sum+fnum(bill.amount),0)
+    );
+    $f("financeNext30Total").textContent=fbrl(
+      next30.reduce((sum,bill)=>sum+fnum(bill.amount),0)
+    );
+    $f("financePaidMonth").textContent=fbrl(paidMonth);
+  }
+
+  function renderAgreement(){
+    ensureFinance();
+
+    const agreement=state.finance.agreement;
+    const recorded=agreementPaidRecorded();
+    const paid=agreementPaidTotal();
+    const total=fnum(agreement.totalValue);
+    const remaining=agreementBalance();
+    const percent=total>0 ? Math.min(100,(paid/total)*100) : 0;
+
+    $f("financeSellerName").textContent=agreement.seller||"Mara";
+    $f("financeAgreementTotal").textContent=fbrl(total);
+    $f("financeOpeningPaid").textContent=fbrl(agreement.paidBefore);
+    $f("financeRecordedPaid").textContent=fbrl(recorded);
+    $f("financeReferenceInstallment").textContent=
+      fnum(agreement.referenceInstallment)>0
+        ? fbrl(agreement.referenceInstallment)
+        : "—";
+    $f("financeNextHouseDue").textContent=fdate(agreement.nextDue);
+    $f("financeProgressText").textContent=
+      total>0 ? `${percent.toFixed(1).replace(".",",")}% quitado` : "Acordo ainda não configurado";
+    $f("financeRemainingText").textContent=`Falta ${fbrl(remaining)}`;
+    $f("financeHouseProgressBar").style.width=percent+"%";
+    $f("financeAgreementNotes").textContent=
+      agreement.notes || "Sem observações cadastradas.";
+
+    $f("financeHouseSubtitle").textContent=
+      total>0
+        ? `Total acordado: ${fbrl(total)} • pago: ${fbrl(paid)} • saldo: ${fbrl(remaining)}`
+        : "Configure o valor total do acordo e o que já foi pago antes deste controle.";
+
+    const payments=state.finance.housePayments
+      .slice()
+      .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+
+    $f("financeHousePaymentCount").textContent=`${payments.length} pagamento(s)`;
+
+    $f("financeHousePaymentsBody").innerHTML=payments.length
+      ? payments.map(payment=>`
+          <tr>
+            <td>${fdate(payment.date)}</td>
+            <td class="money">${fbrl(payment.amount)}</td>
+            <td>${fesc(payment.method||"")}</td>
+            <td>${fesc(payment.note||"")}</td>
+            <td>
+              <button class="btn small finance-edit-house-payment" data-id="${fesc(payment.id)}">Editar</button>
+              <button class="btn small danger finance-delete-house-payment" data-id="${fesc(payment.id)}">Excluir</button>
+            </td>
+          </tr>
+        `).join("")
+      : '<tr><td colspan="5"><div class="empty">Nenhum pagamento registrado neste histórico.</div></td></tr>';
+
+    $f("financeHousePaymentsBody")
+      .querySelectorAll(".finance-edit-house-payment")
+      .forEach(button=>{
+        button.onclick=()=>openHousePayment(button.dataset.id);
+      });
+
+    $f("financeHousePaymentsBody")
+      .querySelectorAll(".finance-delete-house-payment")
+      .forEach(button=>{
+        button.onclick=()=>{
+          if(!confirm("Excluir este pagamento da casa?"))return;
+          state.finance.housePayments=
+            state.finance.housePayments.filter(payment=>payment.id!==button.dataset.id);
+          save();
+          renderFinance();
+        };
+      });
+  }
+
+  function filteredBills(){
+    ensureFinance();
+
+    const search=fnorm($f("financeSearch").value);
+    const category=$f("financeCategoryFilter").value;
+    const status=$f("financeStatusFilter").value;
+
+    return state.finance.bills
+      .filter(bill=>{
+        if(category!=="all" && bill.category!==category)return false;
+
+        if(status==="pending" && billIsPaid(bill))return false;
+        if(status==="paid" && !billIsPaid(bill))return false;
+        if(status==="overdue" && !billIsOverdue(bill))return false;
+
+        if(status==="next30"){
+          const days=daysTo(bill.due);
+          if(billIsPaid(bill) || days<0 || days>30)return false;
+        }
+
+        if(search){
+          const haystack=fnorm(
+            `${bill.title} ${bill.category} ${bill.provider||""} `+
+            `${bill.reference||""} ${bill.notes||""}`
+          );
+          if(!haystack.includes(search))return false;
+        }
+
+        return true;
+      })
+      .sort((a,b)=>{
+        if(billIsPaid(a)!==billIsPaid(b)){
+          return billIsPaid(a)?1:-1;
+        }
+
+        const ad=a.due||"9999-12-31";
+        const bd=b.due||"9999-12-31";
+        return ad.localeCompare(bd);
+      });
+  }
+
+  function billStatusLabel(bill){
+    if(billIsPaid(bill))return `<span class="badge ok">Pago</span>`;
+
+    const days=daysTo(bill.due);
+
+    if(days<0)return `<span class="badge danger">Vencida há ${Math.abs(days)} dia(s)</span>`;
+    if(days===0)return `<span class="badge warn">Vence hoje</span>`;
+    if(days<=7)return `<span class="badge warn">Vence em ${days} dia(s)</span>`;
+
+    return `<span class="badge info">Pendente</span>`;
+  }
+
+  function renderBills(){
+    const bills=filteredBills();
+    const list=$f("financeBillList");
+
+    if(!bills.length){
+      list.innerHTML=`
+        <div class="finance-empty">
+          <strong>Nenhuma conta encontrada.</strong>
+          Cadastre uma conta, serviço do terreno, imposto ou despesa.
+        </div>`;
+      return;
+    }
+
+    list.innerHTML=bills.map(bill=>{
+      const paid=billIsPaid(bill);
+      const overdue=billIsOverdue(bill);
+
+      return `
+        <article class="finance-bill ${paid?"paid":""} ${overdue?"overdue":""}">
+          <div class="finance-bill-title">
+            <strong>${fesc(bill.title)}</strong>
+            <span>
+              ${fesc(bill.category)}
+              ${bill.reference?` • ${fesc(bill.reference)}`:""}
+              ${bill.recurrence && bill.recurrence!=="Única"
+                ? ` • <span class="finance-recurring">${fesc(bill.recurrence)}</span>`
+                : ""}
+            </span>
+          </div>
+
+          <div class="finance-bill-cell finance-provider">
+            Fornecedor
+            <strong>${fesc(bill.provider||"—")}</strong>
+          </div>
+
+          <div class="finance-bill-cell finance-due">
+            ${paid?"Pago em":"Vencimento"}
+            <strong>${fdate(paid?bill.paidDate:bill.due)}</strong>
+          </div>
+
+          <div class="finance-bill-cell">
+            ${paid?"Valor pago":"Valor"}
+            <strong>${fbrl(paid?(bill.paidAmount||bill.amount):bill.amount)}</strong>
+          </div>
+
+          <div class="finance-bill-actions">
+            ${billStatusLabel(bill)}
+            ${paid
+              ? `<button class="btn small finance-reopen-bill" data-id="${fesc(bill.id)}">Reabrir</button>`
+              : `<button class="btn small primary finance-pay-bill" data-id="${fesc(bill.id)}">Pagar</button>`
+            }
+            <button class="btn small finance-edit-bill" data-id="${fesc(bill.id)}">Editar</button>
+            <button class="btn small danger finance-delete-bill" data-id="${fesc(bill.id)}">Excluir</button>
+          </div>
+        </article>`;
+    }).join("");
+
+    list.querySelectorAll(".finance-pay-bill").forEach(button=>{
+      button.onclick=()=>openPayBill(button.dataset.id);
+    });
+
+    list.querySelectorAll(".finance-edit-bill").forEach(button=>{
+      button.onclick=()=>openBill(button.dataset.id);
+    });
+
+    list.querySelectorAll(".finance-delete-bill").forEach(button=>{
+      button.onclick=()=>{
+        if(!confirm("Excluir esta conta/despesa?"))return;
+        state.finance.bills=
+          state.finance.bills.filter(bill=>bill.id!==button.dataset.id);
+        save();
+        renderFinance();
+      };
+    });
+
+    list.querySelectorAll(".finance-reopen-bill").forEach(button=>{
+      button.onclick=()=>{
+        const bill=state.finance.bills.find(item=>item.id===button.dataset.id);
+        if(!bill)return;
+
+        bill.status="Pendente";
+        bill.paidDate="";
+        bill.paidAmount=0;
+        bill.paymentMethod="";
+        save();
+        renderFinance();
+      };
+    });
+  }
+
+  function renderFinance(){
+    ensureFinance();
+    renderFinanceMetrics();
+    renderAgreement();
+    renderBills();
+  }
+
+  function openAgreement(){
+    ensureFinance();
+
+    const agreement=state.finance.agreement;
+
+    $f("financeSellerInput").value=agreement.seller||"Mara";
+    $f("financeAgreementTotalInput").value=fnum(agreement.totalValue);
+    $f("financePaidBeforeInput").value=fnum(agreement.paidBefore);
+    $f("financeReferenceInstallmentInput").value=fnum(agreement.referenceInstallment);
+    $f("financeNextHouseDueInput").value=agreement.nextDue||"";
+    $f("financeAgreementNotesInput").value=agreement.notes||"";
+
+    $f("financeAgreementDialog").showModal();
+  }
+
+  function openHousePayment(paymentId=""){
+    ensureFinance();
+
+    $f("financeHousePaymentForm").reset();
+    $f("financeHousePaymentId").value="";
+    $f("financeHousePaymentDate").value=todayLocal();
+    $f("financeHousePaymentDialogTitle").textContent="Registrar pagamento da casa";
+
+    if(paymentId){
+      const payment=
+        state.finance.housePayments.find(item=>item.id===paymentId);
+
+      if(!payment)return;
+
+      $f("financeHousePaymentDialogTitle").textContent="Editar pagamento da casa";
+      $f("financeHousePaymentId").value=payment.id;
+      $f("financeHousePaymentDate").value=payment.date||todayLocal();
+      $f("financeHousePaymentAmount").value=fnum(payment.amount);
+      $f("financeHousePaymentMethod").value=payment.method||"Pix";
+      $f("financeHousePaymentNote").value=payment.note||"";
+    }
+
+    $f("financeHousePaymentDialog").showModal();
+  }
+
+  function openBill(billId="",presetCategory=""){
+    ensureFinance();
+
+    $f("financeBillForm").reset();
+    $f("financeBillId").value="";
+    $f("financeBillDialogTitle").textContent="Nova conta a pagar";
+    $f("financeBillAmount").value=0;
+    $f("financeBillDue").value=todayLocal();
+    $f("financeBillRecurrence").value="Única";
+
+    if(presetCategory){
+      $f("financeBillCategory").value=presetCategory;
+      $f("financeBillTitle").value=presetCategory;
+    }
+
+    if(billId){
+      const bill=state.finance.bills.find(item=>item.id===billId);
+      if(!bill)return;
+
+      $f("financeBillDialogTitle").textContent="Editar conta";
+      $f("financeBillId").value=bill.id;
+      $f("financeBillTitle").value=bill.title||"";
+      $f("financeBillCategory").value=bill.category||"Outros";
+      $f("financeBillProvider").value=bill.provider||"";
+      $f("financeBillAmount").value=fnum(bill.amount);
+      $f("financeBillDue").value=bill.due||todayLocal();
+      $f("financeBillRecurrence").value=bill.recurrence||"Única";
+      $f("financeBillReference").value=bill.reference||"";
+      $f("financeBillNotes").value=bill.notes||"";
+    }
+
+    $f("financeBillDialog").showModal();
+  }
+
+  function openPayBill(billId){
+    const bill=state.finance.bills.find(item=>item.id===billId);
+    if(!bill)return;
+
+    $f("financePayBillForm").reset();
+    $f("financePayBillId").value=bill.id;
+    $f("financePayBillDate").value=todayLocal();
+    $f("financePayBillAmount").value=fnum(bill.amount);
+    $f("financePayBillMethod").value="Pix";
+    $f("financeCreateNextRecurring").checked=
+      !!bill.recurrence && bill.recurrence!=="Única";
+
+    $f("financePayBillDialog").showModal();
+  }
+
+  $f("financeAgreementForm").addEventListener("submit",event=>{
+    if(event.submitter?.value==="cancel")return;
+    event.preventDefault();
+
+    state.finance.agreement={
+      seller:$f("financeSellerInput").value.trim()||"Mara",
+      totalValue:fnum($f("financeAgreementTotalInput").value),
+      paidBefore:fnum($f("financePaidBeforeInput").value),
+      referenceInstallment:fnum($f("financeReferenceInstallmentInput").value),
+      nextDue:$f("financeNextHouseDueInput").value,
+      notes:$f("financeAgreementNotesInput").value.trim()
+    };
+
+    save();
+    renderFinance();
+    $f("financeAgreementDialog").close();
+  });
+
+  $f("financeHousePaymentForm").addEventListener("submit",event=>{
+    if(event.submitter?.value==="cancel")return;
+    event.preventDefault();
+
+    const id=$f("financeHousePaymentId").value;
+    const data={
+      date:$f("financeHousePaymentDate").value,
+      amount:fnum($f("financeHousePaymentAmount").value),
+      method:$f("financeHousePaymentMethod").value,
+      note:$f("financeHousePaymentNote").value.trim()
+    };
+
+    if(id){
+      const payment=
+        state.finance.housePayments.find(item=>item.id===id);
+      if(payment)Object.assign(payment,data);
+    }else{
+      state.finance.housePayments.push({
+        id:uid(),
+        ...data,
+        createdAt:new Date().toISOString()
+      });
+    }
+
+    save();
+    renderFinance();
+    $f("financeHousePaymentDialog").close();
+  });
+
+  $f("financeBillForm").addEventListener("submit",event=>{
+    if(event.submitter?.value==="cancel")return;
+    event.preventDefault();
+
+    const id=$f("financeBillId").value;
+    const data={
+      title:$f("financeBillTitle").value.trim(),
+      category:$f("financeBillCategory").value,
+      provider:$f("financeBillProvider").value.trim(),
+      amount:fnum($f("financeBillAmount").value),
+      due:$f("financeBillDue").value,
+      recurrence:$f("financeBillRecurrence").value,
+      reference:$f("financeBillReference").value.trim(),
+      notes:$f("financeBillNotes").value.trim()
+    };
+
+    if(id){
+      const bill=state.finance.bills.find(item=>item.id===id);
+      if(bill)Object.assign(bill,data);
+    }else{
+      state.finance.bills.push({
+        id:uid(),
+        status:"Pendente",
+        paidDate:"",
+        paidAmount:0,
+        paymentMethod:"",
+        createdAt:new Date().toISOString(),
+        ...data
+      });
+    }
+
+    save();
+    renderFinance();
+    $f("financeBillDialog").close();
+  });
+
+  $f("financePayBillForm").addEventListener("submit",event=>{
+    if(event.submitter?.value==="cancel")return;
+    event.preventDefault();
+
+    const bill=
+      state.finance.bills.find(item=>item.id===$f("financePayBillId").value);
+
+    if(!bill)return;
+
+    bill.status="Pago";
+    bill.paidDate=$f("financePayBillDate").value;
+    bill.paidAmount=fnum($f("financePayBillAmount").value);
+    bill.paymentMethod=$f("financePayBillMethod").value;
+
+    const shouldCreateNext=
+      $f("financeCreateNextRecurring").checked &&
+      bill.recurrence &&
+      bill.recurrence!=="Única";
+
+    if(shouldCreateNext){
+      const nextDue=nextDueDate(bill.due,bill.recurrence);
+
+      if(nextDue){
+        const duplicateExists=state.finance.bills.some(item=>
+          item.id!==bill.id &&
+          item.title===bill.title &&
+          item.due===nextDue &&
+          item.status!=="Pago"
+        );
+
+        if(!duplicateExists){
+          state.finance.bills.push({
+            ...bill,
+            id:uid(),
+            status:"Pendente",
+            due:nextDue,
+            paidDate:"",
+            paidAmount:0,
+            paymentMethod:"",
+            reference:"",
+            createdAt:new Date().toISOString()
+          });
+        }
+      }
+    }
+
+    save();
+    renderFinance();
+    $f("financePayBillDialog").close();
+  });
+
+  $f("financeEditAgreementBtn").onclick=openAgreement;
+  $f("financeHousePaymentBtn").onclick=()=>openHousePayment();
+  $f("financeAddHousePaymentBtn").onclick=()=>openHousePayment();
+  $f("financeAddBillBtn").onclick=()=>openBill();
+
+  $f("financeSearch").oninput=renderBills;
+  $f("financeCategoryFilter").onchange=renderBills;
+  $f("financeStatusFilter").onchange=renderBills;
+
+  $f("financeClearFiltersBtn").onclick=()=>{
+    $f("financeSearch").value="";
+    $f("financeCategoryFilter").value="all";
+    $f("financeStatusFilter").value="pending";
+    renderBills();
+  };
+
+  $f("financeTemplatesBtn").onclick=()=>{
+    if(!confirm(
+      "Adicionar modelos de Água, Luz, Internet, Capinagem, Podas, Pulverização e IPTU? "+
+      "Os valores e vencimentos poderão ser editados."
+    ))return;
+
+    const templates=[
+      ["Água","Água","Mensal"],
+      ["Luz","Luz","Mensal"],
+      ["Internet","Internet","Mensal"],
+      ["Capinagem do terreno","Terreno — Capinagem","Trimestral"],
+      ["Podas do terreno","Terreno — Podas","Semestral"],
+      ["Pulverização contra pragas e insetos","Terreno — Pulverização","Trimestral"],
+      ["IPTU","IPTU","Anual"]
+    ];
+
+    let added=0;
+
+    templates.forEach(([title,category,recurrence])=>{
+      const exists=state.finance.bills.some(
+        bill=>bill.title===title && bill.status!=="Pago"
+      );
+
+      if(exists)return;
+
+      state.finance.bills.push({
+        id:uid(),
+        title,
+        category,
+        provider:"",
+        amount:0,
+        due:todayLocal(),
+        recurrence,
+        reference:"",
+        notes:"Modelo criado automaticamente. Edite o vencimento e o valor.",
+        status:"Pendente",
+        paidDate:"",
+        paidAmount:0,
+        paymentMethod:"",
+        createdAt:new Date().toISOString()
+      });
+
+      added++;
+    });
+
+    save();
+    renderFinance();
+    alert(`${added} conta(s) padrão adicionada(s).`);
+  };
+
+  /* Atualiza Financeiro também quando o sistema principal chamar renderAll(). */
+  const originalRenderAll=renderAll;
+  renderAll=function(){
+    originalRenderAll();
+    renderFinance();
+  };
+
+  ensureFinance();
+  save();
+  renderFinance();
 })();
 </script>
 
