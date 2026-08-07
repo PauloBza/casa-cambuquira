@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Completo — V6</title>
+<title>Casa Cambuquira — Painel Completo — V7</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1009,8 +1009,78 @@ footer{
   .finance-payee-select-row{grid-template-columns:1fr}
 }
 
+
+/* ===== DADOS DE PAGAMENTO DIRETO NA CONTA — V7 ===== */
+.finance-bill-payment{
+  grid-column:1/-1;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:9px 10px;
+  margin-top:1px;
+  border-radius:11px;
+  border:1px solid rgba(255,255,255,.07);
+  background:#161b24;
+}
+.finance-bill-payment-main{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  align-items:center;
+  min-width:0;
+}
+.finance-bill-payment-item{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  min-width:0;
+  font-size:10px;
+}
+.finance-bill-payment-item span{
+  color:var(--muted);
+  white-space:nowrap;
+}
+.finance-bill-payment-item strong{
+  color:#fff;
+  font-size:11px;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  max-width:360px;
+}
+.finance-bill-payment-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.finance-bill-payment-empty{
+  color:var(--muted);
+  font-size:10px;
+}
+@media(max-width:760px){
+  .finance-bill-payment{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .finance-bill-payment-main{
+    display:grid;
+    grid-template-columns:1fr;
+    width:100%;
+    gap:6px;
+  }
+  .finance-bill-payment-actions{
+    width:100%;
+  }
+  .finance-bill-payment-actions .btn{
+    flex:1;
+  }
+}
+
 </style>
-<!-- CASA CAMBUQUIRA V6 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
+<!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 </head>
 <body>
 <header>
@@ -2903,7 +2973,7 @@ exportRepairsCsvBtn.onclick=()=>download("reparos-casa-rural-cambuquira.csv",csv
 ]),"text/csv");
 exportStockCsv.onclick=()=>download("estoque-casa-cambuquira.csv",csv([["Produto","Categoria","Quantidade","Unidade","Mínimo","Validade","Cambuquira",state.otherCity,"São Paulo","Atualizado","Observação"],...state.inventory.map(x=>[x.name,x.category,x.qty,x.unit,x.min,x.expiry,x.priceC,x.priceO,x.priceSP,x.updated,x.note])]),"text/csv");
 exportShoppingCsv.onclick=()=>download("lista-de-compras.csv",csv([["Item","Categoria","Quantidade","Unidade","Cambuquira",state.otherCity,"São Paulo","Menor preço","Cidade mais barata"],...shoppingItems().filter(x=>!x.bought).map(x=>[x.name,x.category,x.buyQty,x.unit,x.priceC,x.priceO,x.priceSP,lowestPrice(x).price,lowestPrice(x).city])]),"text/csv");
-exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:6,exportedAt:new Date().toISOString(),state},null,2),"application/json");
+exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:7,exportedAt:new Date().toISOString(),state},null,2),"application/json");
 importBackupBtn.onclick=()=>backupFile.click();
 backupFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());state={...freshState(),...(p.state||p)};save();renderAll();alert("Backup importado com sucesso.")}catch(err){alert("Arquivo inválido.")}e.target.value=""};
 resetAllBtn.onclick=()=>{if(!confirm("Apagar todos os dados e restaurar a lista inicial?"))return;state=freshState();save();renderAll()};
@@ -4232,6 +4302,96 @@ renderAll();
     return `<span class="badge info">Pendente</span>`;
   }
 
+
+  function billPaymentData(bill){
+    const payee=getPayee(bill.payeeId);
+
+    const method=
+      bill.expectedPaymentMethod ||
+      payee?.preferredMethod ||
+      "";
+
+    const pixKey=payee?.pixKey || "";
+    const pixType=payee?.pixType || "";
+
+    const bankParts=[
+      payee?.bank || "",
+      payee?.agency ? `Ag. ${payee.agency}` : "",
+      payee?.account ? `Conta ${payee.account}` : "",
+      payee?.accountHolder ? `Titular: ${payee.accountHolder}` : ""
+    ].filter(Boolean);
+
+    return {
+      payee,
+      method,
+      pixKey,
+      pixType,
+      bankText:bankParts.join(" • "),
+      instructions:payee?.paymentInstructions || ""
+    };
+  }
+
+  function billPaymentCopyText(bill){
+    const data=billPaymentData(bill);
+    const lines=[];
+
+    if(data.payee?.name)lines.push(`Favorecido: ${data.payee.name}`);
+    if(data.method)lines.push(`Forma de pagamento: ${data.method}`);
+    if(data.pixKey)lines.push(`PIX${data.pixType?` (${data.pixType})`:""}: ${data.pixKey}`);
+    if(data.bankText)lines.push(`Banco: ${data.bankText}`);
+    if(data.instructions)lines.push(`Instruções: ${data.instructions}`);
+
+    return lines.join("\n");
+  }
+
+  function billPaymentStripHtml(bill){
+    const data=billPaymentData(bill);
+
+    if(!data.method && !data.pixKey && !data.bankText && !data.instructions){
+      return `
+        <div class="finance-bill-payment">
+          <div class="finance-bill-payment-empty">
+            Forma de pagamento ainda não cadastrada para esta conta.
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div class="finance-bill-payment">
+        <div class="finance-bill-payment-main">
+          ${data.method?`
+            <div class="finance-bill-payment-item">
+              <span>Forma:</span>
+              <strong>${fesc(data.method)}</strong>
+            </div>`:""}
+
+          ${data.pixKey?`
+            <div class="finance-bill-payment-item">
+              <span>PIX:</span>
+              <strong>${fesc(data.pixType?`${data.pixType}: ${data.pixKey}`:data.pixKey)}</strong>
+            </div>`:""}
+
+          ${data.bankText?`
+            <div class="finance-bill-payment-item">
+              <span>Banco:</span>
+              <strong>${fesc(data.bankText)}</strong>
+            </div>`:""}
+        </div>
+
+        <div class="finance-bill-payment-actions">
+          ${data.pixKey?`
+            <button class="btn small finance-copy-bill-pix" data-id="${fesc(bill.id)}">
+              Copiar PIX
+            </button>`:""}
+
+          ${(data.method || data.pixKey || data.bankText || data.instructions)?`
+            <button class="btn small finance-copy-bill-payment" data-id="${fesc(bill.id)}">
+              Copiar dados
+            </button>`:""}
+        </div>
+      </div>`;
+  }
+
   function renderBills(){
     const bills=filteredBills();
     const list=$f("financeBillList");
@@ -4287,8 +4447,35 @@ renderAll();
             <button class="btn small finance-edit-bill" data-id="${fesc(bill.id)}">Editar</button>
             <button class="btn small danger finance-delete-bill" data-id="${fesc(bill.id)}">Excluir</button>
           </div>
+
+          ${billPaymentStripHtml(bill)}
         </article>`;
     }).join("");
+
+
+    list.querySelectorAll(".finance-copy-bill-pix").forEach(button=>{
+      button.onclick=()=>{
+        const bill=state.finance.bills.find(item=>item.id===button.dataset.id);
+        if(!bill)return;
+
+        const data=billPaymentData(bill);
+        if(data.pixKey){
+          copyFinanceText(data.pixKey,"Chave PIX");
+        }
+      };
+    });
+
+    list.querySelectorAll(".finance-copy-bill-payment").forEach(button=>{
+      button.onclick=()=>{
+        const bill=state.finance.bills.find(item=>item.id===button.dataset.id);
+        if(!bill)return;
+
+        const text=billPaymentCopyText(bill);
+        if(text){
+          copyFinanceText(text,"Dados de pagamento");
+        }
+      };
+    });
 
     list.querySelectorAll(".finance-pay-bill").forEach(button=>{
       button.onclick=()=>openPayBill(button.dataset.id);
