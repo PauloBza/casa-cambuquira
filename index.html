@@ -1186,7 +1186,7 @@ footer{
   <h1>Casa Cambuquira</h1>
   <div class="subtitle">Painel visual da casa: reparos, fotos, estoque, compras e organização rural.</div>
   <div class="tabs">
-    <button class="tab" data-panel="dashboardPanel">Resumo</button>
+    <button class="tab active" data-panel="dashboardPanel">Resumo</button>
     <button class="tab" data-panel="checklistPanel">Checklist da casa</button>
     <button class="tab" data-panel="repairsPanel">Reparos</button>
     <button class="tab" data-panel="photosPanel">Fotos</button>
@@ -1194,14 +1194,14 @@ footer{
     <button class="tab" data-panel="priceDbPanel">Preços &amp; Compras</button>
     <button class="tab" data-panel="financePanel">Financeiro</button>
     <button class="tab" data-panel="eventsPanel">Especiais</button>
-    <button class="tab active" data-panel="backupPanel">Backup</button>
+    <button class="tab" data-panel="backupPanel">Backup</button>
     <button class="tab" data-panel="supportPanel">Suporte</button>
   </div>
 </div>
 </header>
 
 <main>
-<section id="dashboardPanel" class="panel">
+<section id="dashboardPanel" class="panel active">
   <div class="cards">
     <div class="metric"><span>Itens da casa</span><strong id="dashHouseTotal">339</strong></div>
     <div class="metric alert"><span>Faltando na casa</span><strong id="dashHouseMissing">164</strong></div>
@@ -2571,7 +2571,7 @@ footer{
   <div id="eventsList"><div class="empty">Nenhuma lista especial criada.</div></div>
 </section>
 
-<section id="backupPanel" class="panel active">
+<section id="backupPanel" class="panel">
   <div class="card" style="margin-bottom:12px">
     <div class="section-title"><h2>Banco compartilhado automático</h2></div>
     <p>Na V10, todos os aparelhos usam a <strong>mesma base no Supabase</strong>. Não há login. Ao abrir a página, os dados são carregados automaticamente; ao alterar algo, a mudança é enviada para a nuvem e os outros aparelhos recebem a atualização.</p>
