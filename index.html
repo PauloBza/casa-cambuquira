@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.10 Salvamento Confiável</title>
+<title>Casa Cambuquira — V10.11 Salvar Preço Corrigido</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -2044,6 +2044,85 @@ footer{
 .casa-save-toast.err .casa-save-toast-dot{background:#ff5c5c}
 .casa-save-toast.warn .casa-save-toast-dot{background:#f59e0b}
 
+
+/* ===== V10.11 — MODAL DE PREÇO SIMPLES E SEM TRAVAR ===== */
+#priceQuoteDialog{
+  width:min(620px,calc(100vw - 24px))!important;
+  max-width:none!important;
+  max-height:94vh!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+#priceQuoteDialog .price-simple-dialog{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  max-height:94vh!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:16px!important;
+}
+#priceQuoteDialog .form-cols,
+#priceQuoteDialog .price-inline,
+#priceQuoteDialog .price-optional-grid .form-cols{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  width:100%!important;
+  gap:9px!important;
+}
+#priceQuoteDialog label,
+#priceQuoteDialog input,
+#priceQuoteDialog select,
+#priceQuoteDialog textarea,
+#priceQuoteDialog details,
+#priceQuoteDialog .price-fixed-product,
+#priceQuoteDialog .price-dialog-hint{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+#priceQuoteDialog .dialog-actions{
+  position:sticky!important;
+  bottom:-16px!important;
+  margin:14px -16px -16px!important;
+  padding:11px 16px!important;
+  background:rgba(15,18,24,.98)!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+  z-index:20!important;
+}
+#priceQuoteDialog .dialog-actions .btn{
+  min-width:130px!important;
+}
+#priceQuoteDialog::-webkit-scrollbar,
+#priceQuoteDialog .price-simple-dialog::-webkit-scrollbar{
+  width:9px!important;
+  height:0!important;
+}
+#priceQuoteDialog .price-simple-dialog::-webkit-scrollbar-thumb{
+  background:#343a46;
+  border-radius:999px;
+}
+@media(max-width:620px){
+  #priceQuoteDialog{
+    width:calc(100vw - 10px)!important;
+    max-height:96vh!important;
+    border-radius:12px!important;
+  }
+  #priceQuoteDialog .price-simple-dialog{
+    max-height:96vh!important;
+    padding:11px!important;
+  }
+  #priceQuoteDialog .dialog-actions{
+    bottom:-11px!important;
+    margin:12px -11px -11px!important;
+    padding:9px 11px!important;
+  }
+  #priceQuoteDialog .dialog-actions .btn{
+    flex:1!important;
+    min-width:0!important;
+  }
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -3896,7 +3975,7 @@ footer{
 </dialog>
 
 <dialog id="priceQuoteDialog">
-  <form method="dialog" id="priceQuoteForm" class="dialog-body price-dialog-large price-simple-dialog">
+  <form id="priceQuoteForm" class="dialog-body price-dialog-large price-simple-dialog" novalidate>
     <h2 id="priceQuoteTitle">Adicionar preço</h2>
     <input id="priceQuoteId" type="hidden">
 
@@ -3905,7 +3984,7 @@ footer{
       <strong id="priceQuoteProductName">—</strong>
       <small id="priceQuoteProductMeta"></small>
     </div>
-    <select id="priceQuoteProduct" required hidden><option value="">Selecione...</option></select>
+    <select id="priceQuoteProduct" hidden><option value="">Selecione...</option></select>
 
     <div class="form-cols">
       <label>Onde você viu ou pagou esse preço?
@@ -3923,10 +4002,10 @@ footer{
 
     <div class="form-cols">
       <label>Preço total (R$)
-        <input id="priceQuotePrice" type="number" min="0.01" step="0.01" placeholder="Ex.: 16,00" required>
+        <input id="priceQuotePrice" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 16,00">
       </label>
       <label>Quantidade correspondente a esse preço
-        <input id="priceQuotePackageQty" type="number" min="0.0001" step="0.0001" value="1" required>
+        <input id="priceQuotePackageQty" type="text" inputmode="decimal" autocomplete="off" value="1" placeholder="Ex.: 200 ou 2,5">
       </label>
     </div>
 
@@ -3950,7 +4029,7 @@ footer{
             <input id="priceQuoteCityDetail" placeholder="Ex.: Varginha / Mercado Livre">
           </label>
           <label>Frete ou custo adicional
-            <input id="priceQuoteFreight" type="number" min="0" step="0.01" value="0">
+            <input id="priceQuoteFreight" type="text" inputmode="decimal" autocomplete="off" value="0" placeholder="Ex.: 0 ou 12,50">
           </label>
         </div>
         <label>Link, telefone ou referência
@@ -3967,8 +4046,8 @@ footer{
     </div>
 
     <div class="dialog-actions">
-      <button value="cancel" class="btn">Cancelar</button>
-      <button value="save" class="btn primary">Salvar preço</button>
+      <button type="button" id="priceQuoteCancelBtn" class="btn">Cancelar</button>
+      <button type="button" id="priceQuoteSaveBtn" class="btn primary">Salvar preço</button>
     </div>
   </form>
 </dialog>
@@ -5793,6 +5872,32 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
 
   const numPriceDb = value => Number(value) || 0;
 
+  const parsePtNumber = value => {
+    if(typeof value === "number") return Number.isFinite(value) ? value : 0;
+    let s=String(value ?? "").trim();
+    if(!s) return 0;
+
+    s=s.replace(/\s+/g,"").replace(/^R\$/i,"");
+
+    const hasComma=s.includes(",");
+    const hasDot=s.includes(".");
+
+    if(hasComma && hasDot){
+      // O último separador digitado é tratado como decimal.
+      if(s.lastIndexOf(",") > s.lastIndexOf(".")){
+        s=s.replace(/\./g,"").replace(",",".");
+      }else{
+        s=s.replace(/,/g,"");
+      }
+    }else if(hasComma){
+      s=s.replace(",",".");
+    }
+
+    s=s.replace(/[^0-9.+-]/g,"");
+    const n=Number(s);
+    return Number.isFinite(n) ? n : 0;
+  };
+
   const roundQtyPriceDb = (value, digits=3) => {
     const factor = 10 ** digits;
     return Math.round((numPriceDb(value) + Number.EPSILON) * factor) / factor;
@@ -6561,9 +6666,9 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
         $("priceQuoteId").value=quote.id;
         $("priceQuoteRegion").value=quoteRegion(quote);
         $("priceQuoteStore").value=quote.store||"";
-        $("priceQuotePackageQty").value=quote.packageQty||1;
-        $("priceQuotePrice").value=quote.price||0;
-        $("priceQuoteFreight").value=quote.freight||0;
+        $("priceQuotePackageQty").value=String(quote.packageQty||1).replace(".",",");
+        $("priceQuotePrice").value=String(quote.price||"").replace(".",",");
+        $("priceQuoteFreight").value=String(quote.freight||0).replace(".",",");
         $("priceQuoteDate").value=quote.date||todayPriceDb();
         $("priceQuoteLink").value=quote.link||"";
         $("priceQuoteNotes").value=quote.notes||"";
@@ -6619,9 +6724,9 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
 
   function updateQuotePreview(){
     const product = productById($("priceQuoteProduct").value);
-    const packageQty = numPriceDb($("priceQuotePackageQty").value);
-    const price = numPriceDb($("priceQuotePrice").value);
-    const freight = numPriceDb($("priceQuoteFreight").value);
+    const packageQty = parsePtNumber($("priceQuotePackageQty").value);
+    const price = parsePtNumber($("priceQuotePrice").value);
+    const freight = parsePtNumber($("priceQuoteFreight").value);
 
     if(!product || packageQty <= 0){
       $("priceQuotePreview").textContent =
@@ -6669,20 +6774,19 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
     $("priceProductDialog").close();
   });
 
-  $("priceQuoteForm").addEventListener("submit", async event => {
-    if(event.submitter?.value === "cancel") return;
-    event.preventDefault();
-
+  async function saveCurrentPriceQuote(){
     const productId = $("priceQuoteProduct").value;
     const product=productById(productId);
+
     if(!productId || !product){
       alert("Não foi possível identificar o produto. Feche esta janela e tente novamente.");
       return;
     }
 
     const store=$("priceQuoteStore").value.trim();
-    const packageQty=numPriceDb($("priceQuotePackageQty").value);
-    const price=numPriceDb($("priceQuotePrice").value);
+    const packageQty=parsePtNumber($("priceQuotePackageQty").value);
+    const price=parsePtNumber($("priceQuotePrice").value);
+    const freight=parsePtNumber($("priceQuoteFreight").value);
 
     if(!store){
       $("priceQuoteStore").focus();
@@ -6691,18 +6795,19 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
     }
     if(!(price>0)){
       $("priceQuotePrice").focus();
-      alert("Informe um preço maior que zero.");
+      alert("Informe o preço. Você pode digitar, por exemplo, 16,00 ou 16.00.");
       return;
     }
     if(!(packageQty>0)){
       $("priceQuotePackageQty").focus();
-      alert("Informe a quantidade correspondente a esse preço.");
+      alert("Informe a quantidade correspondente ao preço. Ex.: 200, 250 ou 2,5.");
       return;
     }
 
     const quoteId=$("priceQuoteId").value;
     const region=$("priceQuoteRegion").value;
     const cityDetail=$("priceQuoteCityDetail").value.trim();
+
     const quoteData={
       productId,
       store,
@@ -6710,8 +6815,8 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
       city: cityDetail || region,
       packageQty,
       price,
-      freight: numPriceDb($("priceQuoteFreight").value),
-      date: $("priceQuoteDate").value,
+      freight,
+      date: $("priceQuoteDate").value || todayPriceDb(),
       kind: $("priceQuoteKind").value,
       link: $("priceQuoteLink").value.trim(),
       notes: $("priceQuoteNotes").value.trim()
@@ -6719,7 +6824,11 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
 
     if(quoteId){
       const quote=priceDb.quotes.find(q=>q.id===quoteId);
-      if(quote)Object.assign(quote,quoteData,{updatedAt:new Date().toISOString()});
+      if(!quote){
+        alert("Não encontrei este preço para editar. Feche a janela e tente novamente.");
+        return;
+      }
+      Object.assign(quote,quoteData,{updatedAt:new Date().toISOString()});
     }else{
       priceDb.quotes.push({
         id: uidPriceDb(),
@@ -6728,21 +6837,47 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
       });
     }
 
+    // 1. grava imediatamente no navegador
     savePriceDb();
+    // 2. redesenha a tela antes de qualquer chamada de rede
     renderPriceDb();
+    // 3. fecha o popup e confirma visualmente
     $("priceQuoteDialog").close();
-    showCasaSaveToast(`Preço de ${product.name} salvo. Sincronizando…`,"warn",0);
+    showCasaSaveToast(
+      `${product.name}: ${brlPriceDb(price)} salvo. Sincronizando…`,
+      "warn",
+      0
+    );
 
     try{
       const cloudResult=await window.CasaCloud?.flushNow?.("price_db");
       if(cloudResult===false){
-        showCasaSaveToast("Preço salvo neste aparelho. Nuvem será sincronizada quando a conexão voltar.","warn",4200);
+        showCasaSaveToast(
+          "Preço salvo neste aparelho. A nuvem será sincronizada quando a conexão voltar.",
+          "warn",
+          4200
+        );
       }else{
-        showCasaSaveToast("Preço salvo e sincronizado ✓","ok",2400);
+        showCasaSaveToast("Preço salvo e sincronizado ✓","ok",2600);
       }
     }catch(error){
       console.error(error);
-      showCasaSaveToast("Preço salvo neste aparelho. Falha momentânea ao sincronizar a nuvem.","warn",4200);
+      showCasaSaveToast(
+        "Preço salvo neste aparelho. Falha momentânea ao sincronizar a nuvem.",
+        "warn",
+        4200
+      );
+    }
+  }
+
+  $("priceQuoteSaveBtn").onclick=saveCurrentPriceQuote;
+  $("priceQuoteCancelBtn").onclick=()=>$("priceQuoteDialog").close();
+
+  // Enter também salva, sem depender da validação nativa do navegador.
+  $("priceQuoteForm").addEventListener("keydown",event=>{
+    if(event.key==="Enter" && event.target.tagName!=="TEXTAREA"){
+      event.preventDefault();
+      saveCurrentPriceQuote();
     }
   });
 
