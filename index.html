@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.9 Popup de Preços Melhorado</title>
+<title>Casa Cambuquira — V10.10 Salvamento Confiável</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1930,6 +1930,120 @@ footer{
   }
 }
 
+
+/* ===== V10.10 — POPUP DE PREÇO E SALVAMENTO CONFIÁVEL ===== */
+#priceQuoteDialog{
+  width:min(760px,calc(100vw - 28px))!important;
+  max-width:none!important;
+  max-height:92vh!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border-radius:18px!important;
+  background:#0f1218!important;
+}
+#priceQuoteDialog .price-simple-dialog{
+  width:100%!important;
+  max-width:none!important;
+  max-height:92vh!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:18px!important;
+  background:#0f1218!important;
+}
+#priceQuoteDialog .form-cols{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:10px!important;
+}
+#priceQuoteDialog label,
+#priceQuoteDialog input,
+#priceQuoteDialog select,
+#priceQuoteDialog textarea,
+#priceQuoteDialog .price-fixed-product,
+#priceQuoteDialog .price-optional-details,
+#priceQuoteDialog .price-dialog-hint{
+  min-width:0!important;
+  max-width:100%!important;
+  width:100%!important;
+}
+#priceQuoteDialog input,
+#priceQuoteDialog select,
+#priceQuoteDialog textarea{
+  box-sizing:border-box!important;
+}
+#priceQuoteDialog .dialog-actions{
+  position:sticky;
+  bottom:-18px;
+  z-index:8;
+  margin:14px -18px -18px!important;
+  padding:12px 18px!important;
+  background:rgba(15,18,24,.98)!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
+}
+#priceQuoteDialog .dialog-actions .btn{
+  min-width:120px;
+}
+#priceQuoteDialog .price-fixed-product{
+  margin-bottom:12px!important;
+}
+#priceQuoteDialog .price-dialog-hint{
+  line-height:1.5;
+}
+@media(max-width:620px){
+  #priceQuoteDialog{
+    width:calc(100vw - 12px)!important;
+    max-height:95vh!important;
+    border-radius:14px!important;
+  }
+  #priceQuoteDialog .price-simple-dialog{
+    max-height:95vh!important;
+    padding:12px!important;
+  }
+  #priceQuoteDialog .form-cols{
+    grid-template-columns:1fr!important;
+  }
+  #priceQuoteDialog .dialog-actions{
+    bottom:-12px;
+    margin:12px -12px -12px!important;
+    padding:10px 12px!important;
+  }
+  #priceQuoteDialog .dialog-actions .btn{
+    flex:1;
+    min-width:0;
+  }
+}
+
+/* Feedback de gravação */
+.casa-save-toast{
+  position:fixed;
+  z-index:99999;
+  top:18px;
+  right:18px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-height:42px;
+  max-width:min(390px,calc(100vw - 28px));
+  padding:9px 13px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:#171b23;
+  color:#fff;
+  box-shadow:0 16px 45px rgba(0,0,0,.38);
+  font-size:12px;
+  font-weight:700;
+}
+.casa-save-toast[hidden]{display:none!important}
+.casa-save-toast-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#f59e0b;
+  flex:0 0 auto;
+}
+.casa-save-toast.ok .casa-save-toast-dot{background:#2ecc71}
+.casa-save-toast.err .casa-save-toast-dot{background:#ff5c5c}
+.casa-save-toast.warn .casa-save-toast-dot{background:#f59e0b}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -1937,6 +2051,10 @@ footer{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
+<div id="casaSaveToast" class="casa-save-toast" hidden>
+  <span class="casa-save-toast-dot"></span>
+  <span id="casaSaveToastText">Salvando…</span>
+</div>
 <header>
 <div class="header-inner">
   <h1>Casa Cambuquira</h1>
@@ -3805,7 +3923,7 @@ footer{
 
     <div class="form-cols">
       <label>Preço total (R$)
-        <input id="priceQuotePrice" type="number" min="0" step="0.01" value="0" required>
+        <input id="priceQuotePrice" type="number" min="0.01" step="0.01" placeholder="Ex.: 16,00" required>
       </label>
       <label>Quantidade correspondente a esse preço
         <input id="priceQuotePackageQty" type="number" min="0.0001" step="0.0001" value="1" required>
@@ -5651,6 +5769,19 @@ renderAll();
 </script>
 
 <script>
+function showCasaSaveToast(message,kind="warn",duration=2200){
+  const toast=document.getElementById("casaSaveToast");
+  const label=document.getElementById("casaSaveToastText");
+  if(!toast||!label)return;
+  toast.className=`casa-save-toast ${kind}`;
+  label.textContent=message;
+  toast.hidden=false;
+  clearTimeout(window.__casaSaveToastTimer);
+  if(duration>0){
+    window.__casaSaveToastTimer=setTimeout(()=>{toast.hidden=true;},duration);
+  }
+}
+
 (() => {
   const PRICE_DB_KEY = "casa-cambuquira-price-db-v1";
   const MAIN_DB_KEY = "casa-cambuquira-controle-v4";
@@ -6410,7 +6541,7 @@ renderAll();
     $("priceQuoteForm").reset();
     $("priceQuoteId").value = "";
     $("priceQuotePackageQty").value = 1;
-    $("priceQuotePrice").value = 0;
+    $("priceQuotePrice").value = "";
     $("priceQuoteFreight").value = 0;
     $("priceQuoteDate").value = todayPriceDb();
     $("priceQuoteKind").value = "pesquisado";
@@ -6538,23 +6669,47 @@ renderAll();
     $("priceProductDialog").close();
   });
 
-  $("priceQuoteForm").addEventListener("submit", event => {
+  $("priceQuoteForm").addEventListener("submit", async event => {
     if(event.submitter?.value === "cancel") return;
     event.preventDefault();
 
     const productId = $("priceQuoteProduct").value;
-    if(!productId) return;
+    const product=productById(productId);
+    if(!productId || !product){
+      alert("Não foi possível identificar o produto. Feche esta janela e tente novamente.");
+      return;
+    }
+
+    const store=$("priceQuoteStore").value.trim();
+    const packageQty=numPriceDb($("priceQuotePackageQty").value);
+    const price=numPriceDb($("priceQuotePrice").value);
+
+    if(!store){
+      $("priceQuoteStore").focus();
+      alert("Informe a loja, mercado ou fornecedor.");
+      return;
+    }
+    if(!(price>0)){
+      $("priceQuotePrice").focus();
+      alert("Informe um preço maior que zero.");
+      return;
+    }
+    if(!(packageQty>0)){
+      $("priceQuotePackageQty").focus();
+      alert("Informe a quantidade correspondente a esse preço.");
+      return;
+    }
 
     const quoteId=$("priceQuoteId").value;
     const region=$("priceQuoteRegion").value;
     const cityDetail=$("priceQuoteCityDetail").value.trim();
     const quoteData={
       productId,
-      store: $("priceQuoteStore").value.trim(),
+      store,
       region,
       city: cityDetail || region,
-      packageQty: numPriceDb($("priceQuotePackageQty").value),
-      price: numPriceDb($("priceQuotePrice").value),
+      packageQty,
+      price,
       freight: numPriceDb($("priceQuoteFreight").value),
       date: $("priceQuoteDate").value,
       kind: $("priceQuoteKind").value,
@@ -6576,6 +6731,19 @@ renderAll();
     savePriceDb();
     renderPriceDb();
     $("priceQuoteDialog").close();
+    showCasaSaveToast(`Preço de ${product.name} salvo. Sincronizando…`,"warn",0);
+
+    try{
+      const cloudResult=await window.CasaCloud?.flushNow?.("price_db");
+      if(cloudResult===false){
+        showCasaSaveToast("Preço salvo neste aparelho. Nuvem será sincronizada quando a conexão voltar.","warn",4200);
+      }else{
+        showCasaSaveToast("Preço salvo e sincronizado ✓","ok",2400);
+      }
+    }catch(error){
+      console.error(error);
+      showCasaSaveToast("Preço salvo neste aparelho. Falha momentânea ao sincronizar a nuvem.","warn",4200);
+    }
   });
 
   $("pricePurchaseForm").addEventListener("submit", event => {
@@ -7905,6 +8073,8 @@ renderAll();
   let remoteEmpty=false;
   let timers={};
   let pending={};
+  let pendingVersion={};
+  let inFlight={};
   let busy=false;
   let pollTimer=null;
   let realtimeChannel=null;
@@ -7915,6 +8085,7 @@ renderAll();
     queueSave(section,payload){
       if(api.applyingRemote)return;
       pending[section]=clone(payload);
+      pendingVersion[section]=(pendingVersion[section]||0)+1;
 
       if(!cloudReady || !client){
         setStatus("Alteração salva localmente; aguardando conexão com a nuvem","warn");
@@ -7922,8 +8093,16 @@ renderAll();
       }
 
       clearTimeout(timers[section]);
-      timers[section]=setTimeout(()=>flushSection(section),700);
+      timers[section]=setTimeout(()=>flushSection(section),500);
       setStatus("Alteração salva; sincronizando…","warn");
+    },
+    async flushNow(section){
+      if(!cloudReady || !client)return false;
+      clearTimeout(timers[section]);
+      return await flushSection(section);
+    },
+    isPending(section){
+      return !!pending[section] || !!inFlight[section];
     }
   };
   window.CasaCloud=api;
@@ -8087,7 +8266,7 @@ renderAll();
 
       rows.forEach(row=>{
         // Se uma alteração local ainda estiver pendente para a mesma seção, ela é preservada.
-        if(!pending[row.section])applyPayload(row.section,row.payload);
+        if(!pending[row.section] && !inFlight[row.section])applyPayload(row.section,row.payload);
       });
 
       saveLast("Dados compartilhados atualizados");
@@ -8136,7 +8315,7 @@ renderAll();
       const {error}=await client.from(TABLE).upsert(rows,{onConflict:"section"});
       if(error)throw error;
 
-      pending={};
+      pending={}; pendingVersion={}; inFlight={};
       cloudReady=true;
       remoteEmpty=false;
       setInitButtonState(true);
@@ -8154,31 +8333,60 @@ renderAll();
   }
 
   async function flushSection(section){
-    if(!pending[section] || !cloudReady || !client)return;
+    if(!pending[section] || !cloudReady || !client)return false;
 
-    const payload=pending[section];
-    delete pending[section];
-
-    try{
-      const {error}=await client.from(TABLE).upsert({
-        section,
-        payload,
-        updated_at:new Date().toISOString()
-      },{onConflict:"section"});
-      if(error)throw error;
-      saveLast();
-    }catch(error){
-      pending[section]=payload;
-      console.error(error);
-      setStatus("Sem sincronizar — alteração continua salva neste aparelho","err");
+    // Se já existe envio desta mesma seção, espera terminar e tenta o estado mais novo.
+    if(inFlight[section]){
+      try{await inFlight[section];}catch{}
+      if(pending[section])return await flushSection(section);
+      return true;
     }
+
+    const payload=clone(pending[section]);
+    const version=pendingVersion[section]||0;
+
+    const task=(async()=>{
+      try{
+        const {error}=await client.from(TABLE).upsert({
+          section,
+          payload,
+          updated_at:new Date().toISOString()
+        },{onConflict:"section"});
+        if(error)throw error;
+
+        // Só remove o pendente se nenhuma edição nova aconteceu durante o envio.
+        if((pendingVersion[section]||0)===version){
+          delete pending[section];
+        }
+        saveLast();
+        return true;
+      }catch(error){
+        console.error(error);
+        setStatus("Sem sincronizar — alteração continua salva neste aparelho","err");
+        return false;
+      }finally{
+        delete inFlight[section];
+      }
+    })();
+
+    inFlight[section]=task;
+    const ok=await task;
+
+    // Se houve outra edição enquanto o primeiro envio estava acontecendo, envia a versão mais nova.
+    if(ok && pending[section] && (pendingVersion[section]||0)>version){
+      return await flushSection(section);
+    }
+    return ok;
   }
 
   async function flushAllPending(){
-    const sections=Object.keys(pending);
+    const sections=[...new Set([...Object.keys(pending),...Object.keys(inFlight)])];
     for(const section of sections){
       clearTimeout(timers[section]);
-      await flushSection(section);
+      if(inFlight[section]){
+        try{await inFlight[section];}catch{}
+      }
+      if(pending[section])await flushSection(section);
     }
   }
 
