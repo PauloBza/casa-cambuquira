@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.12 Identificação de Produto Corrigida</title>
+<title>Casa Cambuquira — V10.13 Lista de Compras no Resumo</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -2123,6 +2123,265 @@ footer{
   }
 }
 
+
+/* ===== V10.13 — LISTA REAL DE COMPRAS NO RESUMO ===== */
+#dashShopping .summary-item{
+  align-items:center;
+}
+#dashShopping .dash-buy-main{
+  min-width:0;
+}
+#dashShopping .dash-buy-main strong{
+  display:block;
+  color:#fff;
+  font-size:13px;
+}
+#dashShopping .dash-buy-main small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:10px;
+}
+#dashShopping .dash-buy-need{
+  text-align:right;
+  white-space:nowrap;
+}
+#dashShopping .dash-buy-need span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+#dashShopping .dash-buy-need strong{
+  display:block;
+  margin-top:2px;
+  color:#ffd166;
+  font-size:13px;
+}
+
+.dashboard-shopping-dialog{
+  width:min(900px,calc(100vw - 24px))!important;
+  max-width:none!important;
+  max-height:92vh!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+  background:#0f1218!important;
+  color:var(--text)!important;
+}
+.dashboard-shopping-dialog::backdrop{
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(3px);
+}
+.dashboard-shopping-shell{
+  max-height:92vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.dashboard-shopping-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding:16px 18px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:#12161d;
+}
+.dashboard-shopping-head h2{
+  margin:0;
+  font-size:20px;
+}
+.dashboard-shopping-head p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:11px;
+}
+.dashboard-shopping-close{
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  padding:0!important;
+  border-radius:999px!important;
+  font-size:20px!important;
+}
+.dashboard-shopping-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  padding:12px 16px 8px;
+}
+.dashboard-shopping-metrics>div{
+  padding:10px 11px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  background:#171b23;
+}
+.dashboard-shopping-metrics span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+.dashboard-shopping-metrics strong{
+  display:block;
+  margin-top:4px;
+  color:#fff;
+  font-size:18px;
+}
+.dashboard-shopping-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px 15px;
+  padding:4px 16px 11px;
+  color:var(--muted);
+  font-size:9px;
+}
+.dashboard-shopping-legend strong{color:#dfe6f3}
+.dashboard-shopping-full-list{
+  flex:1;
+  overflow:auto;
+  padding:0 16px 14px;
+}
+.dashboard-shopping-category{
+  margin-top:10px;
+}
+.dashboard-shopping-category:first-child{margin-top:0}
+.dashboard-shopping-category-title{
+  position:sticky;
+  top:0;
+  z-index:2;
+  padding:8px 9px;
+  border-radius:9px;
+  background:#1a1e27;
+  color:#cbd5e1;
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.dashboard-shopping-row{
+  display:grid;
+  grid-template-columns:minmax(170px,1.5fr) repeat(3,minmax(110px,.7fr)) 92px;
+  gap:8px;
+  align-items:center;
+  padding:10px 8px;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+.dashboard-shopping-row:last-child{border-bottom:0}
+.dashboard-shopping-name{
+  min-width:0;
+}
+.dashboard-shopping-name strong{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#fff;
+  font-size:12px;
+}
+.dashboard-shopping-name small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:9px;
+}
+.dashboard-shopping-value span{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+.dashboard-shopping-value strong{
+  display:block;
+  margin-top:3px;
+  color:#fff;
+  font-size:11px;
+}
+.dashboard-shopping-value.need strong{
+  color:#ffd166;
+  font-size:13px;
+}
+.dashboard-shopping-badge{
+  justify-self:end;
+  display:inline-flex;
+  align-items:center;
+  min-height:25px;
+  padding:0 8px;
+  border-radius:999px;
+  background:#30230e;
+  color:#ffd166;
+  font-size:9px;
+  font-weight:900;
+}
+.dashboard-shopping-badge.zero{
+  background:#31171b;
+  color:#ff9999;
+}
+.dashboard-shopping-badge.manual{
+  background:#20293a;
+  color:#9cc1ff;
+}
+.dashboard-shopping-empty{
+  padding:30px 14px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed rgba(255,255,255,.12);
+  border-radius:13px;
+}
+.dashboard-shopping-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  padding:12px 16px;
+  border-top:1px solid rgba(255,255,255,.08);
+  background:#12161d;
+}
+@media(max-width:700px){
+  .dashboard-shopping-dialog{
+    width:calc(100vw - 10px)!important;
+    max-height:95vh!important;
+    border-radius:13px!important;
+  }
+  .dashboard-shopping-shell{max-height:95vh}
+  .dashboard-shopping-head{padding:12px}
+  .dashboard-shopping-head h2{font-size:17px}
+  .dashboard-shopping-metrics{
+    grid-template-columns:1fr 1fr 1fr;
+    padding:10px;
+  }
+  .dashboard-shopping-metrics>div{padding:8px}
+  .dashboard-shopping-metrics strong{font-size:16px}
+  .dashboard-shopping-legend{padding:0 10px 9px}
+  .dashboard-shopping-full-list{padding:0 10px 10px}
+  .dashboard-shopping-row{
+    grid-template-columns:1fr 1fr;
+    gap:7px 10px;
+    padding:10px 5px;
+  }
+  .dashboard-shopping-name{
+    grid-column:1/-1;
+  }
+  .dashboard-shopping-name strong{
+    white-space:normal;
+  }
+  .dashboard-shopping-badge{
+    justify-self:start;
+  }
+  .dashboard-shopping-footer{
+    padding:9px 10px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .dashboard-shopping-footer #dashboardShoppingCloseBtn{
+    grid-column:1/-1;
+  }
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -2165,7 +2424,7 @@ footer{
   </div>
   <div class="grid-2">
     <div class="card">
-      <div class="section-title"><h2>Precisa comprar</h2><button class="btn small" onclick="openPanel('priceDbPanel')">Abrir lista</button></div>
+      <div class="section-title"><h2>Precisa comprar</h2><button id="dashOpenShoppingList" class="btn small">Ver lista completa</button></div>
       <div id="dashShopping" class="summary-list"><div class="summary-item"><span>Óleo <span class="muted">(1 Garrafa)</span></span><strong>Sem preço</strong></div><div class="summary-item"><span>Café <span class="muted">(1 Pacote)</span></span><strong>Sem preço</strong></div><div class="summary-item"><span>Azeite <span class="muted">(1 Garrafa)</span></span><strong>Sem preço</strong></div><div class="summary-item"><span>Vinagre de álcool <span class="muted">(1 Garrafa)</span></span><strong>Sem preço</strong></div><div class="summary-item"><span>Vinagre de Maçã <span class="muted">(1 Garrafa)</span></span><strong>Sem preço</strong></div></div>
     </div>
     <div class="card">
@@ -4321,6 +4580,47 @@ footer{
   </form>
 </dialog>
 
+<dialog id="dashboardShoppingDialog" class="dashboard-shopping-dialog">
+  <div class="dashboard-shopping-shell">
+    <div class="dashboard-shopping-head">
+      <div>
+        <h2>Lista de compras</h2>
+        <p>Itens que estão abaixo do mínimo no Estoque e compras adicionadas manualmente.</p>
+      </div>
+      <button id="dashboardShoppingCloseX" class="btn dashboard-shopping-close" type="button" title="Fechar">×</button>
+    </div>
+
+    <div class="dashboard-shopping-metrics">
+      <div>
+        <span>Itens para comprar</span>
+        <strong id="dashboardShoppingCount">0</strong>
+      </div>
+      <div>
+        <span>Abaixo do mínimo</span>
+        <strong id="dashboardShoppingStockCount">0</strong>
+      </div>
+      <div>
+        <span>Itens manuais</span>
+        <strong id="dashboardShoppingManualCount">0</strong>
+      </div>
+    </div>
+
+    <div class="dashboard-shopping-legend">
+      <span><strong>Em casa</strong> = quantidade atual</span>
+      <span><strong>Mínimo</strong> = quantidade que você quer manter</span>
+      <span><strong>Falta comprar</strong> = quantidade necessária agora</span>
+    </div>
+
+    <div id="dashboardShoppingFullList" class="dashboard-shopping-full-list"></div>
+
+    <div class="dashboard-shopping-footer">
+      <button id="dashboardShoppingCopyBtn" class="btn" type="button">Copiar lista</button>
+      <button id="dashboardShoppingCsvBtn" class="btn" type="button">Exportar CSV</button>
+      <button id="dashboardShoppingCloseBtn" class="btn primary" type="button">Fechar</button>
+    </div>
+  </div>
+</dialog>
+
 <script>
 const BASE_DATA = [{"category": "1. Sala e convivência", "items": [{"id": 1, "name": "Sofá"}, {"id": 2, "name": "Poltrona"}, {"id": 3, "name": "Mesa de centro"}, {"id": 4, "name": "Mesa lateral"}, {"id": 5, "name": "Rack ou móvel para televisão"}, {"id": 6, "name": "Televisão"}, {"id": 7, "name": "Estante para livros"}, {"id": 8, "name": "Aparador"}, {"id": 9, "name": "Tapete"}, {"id": 10, "name": "Cortinas"}, {"id": 11, "name": "Cortinas blackout"}, {"id": 12, "name": "Luminária de chão"}, {"id": 13, "name": "Abajur"}, {"id": 14, "name": "Ventilador"}, {"id": 15, "name": "Aquecedor"}, {"id": 16, "name": "Mantas para o sofá"}, {"id": 17, "name": "Almofadas"}, {"id": 18, "name": "Caixa de som"}, {"id": 19, "name": "Filtro de linha para televisão e aparelhos"}, {"id": 20, "name": "Protetor contra surtos elétricos"}]}, {"category": "2. Sala de jantar", "items": [{"id": 21, "name": "Mesa de jantar"}, {"id": 22, "name": "Cadeiras"}, {"id": 23, "name": "Buffet ou armário"}, {"id": 24, "name": "Toalha de mesa"}, {"id": 25, "name": "Jogo americano"}, {"id": 26, "name": "Fruteira"}, {"id": 27, "name": "Garrafa térmica"}, {"id": 28, "name": "Bandejas"}, {"id": 29, "name": "Jarra para água ou suco"}, {"id": 30, "name": "Luminária sobre a mesa"}]}, {"category": "3. Cozinha — eletrodomésticos", "items": [{"id": 31, "name": "Geladeira"}, {"id": 32, "name": "Freezer horizontal"}, {"id": 33, "name": "Fogão"}, {"id": 34, "name": "Botijão de gás"}, {"id": 35, "name": "Botijão de gás reserva"}, {"id": 36, "name": "Forno elétrico"}, {"id": 37, "name": "Micro-ondas"}, {"id": 38, "name": "Air fryer"}, {"id": 39, "name": "Liquidificador"}, {"id": 40, "name": "Mixer"}, {"id": 41, "name": "Batedeira"}, {"id": 42, "name": "Processador de alimentos"}, {"id": 43, "name": "Cafeteira"}, {"id": 44, "name": "Chaleira elétrica"}, {"id": 45, "name": "Sanduicheira"}, {"id": 46, "name": "Grill elétrico"}, {"id": 47, "name": "Panela elétrica de arroz"}, {"id": 48, "name": "Panela de pressão elétrica"}, {"id": 49, "name": "Máquina de fazer pão"}, {"id": 50, "name": "Bebedouro"}, {"id": 51, "name": "Purificador de água"}, {"id": 52, "name": "Frigobar"}, {"id": 53, "name": "Máquina de gelo"}, {"id": 54, "name": "Exaustor ou depurador"}, {"id": 55, "name": "Balança de cozinha"}]}, {"category": "4. Cozinha — móveis e utensílios", "items": [{"id": 56, "name": "Armário de cozinha"}, {"id": 57, "name": "Balcão"}, {"id": 58, "name": "Bancada auxiliar"}, {"id": 59, "name": "Prateleiras"}, {"id": 60, "name": "Escorredor de louças"}, {"id": 61, "name": "Lixeira com tampa"}, {"id": 62, "name": "Jogo de panelas"}, {"id": 63, "name": "Panela de pressão"}, {"id": 64, "name": "Frigideiras"}, {"id": 65, "name": "Assadeiras"}, {"id": 66, "name": "Formas"}, {"id": 67, "name": "Chaleira"}, {"id": 68, "name": "Leiteira"}, {"id": 69, "name": "Facas de cozinha"}, {"id": 70, "name": "Tábua de corte"}, {"id": 71, "name": "Talheres"}, {"id": 72, "name": "Pratos"}, {"id": 73, "name": "Copos"}, {"id": 74, "name": "Xícaras"}, {"id": 75, "name": "Canecas"}, {"id": 76, "name": "Tigelas"}, {"id": 77, "name": "Potes com tampa"}, {"id": 78, "name": "Potes herméticos para mantimentos"}, {"id": 79, "name": "Peneira"}, {"id": 80, "name": "Escorredor de macarrão"}, {"id": 81, "name": "Abridor de latas e garrafas"}, {"id": 82, "name": "Saca-rolhas"}, {"id": 83, "name": "Conchas e espátulas"}, {"id": 84, "name": "Ralador"}, {"id": 85, "name": "Descascador"}, {"id": 86, "name": "Luvas térmicas"}, {"id": 87, "name": "Panos de prato"}, {"id": 88, "name": "Avental"}, {"id": 89, "name": "Suporte para temperos"}, {"id": 90, "name": "Porta-detergente"}, {"id": 91, "name": "Organizadores de gaveta"}, {"id": 92, "name": "Filtro de barro"}, {"id": 93, "name": "Garrafas para água"}, {"id": 94, "name": "Caixa térmica"}, {"id": 95, "name": "Carrinho auxiliar de cozinha"}]}, {"category": "5. Quarto principal", "items": [{"id": 96, "name": "Cama"}, {"id": 97, "name": "Colchão"}, {"id": 98, "name": "Cabeceira"}, {"id": 99, "name": "Guarda-roupa"}, {"id": 100, "name": "Cômoda"}, {"id": 101, "name": "Criado-mudo"}, {"id": 102, "name": "Abajur"}, {"id": 103, "name": "Travesseiros"}, {"id": 104, "name": "Lençóis"}, {"id": 105, "name": "Fronhas"}, {"id": 106, "name": "Cobertores"}, {"id": 107, "name": "Edredom"}, {"id": 108, "name": "Manta"}, {"id": 109, "name": "Protetor de colchão"}, {"id": 110, "name": "Cortina blackout"}, {"id": 111, "name": "Tapete"}, {"id": 112, "name": "Ventilador"}, {"id": 113, "name": "Aquecedor"}, {"id": 114, "name": "Cabideiro"}, {"id": 115, "name": "Sapateira"}, {"id": 116, "name": "Espelho"}, {"id": 117, "name": "Cesto de roupas"}, {"id": 118, "name": "Baú para cobertores"}, {"id": 119, "name": "Mosquiteiro"}, {"id": 120, "name": "Tela contra insetos na janela"}]}, {"category": "6. Quarto de hóspedes", "items": [{"id": 121, "name": "Cama ou sofá-cama"}, {"id": 122, "name": "Colchão"}, {"id": 123, "name": "Travesseiros"}, {"id": 124, "name": "Jogo de cama"}, {"id": 125, "name": "Cobertores"}, {"id": 126, "name": "Guarda-roupa ou arara"}, {"id": 127, "name": "Criado-mudo"}, {"id": 128, "name": "Abajur"}, {"id": 129, "name": "Cortina"}, {"id": 130, "name": "Ventilador"}, {"id": 131, "name": "Aquecedor"}, {"id": 132, "name": "Espelho"}, {"id": 133, "name": "Cabides"}, {"id": 134, "name": "Toalhas para hóspedes"}]}, {"category": "7. Banheiro", "items": [{"id": 135, "name": "Chuveiro"}, {"id": 136, "name": "Chuveiro reserva"}, {"id": 137, "name": "Armário de banheiro"}, {"id": 138, "name": "Espelho"}, {"id": 139, "name": "Prateleiras"}, {"id": 140, "name": "Toalhas de banho"}, {"id": 141, "name": "Toalhas de rosto"}, {"id": 142, "name": "Tapete antiderrapante"}, {"id": 143, "name": "Cortina ou box"}, {"id": 144, "name": "Lixeira com tampa"}, {"id": 145, "name": "Cesto de roupas"}, {"id": 146, "name": "Porta-sabonete"}, {"id": 147, "name": "Porta-escovas"}, {"id": 148, "name": "Suporte para papel higiênico"}, {"id": 149, "name": "Escova sanitária"}, {"id": 150, "name": "Rodo pequeno"}, {"id": 151, "name": "Desentupidor"}, {"id": 152, "name": "Secador de cabelo"}, {"id": 153, "name": "Aquecedor de ambiente"}, {"id": 154, "name": "Kit de primeiros socorros"}, {"id": 155, "name": "Tela para ralo"}, {"id": 156, "name": "Barras de apoio"}]}, {"category": "8. Lavanderia", "items": [{"id": 157, "name": "Máquina de lavar roupas"}, {"id": 158, "name": "Tanquinho"}, {"id": 159, "name": "Centrífuga"}, {"id": 160, "name": "Secadora"}, {"id": 161, "name": "Varal de chão"}, {"id": 162, "name": "Varal de teto"}, {"id": 163, "name": "Varal externo"}, {"id": 164, "name": "Pregadores"}, {"id": 165, "name": "Cesto de roupa suja"}, {"id": 166, "name": "Cesto para roupas limpas"}, {"id": 167, "name": "Tábua de passar"}, {"id": 168, "name": "Ferro de passar"}, {"id": 169, "name": "Armário para produtos de limpeza"}, {"id": 170, "name": "Baldes"}, {"id": 171, "name": "Bacias"}, {"id": 172, "name": "Mangueira"}, {"id": 173, "name": "Enrolador de mangueira"}, {"id": 174, "name": "Lavadora de alta pressão"}, {"id": 175, "name": "Aspirador de pó"}, {"id": 176, "name": "Aspirador de água e pó"}, {"id": 177, "name": "Mop"}, {"id": 178, "name": "Vassoura interna"}, {"id": 179, "name": "Vassoura para área externa"}, {"id": 180, "name": "Rodo"}, {"id": 181, "name": "Pá de lixo"}, {"id": 182, "name": "Escovas de limpeza"}, {"id": 183, "name": "Luvas de limpeza"}, {"id": 184, "name": "Panos de chão"}, {"id": 185, "name": "Lixeira externa com tampa"}]}, {"category": "9. Escritório e trabalho", "items": [{"id": 186, "name": "Escrivaninha"}, {"id": 187, "name": "Cadeira ergonômica"}, {"id": 188, "name": "Computador"}, {"id": 189, "name": "Monitor"}, {"id": 190, "name": "Impressora"}, {"id": 191, "name": "Estante"}, {"id": 192, "name": "Gaveteiro"}, {"id": 193, "name": "Luminária de mesa"}, {"id": 194, "name": "Filtro de linha"}, {"id": 195, "name": "Nobreak para computador"}, {"id": 196, "name": "Organizador de cabos"}, {"id": 197, "name": "Suporte para notebook"}, {"id": 198, "name": "Teclado e mouse"}, {"id": 199, "name": "Fones de ouvido"}, {"id": 200, "name": "Webcam"}, {"id": 201, "name": "Microfone"}, {"id": 202, "name": "Carregadores extras"}, {"id": 203, "name": "HD externo"}, {"id": 204, "name": "Pastas e organizadores"}]}, {"category": "10. Internet e comunicação", "items": [{"id": 205, "name": "Modem de internet"}, {"id": 206, "name": "Roteador de bom alcance"}, {"id": 207, "name": "Sistema Wi-Fi Mesh"}, {"id": 208, "name": "Repetidor de sinal"}, {"id": 209, "name": "Antena externa"}, {"id": 210, "name": "Internet via satélite"}, {"id": 211, "name": "Nobreak para modem e roteador"}, {"id": 212, "name": "Cabo de rede"}, {"id": 213, "name": "Power bank"}, {"id": 214, "name": "Rádio comunicador"}, {"id": 215, "name": "Celular reserva"}, {"id": 216, "name": "Carregador veicular"}, {"id": 217, "name": "Suporte para celular"}, {"id": 218, "name": "Campainha sem fio"}]}, {"category": "11. Água e abastecimento", "items": [{"id": 219, "name": "Caixa-d’água"}, {"id": 220, "name": "Caixa-d’água reserva"}, {"id": 221, "name": "Tampa segura para caixa-d’água"}, {"id": 222, "name": "Boia da caixa-d’água"}, {"id": 223, "name": "Sensor de nível"}, {"id": 224, "name": "Bomba d’água"}, {"id": 225, "name": "Pressurizador"}, {"id": 226, "name": "Pré-filtro lavável"}, {"id": 227, "name": "Filtro de sedimentos antes da caixa"}, {"id": 228, "name": "Filtro de 50 micras"}, {"id": 229, "name": "Filtro de 25 micras"}, {"id": 230, "name": "Filtro de 10 micras"}, {"id": 231, "name": "Filtro de 5 micras"}, {"id": 232, "name": "Purificador para água de beber"}, {"id": 233, "name": "Torneira com filtro"}, {"id": 234, "name": "Galões de água"}, {"id": 235, "name": "Reservatório portátil"}, {"id": 236, "name": "Kit para análise da água"}, {"id": 237, "name": "Conexões e registros reserva"}, {"id": 238, "name": "Fita veda-rosca"}, {"id": 239, "name": "Mangueira de jardim"}, {"id": 240, "name": "Regador"}]}, {"category": "12. Energia e iluminação de emergência", "items": [{"id": 241, "name": "Lanternas"}, {"id": 242, "name": "Lanternas recarregáveis"}, {"id": 243, "name": "Lâmpadas de emergência"}, {"id": 244, "name": "Velas"}, {"id": 245, "name": "Fósforos ou isqueiros"}, {"id": 246, "name": "Pilhas"}, {"id": 247, "name": "Pilhas recarregáveis"}, {"id": 248, "name": "Carregador de pilhas"}, {"id": 249, "name": "Extensões reforçadas"}, {"id": 250, "name": "Adaptadores de tomada"}, {"id": 251, "name": "Filtros de linha"}, {"id": 252, "name": "Protetores contra surtos"}, {"id": 253, "name": "Nobreak"}, {"id": 254, "name": "Gerador"}, {"id": 255, "name": "Estação de energia portátil"}, {"id": 256, "name": "Painel ou carregador solar"}, {"id": 257, "name": "Refletores solares"}, {"id": 258, "name": "Lâmpadas solares para caminhos"}, {"id": 259, "name": "Lâmpadas reserva"}, {"id": 260, "name": "Disjuntores reserva"}]}, {"category": "13. Segurança", "items": [{"id": 261, "name": "Câmeras externas"}, {"id": 262, "name": "Câmeras internas"}, {"id": 263, "name": "Gravador ou armazenamento para câmeras"}, {"id": 264, "name": "Alarme"}, {"id": 265, "name": "Sensor de presença"}, {"id": 266, "name": "Sensor de abertura de portas"}, {"id": 267, "name": "Refletores com sensor"}, {"id": 268, "name": "Trancas reforçadas"}, {"id": 269, "name": "Cadeados"}, {"id": 270, "name": "Fechadura eletrônica"}, {"id": 271, "name": "Interfone"}, {"id": 272, "name": "Campainha com câmera"}, {"id": 273, "name": "Portão automático"}, {"id": 274, "name": "Controle reserva do portão"}, {"id": 275, "name": "Cofre pequeno"}, {"id": 276, "name": "Extintor de incêndio"}, {"id": 277, "name": "Detector de fumaça"}, {"id": 278, "name": "Detector de gás"}, {"id": 279, "name": "Placas de sinalização"}, {"id": 280, "name": "Apito de emergência"}]}, {"category": "14. Proteção contra insetos e animais", "items": [{"id": 281, "name": "Telas mosquiteiras nas janelas"}, {"id": 282, "name": "Tela nas portas"}, {"id": 283, "name": "Mosquiteiro para cama"}, {"id": 284, "name": "Repelente elétrico"}, {"id": 285, "name": "Repelente corporal"}, {"id": 286, "name": "Raquete elétrica"}, {"id": 287, "name": "Armadilha para mosquitos"}, {"id": 288, "name": "Vedação inferior para portas"}, {"id": 289, "name": "Tela para ralos"}, {"id": 290, "name": "Potes herméticos"}, {"id": 291, "name": "Lixeiras vedadas"}, {"id": 292, "name": "Pinça para retirada de carrapatos"}, {"id": 293, "name": "Botas de borracha"}, {"id": 294, "name": "Perneiras de proteção"}, {"id": 295, "name": "Luvas resistentes"}, {"id": 296, "name": "Chapéu ou boné"}, {"id": 297, "name": "Lanterna de cabeça"}, {"id": 298, "name": "Armário fechado para alimentos"}, {"id": 299, "name": "Abrigo seguro para ração"}, {"id": 300, "name": "Kit para picadas e pequenos ferimentos"}]}, {"category": "15. Ferramentas e manutenção", "items": [{"id": 301, "name": "Caixa de ferramentas"}, {"id": 302, "name": "Furadeira"}, {"id": 303, "name": "Parafusadeira"}, {"id": 304, "name": "Brocas"}, {"id": 305, "name": "Martelo"}, {"id": 306, "name": "Alicates"}, {"id": 307, "name": "Chaves de fenda"}, {"id": 308, "name": "Chaves Phillips"}, {"id": 309, "name": "Chaves combinadas"}, {"id": 310, "name": "Chave inglesa"}, {"id": 311, "name": "Trena"}, {"id": 312, "name": "Nível"}, {"id": 313, "name": "Estilete"}, {"id": 314, "name": "Serrote"}, {"id": 315, "name": "Serra elétrica"}, {"id": 316, "name": "Escada"}, {"id": 317, "name": "Bancada de trabalho"}, {"id": 318, "name": "Parafusos e buchas"}, {"id": 319, "name": "Pregos"}, {"id": 320, "name": "Fita isolante"}, {"id": 321, "name": "Fita veda-rosca"}, {"id": 322, "name": "Abraçadeiras plásticas"}, {"id": 323, "name": "Arame"}, {"id": 324, "name": "Cordas"}, {"id": 325, "name": "Lonas"}, {"id": 326, "name": "Cola de contato"}, {"id": 327, "name": "Silicone"}, {"id": 328, "name": "Espuma expansiva"}, {"id": 329, "name": "Óleo lubrificante"}, {"id": 330, "name": "Extensão elétrica para área externa"}]}, {"category": "16. Jardim, terreno e área rural", "items": [{"id": 331, "name": "Roçadeira"}, {"id": 332, "name": "Cortador de grama"}, {"id": 333, "name": "Aparador de cerca-viva"}, {"id": 334, "name": "Enxada"}, {"id": 335, "name": "Enxadão"}, {"id": 336, "name": "Pá"}, {"id": 337, "name": "Rastelo"}, {"id": 338, "name": "Cavadeira"}, {"id": 339, "name": "Foice"}, {"id": 340, "name": "Machado"}, {"id": 341, "name": "Tesoura de poda"}, {"id": 342, "name": "Carrinho de mão"}, {"id": 343, "name": "Pulverizador"}, {"id": 344, "name": "Mangueira longa"}, {"id": 345, "name": "Esguicho para mangueira"}, {"id": 346, "name": "Composteira"}, {"id": 347, "name": "Lixeira externa"}, {"id": 348, "name": "Armário para ferramentas"}, {"id": 349, "name": "Caixa organizadora"}, {"id": 350, "name": "Botas de trabalho"}, {"id": 351, "name": "Luvas de jardinagem"}, {"id": 352, "name": "Óculos de proteção"}, {"id": 353, "name": "Protetor auricular"}, {"id": 354, "name": "Máscara de proteção"}, {"id": 355, "name": "Banco ou mesa para trabalhos externos"}]}, {"category": "17. Veículos e pequenos reparos", "items": [{"id": 356, "name": "Compressor de ar"}, {"id": 357, "name": "Calibrador de pneus"}, {"id": 358, "name": "Cabo para bateria"}, {"id": 359, "name": "Carregador de bateria"}, {"id": 360, "name": "Kit de ferramentas veiculares"}, {"id": 361, "name": "Macaco"}, {"id": 362, "name": "Chave de roda"}, {"id": 363, "name": "Triângulo"}, {"id": 364, "name": "Lanterna veicular"}, {"id": 365, "name": "Kit de reparo de pneus"}, {"id": 366, "name": "Galão apropriado para combustível"}, {"id": 367, "name": "Capa para veículo"}, {"id": 368, "name": "Aspirador veicular"}, {"id": 369, "name": "Organizador de porta-malas"}, {"id": 370, "name": "Corrente ou cinta de reboque"}]}, {"category": "18. Varanda e área externa", "items": [{"id": 371, "name": "Mesa externa"}, {"id": 372, "name": "Cadeiras externas"}, {"id": 373, "name": "Banco de madeira"}, {"id": 374, "name": "Poltronas para varanda"}, {"id": 375, "name": "Rede de descanso"}, {"id": 376, "name": "Suporte para rede"}, {"id": 377, "name": "Espreguiçadeiras"}, {"id": 378, "name": "Ombrelone"}, {"id": 379, "name": "Toldo"}, {"id": 380, "name": "Tapete externo"}, {"id": 381, "name": "Iluminação para varanda"}, {"id": 382, "name": "Refletor externo"}, {"id": 383, "name": "Caixa de som portátil"}, {"id": 384, "name": "Frigobar"}, {"id": 385, "name": "Caixa térmica"}, {"id": 386, "name": "Churrasqueira"}, {"id": 387, "name": "Grelha"}, {"id": 388, "name": "Espetos"}, {"id": 389, "name": "Mesa ou bancada para churrasqueira"}, {"id": 390, "name": "Fogão a lenha"}, {"id": 391, "name": "Forno de pizza"}, {"id": 392, "name": "Lenheiro"}, {"id": 393, "name": "Braseiro ou área para fogueira"}, {"id": 394, "name": "Vasos e jardineiras"}, {"id": 395, "name": "Horta elevada"}]}, {"category": "19. Conforto para frio e umidade", "items": [{"id": 396, "name": "Aquecedor elétrico"}, {"id": 397, "name": "Aquecedor a óleo"}, {"id": 398, "name": "Ar-condicionado quente e frio"}, {"id": 399, "name": "Desumidificador"}, {"id": 400, "name": "Higrômetro"}, {"id": 401, "name": "Termômetro de ambiente"}, {"id": 402, "name": "Cobertor elétrico"}, {"id": 403, "name": "Edredons pesados"}, {"id": 404, "name": "Mantas"}, {"id": 405, "name": "Tapetes"}, {"id": 406, "name": "Cortinas grossas"}, {"id": 407, "name": "Vedação para janelas"}, {"id": 408, "name": "Vedação para portas"}, {"id": 409, "name": "Secador de calçados"}, {"id": 410, "name": "Suporte para botas molhadas"}]}, {"category": "20. Organização geral", "items": [{"id": 411, "name": "Sapateira"}, {"id": 412, "name": "Cabideiro de entrada"}, {"id": 413, "name": "Capacho"}, {"id": 414, "name": "Bandeja para calçados com barro"}, {"id": 415, "name": "Guarda-chuvas"}, {"id": 416, "name": "Porta-guarda-chuvas"}, {"id": 417, "name": "Ganchos de parede"}, {"id": 418, "name": "Prateleiras"}, {"id": 419, "name": "Caixas plásticas com tampa"}, {"id": 420, "name": "Cestos organizadores"}, {"id": 421, "name": "Baús"}, {"id": 422, "name": "Organizadores de gaveta"}, {"id": 423, "name": "Etiquetas"}, {"id": 424, "name": "Armário multiuso"}, {"id": 425, "name": "Escada pequena"}, {"id": 426, "name": "Relógio de parede"}, {"id": 427, "name": "Calendário"}, {"id": 428, "name": "Quadro de avisos"}, {"id": 429, "name": "Porta-chaves"}, {"id": 430, "name": "Kit de costura"}]}, {"category": "21. Lazer e entretenimento", "items": [{"id": 431, "name": "Smart TV"}, {"id": 432, "name": "Antena de televisão"}, {"id": 433, "name": "Projetor"}, {"id": 434, "name": "Tela de projeção"}, {"id": 435, "name": "Caixa de som"}, {"id": 436, "name": "Jogos de tabuleiro"}, {"id": 437, "name": "Baralho"}, {"id": 438, "name": "Livros"}, {"id": 439, "name": "Estante de livros"}, {"id": 440, "name": "Mesa para jogos"}, {"id": 441, "name": "Violão ou instrumento musical"}, {"id": 442, "name": "Binóculo"}, {"id": 443, "name": "Bicicleta"}, {"id": 444, "name": "Balanço externo"}, {"id": 445, "name": "Rede de descanso"}]}, {"category": "22. Animais de estimação", "items": [{"id": 446, "name": "Potes de água e comida"}, {"id": 447, "name": "Reservatório automático de água"}, {"id": 448, "name": "Comedouro automático"}, {"id": 449, "name": "Cama para o animal"}, {"id": 450, "name": "Casinha externa"}, {"id": 451, "name": "Caixa de transporte"}, {"id": 452, "name": "Coleira"}, {"id": 453, "name": "Guia"}, {"id": 454, "name": "Identificação"}, {"id": 455, "name": "Armário para ração"}, {"id": 456, "name": "Kit de higiene"}, {"id": 457, "name": "Removedor de carrapatos"}, {"id": 458, "name": "Cercado"}, {"id": 459, "name": "Portão de proteção"}, {"id": 460, "name": "Toalhas para o animal"}]}, {"category": "23. Estoque e emergências", "items": [{"id": 461, "name": "Água potável reserva"}, {"id": 462, "name": "Alimentos não perecíveis"}, {"id": 463, "name": "Enlatados"}, {"id": 464, "name": "Leite de longa duração"}, {"id": 465, "name": "Café"}, {"id": 466, "name": "Açúcar"}, {"id": 467, "name": "Sal"}, {"id": 468, "name": "Óleo"}, {"id": 469, "name": "Arroz"}, {"id": 470, "name": "Feijão"}, {"id": 471, "name": "Macarrão"}, {"id": 472, "name": "Papel higiênico reserva"}, {"id": 473, "name": "Produtos de limpeza reserva"}, {"id": 474, "name": "Sacos de lixo"}, {"id": 475, "name": "Gás reserva"}, {"id": 476, "name": "Medicamentos de uso habitual"}, {"id": 477, "name": "Kit completo de primeiros socorros"}, {"id": 478, "name": "Lista de telefones de emergência"}, {"id": 479, "name": "Dinheiro em espécie para emergência"}, {"id": 480, "name": "Cópias de documentos importantes"}]}, {"category": "24. Melhorias futuras", "items": [{"id": 481, "name": "Cerca nova ou reparada"}, {"id": 482, "name": "Portão"}, {"id": 483, "name": "Iluminação no caminho"}, {"id": 484, "name": "Calçamento ou pedras no acesso"}, {"id": 485, "name": "Drenagem da chuva"}, {"id": 486, "name": "Calhas"}, {"id": 487, "name": "Reservatório para água da chuva"}, {"id": 488, "name": "Energia solar"}, {"id": 489, "name": "Aquecimento solar de água"}, {"id": 490, "name": "Sistema de câmeras completo"}, {"id": 491, "name": "Internet via satélite"}, {"id": 492, "name": "Área gourmet"}, {"id": 493, "name": "Oficina"}, {"id": 494, "name": "Depósito externo"}, {"id": 495, "name": "Horta"}, {"id": 496, "name": "Pomar"}, {"id": 497, "name": "Galinheiro"}, {"id": 498, "name": "Cobertura para veículos"}, {"id": 499, "name": "Quarto de hóspedes"}, {"id": 500, "name": "Banheiro externo"}]}];
 const DEFAULT_CHECKED = new Set([3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 21, 22, 23, 24, 27, 28, 29, 31, 33, 34, 37, 40, 60, 62, 63, 64, 65, 67, 68, 69, 70, 71, 72, 73, 75, 76, 79, 83, 84, 87, 88, 94, 96, 97, 98, 99, 100, 101, 103, 104, 106, 107, 108, 111, 112, 113, 114]);
@@ -5281,6 +5581,128 @@ function shoppingItems(){
   const manual=state.manualBuys.map(x=>({...x,source:"manual",ref:x.id,buyQty:num(x.qty)}));
   return [...auto,...manual];
 }
+
+function shoppingQtyText(value,unit){
+  const n=num(value);
+  const formatted=new Intl.NumberFormat("pt-BR",{
+    minimumFractionDigits:0,
+    maximumFractionDigits:3
+  }).format(n);
+  return `${formatted} ${unit||"un."}`;
+}
+
+function shoppingNeedFor(item){
+  if(item.source==="stock"){
+    const exactMissing=Math.max(num(item.min)-num(item.qty),0);
+    const planned=num(item.buyQty)>0 ? num(item.buyQty) : exactMissing;
+    return planned>0 ? planned : exactMissing;
+  }
+  return num(item.buyQty);
+}
+
+function dashboardShoppingItems(){
+  return shoppingItems()
+    .filter(x=>!x.bought)
+    .map(x=>{
+      const stock=x.source==="stock";
+      return {
+        ...x,
+        current:stock?num(x.qty):null,
+        minimum:stock?num(x.min):null,
+        need:shoppingNeedFor(x),
+        category:x.category||"Outros"
+      };
+    })
+    .sort((a,b)=>
+      String(a.category).localeCompare(String(b.category),"pt-BR") ||
+      String(a.name).localeCompare(String(b.name),"pt-BR")
+    );
+}
+
+function renderDashboardShoppingDialog(){
+  const items=dashboardShoppingItems();
+  const stockCount=items.filter(x=>x.source==="stock").length;
+  const manualCount=items.filter(x=>x.source==="manual").length;
+
+  dashboardShoppingCount.textContent=items.length;
+  dashboardShoppingStockCount.textContent=stockCount;
+  dashboardShoppingManualCount.textContent=manualCount;
+
+  if(!items.length){
+    dashboardShoppingFullList.innerHTML=
+      '<div class="dashboard-shopping-empty"><strong>Nada para comprar.</strong><br>O estoque está dentro dos mínimos definidos.</div>';
+    return;
+  }
+
+  const groups=new Map();
+  items.forEach(item=>{
+    if(!groups.has(item.category))groups.set(item.category,[]);
+    groups.get(item.category).push(item);
+  });
+
+  dashboardShoppingFullList.innerHTML=[...groups.entries()].map(([category,group])=>`
+    <section class="dashboard-shopping-category">
+      <div class="dashboard-shopping-category-title">${esc(category)} • ${group.length} item(ns)</div>
+      ${group.map(item=>{
+        const isStock=item.source==="stock";
+        const zero=isStock && num(item.current)<=0;
+        return `
+          <div class="dashboard-shopping-row">
+            <div class="dashboard-shopping-name">
+              <strong>${esc(item.name)}</strong>
+              <small>${isStock ? esc(item.location||"Estoque") : "Compra adicionada manualmente"}</small>
+            </div>
+            <div class="dashboard-shopping-value">
+              <span>Em casa</span>
+              <strong>${isStock ? shoppingQtyText(item.current,item.unit) : "—"}</strong>
+            </div>
+            <div class="dashboard-shopping-value">
+              <span>Mínimo</span>
+              <strong>${isStock ? shoppingQtyText(item.minimum,item.unit) : "—"}</strong>
+            </div>
+            <div class="dashboard-shopping-value need">
+              <span>Falta comprar</span>
+              <strong>${shoppingQtyText(item.need,item.unit)}</strong>
+            </div>
+            <span class="dashboard-shopping-badge ${item.source==="manual"?"manual":zero?"zero":""}">
+              ${item.source==="manual"?"MANUAL":zero?"ZERADO":"BAIXO"}
+            </span>
+          </div>`;
+      }).join("")}
+    </section>
+  `).join("");
+}
+
+function openDashboardShoppingList(){
+  renderDashboardShoppingDialog();
+  dashboardShoppingDialog.showModal();
+}
+
+async function copyDashboardShoppingList(){
+  const items=dashboardShoppingItems();
+  const lines=["LISTA DE COMPRAS — CASA CAMBUQUIRA",""];
+  let lastCategory="";
+  items.forEach(item=>{
+    if(item.category!==lastCategory){
+      if(lastCategory)lines.push("");
+      lines.push(item.category.toUpperCase());
+      lastCategory=item.category;
+    }
+    if(item.source==="stock"){
+      lines.push(`• ${item.name} — tem ${shoppingQtyText(item.current,item.unit)} | mínimo ${shoppingQtyText(item.minimum,item.unit)} | comprar ${shoppingQtyText(item.need,item.unit)}`);
+    }else{
+      lines.push(`• ${item.name} — comprar ${shoppingQtyText(item.need,item.unit)}`);
+    }
+  });
+
+  const content=lines.join("\n");
+  try{
+    await navigator.clipboard.writeText(content);
+    showCasaSaveToast?.("Lista de compras copiada ✓","ok",2200);
+  }catch(error){
+    prompt("Copie a lista:",content);
+  }
+}
 function renderShopping(){
   shoppingBody.innerHTML="";let items=shoppingItems();
   if(state.hideBought)items=items.filter(x=>!x.bought);
@@ -5819,7 +6241,22 @@ function renderDashboard(){
   const low=state.inventory.filter(x=>num(x.qty)<num(x.min)).length,expiring=state.inventory.filter(x=>daysUntil(x.expiry)<=30).length;
   const buys=shoppingItems().filter(x=>!x.bought),best=buys.reduce((s,x)=>s+num(x.buyQty)*lowestPrice(x).price,0);
   dashHouseTotal.textContent=house.length;dashHouseMissing.textContent=missing;dashLowStock.textContent=low;dashExpiring.textContent=expiring;dashUrgentRepairs.textContent=state.repairs.filter(x=>x.priority==="Urgente"&&x.status!=="Concluído").length;dashBestTotal.textContent=brl(best);
-  dashShopping.innerHTML=buys.slice(0,8).map(x=>`<div class="summary-item"><span>${esc(x.name)} <span class="muted">(${num(x.buyQty)} ${esc(x.unit)})</span></span><strong>${lowestPrice(x).price?brl(num(x.buyQty)*lowestPrice(x).price):"Sem preço"}</strong></div>`).join("")||'<div class="empty">Nada pendente.</div>';
+  dashShopping.innerHTML=buys.slice(0,8).map(x=>{
+    const isStock=x.source==="stock";
+    const need=shoppingNeedFor(x);
+    return `<div class="summary-item">
+      <div class="dash-buy-main">
+        <strong>${esc(x.name)}</strong>
+        <small>${isStock
+          ? `Tem ${shoppingQtyText(x.qty,x.unit)} • mínimo ${shoppingQtyText(x.min,x.unit)}`
+          : "Compra adicionada manualmente"}</small>
+      </div>
+      <div class="dash-buy-need">
+        <span>Falta comprar</span>
+        <strong>${shoppingQtyText(need,x.unit)}</strong>
+      </div>
+    </div>`;
+  }).join("")||'<div class="empty">Nada pendente.</div>';
   const exps=state.inventory.filter(x=>x.expiry&&daysUntil(x.expiry)<=30).sort((a,b)=>daysUntil(a.expiry)-daysUntil(b.expiry));
   dashExpiry.innerHTML=exps.slice(0,8).map(x=>`<div class="summary-item"><span>${esc(x.name)}</span><strong>${daysUntil(x.expiry)<0?"Vencido":daysUntil(x.expiry)+" dias"}</strong></div>`).join("")||'<div class="empty">Nenhuma validade próxima.</div>';
   const repairs=state.repairs.filter(x=>x.status!=="Concluído").sort((a,b)=>{
@@ -5844,6 +6281,26 @@ exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringif
 importBackupBtn.onclick=()=>backupFile.click();
 backupFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());state={...freshState(),...(p.state||p)};save();renderAll();alert("Backup importado com sucesso.")}catch(err){alert("Arquivo inválido.")}e.target.value=""};
 resetAllBtn.onclick=()=>{if(!confirm("Apagar todos os dados e restaurar a lista inicial?"))return;state=freshState();save();renderAll()};
+
+dashOpenShoppingList.onclick=openDashboardShoppingList;
+dashboardShoppingCloseBtn.onclick=()=>dashboardShoppingDialog.close();
+dashboardShoppingCloseX.onclick=()=>dashboardShoppingDialog.close();
+dashboardShoppingCopyBtn.onclick=copyDashboardShoppingList;
+dashboardShoppingCsvBtn.onclick=()=>{
+  const items=dashboardShoppingItems();
+  download("lista-de-compras-casa-cambuquira.csv",csv([
+    ["Item","Categoria","Em casa","Mínimo","Falta comprar","Unidade","Origem"],
+    ...items.map(x=>[
+      x.name,
+      x.category,
+      x.source==="stock"?x.current:"",
+      x.source==="stock"?x.minimum:"",
+      x.need,
+      x.unit,
+      x.source==="stock"?"Estoque":"Manual"
+    ])
+  ]),"text/csv");
+};
 
 renderAll();
 </script>
