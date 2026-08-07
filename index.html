@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.11 Salvar Preço Corrigido</title>
+<title>Casa Cambuquira — V10.12 Identificação de Produto Corrigida</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -3978,6 +3978,7 @@ footer{
   <form id="priceQuoteForm" class="dialog-body price-dialog-large price-simple-dialog" novalidate>
     <h2 id="priceQuoteTitle">Adicionar preço</h2>
     <input id="priceQuoteId" type="hidden">
+    <input id="priceQuoteProductId" type="hidden">
 
     <div class="price-fixed-product">
       <span>Produto</span>
@@ -6161,11 +6162,13 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
   window.CasaPriceDBAutoSync=syncInventoryToPriceDb;
 
   function productById(id){
-    return priceDb.products.find(product => product.id === id);
+    const wanted=String(id ?? "");
+    return priceDb.products.find(product => String(product.id ?? "") === wanted);
   }
 
   function quotesFor(productId){
-    return priceDb.quotes.filter(quote => quote.productId === productId);
+    const wanted=String(productId ?? "");
+    return priceDb.quotes.filter(quote => String(quote.productId ?? "") === wanted);
   }
 
   function quoteUnitPrice(quote){
@@ -6306,8 +6309,13 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
         `</option>`
       ).join("");
 
-    $("priceQuoteProduct").innerHTML =
+    const quoteSelect=$("priceQuoteProduct");
+    const fixedQuoteId=$("priceQuoteProductId")?.value || $("priceQuoteDialog")?.dataset.productId || selectedId;
+    quoteSelect.innerHTML =
       `<option value="">Selecione...</option>${options}`;
+    if(fixedQuoteId && productById(fixedQuoteId)){
+      quoteSelect.value=String(fixedQuoteId);
+    }
 
     $("pricePurchaseProduct").innerHTML =
       `<option value="">Selecione...</option>${options}`;
@@ -6543,7 +6551,7 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
 
     container.querySelectorAll(".quote-edit").forEach(button => {
       button.onclick = () => {
-        const quote=priceDb.quotes.find(q=>q.id===button.dataset.id);
+        const quote=priceDb.quotes.find(q=>String(q.id)===String(button.dataset.id));
         if(!quote)return;
         openQuoteDialog(quote.productId,quote.id,quoteRegion(quote));
       };
@@ -6654,14 +6662,18 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
     $("priceQuoteCityDetail").value = "";
 
     populateProductSelects(productId);
-    $("priceQuoteProduct").value=productId;
+    $("priceQuoteProduct").value=String(product.id);
+    $("priceQuoteProductId").value=String(product.id);
+    $("priceQuoteDialog").dataset.productId=String(product.id);
+    $("priceQuoteDialog").dataset.productName=product.name||"";
+    $("priceQuoteDialog").dataset.sourceStockId=String(product.sourceStockId||"");
     $("priceQuoteProductName").textContent=product.name;
     $("priceQuoteProductMeta").textContent=
       `${product.category} • comparação por ${product.unit}. Ex.: R$ 32 por 5 ${product.unit} = R$ 6,40/${product.unit}`;
     $("priceQuoteTitle").textContent=`Adicionar preço — ${product.name}`;
 
     if(quoteId){
-      const quote=priceDb.quotes.find(q=>q.id===quoteId);
+      const quote=priceDb.quotes.find(q=>String(q.id)===String(quoteId));
       if(quote){
         $("priceQuoteId").value=quote.id;
         $("priceQuoteRegion").value=quoteRegion(quote);
@@ -6723,7 +6735,8 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
   }
 
   function updateQuotePreview(){
-    const product = productById($("priceQuoteProduct").value);
+    const fixedProductId=$("priceQuoteProductId")?.value || $("priceQuoteDialog")?.dataset.productId || $("priceQuoteProduct").value;
+    const product = productById(fixedProductId);
     const packageQty = parsePtNumber($("priceQuotePackageQty").value);
     const price = parsePtNumber($("priceQuotePrice").value);
     const freight = parsePtNumber($("priceQuoteFreight").value);
@@ -6775,13 +6788,33 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
   });
 
   async function saveCurrentPriceQuote(){
-    const productId = $("priceQuoteProduct").value;
-    const product=productById(productId);
+    const dialog=$("priceQuoteDialog");
+    let productId=$("priceQuoteProductId")?.value || dialog?.dataset.productId || "";
+    let product=productById(productId);
 
-    if(!productId || !product){
-      alert("Não foi possível identificar o produto. Feche esta janela e tente novamente.");
+    // Se a lista foi redesenhada enquanto o popup estava aberto, recupera o produto
+    // pelo vínculo com o Estoque ou, em último caso, pelo nome exibido.
+    if(!product){
+      const sourceStockId=String(dialog?.dataset.sourceStockId||"");
+      if(sourceStockId){
+        product=priceDb.products.find(p=>String(p.sourceStockId||"")===sourceStockId);
+      }
+    }
+    if(!product){
+      const productName=String(dialog?.dataset.productName||$("priceQuoteProductName")?.textContent||"").trim();
+      if(productName){
+        product=priceDb.products.find(p=>normPriceDb(p.name)===normPriceDb(productName));
+      }
+    }
+
+    if(!product){
+      alert("O produto foi atualizado enquanto esta janela estava aberta. Feche e abra novamente o botão + Preço.");
       return;
     }
+
+    productId=String(product.id);
+    $("priceQuoteProductId").value=productId;
+    dialog.dataset.productId=productId;
 
     const store=$("priceQuoteStore").value.trim();
     const packageQty=parsePtNumber($("priceQuotePackageQty").value);
@@ -6823,7 +6856,7 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
     };
 
     if(quoteId){
-      const quote=priceDb.quotes.find(q=>q.id===quoteId);
+      const quote=priceDb.quotes.find(q=>String(q.id)===String(quoteId));
       if(!quote){
         alert("Não encontrei este preço para editar. Feche a janela e tente novamente.");
         return;
@@ -6844,7 +6877,7 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
     // 3. fecha o popup e confirma visualmente
     $("priceQuoteDialog").close();
     showCasaSaveToast(
-      `${product.name}: ${brlPriceDb(price)} salvo. Sincronizando…`,
+      `${product.name}: ${brlPriceDb(price)} salvo neste aparelho. Sincronizando…`,
       "warn",
       0
     );
@@ -6871,7 +6904,9 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
   }
 
   $("priceQuoteSaveBtn").onclick=saveCurrentPriceQuote;
-  $("priceQuoteCancelBtn").onclick=()=>$("priceQuoteDialog").close();
+  $("priceQuoteCancelBtn").onclick=()=>{
+    $("priceQuoteDialog").close();
+  };
 
   // Enter também salva, sem depender da validação nativa do navegador.
   $("priceQuoteForm").addEventListener("keydown",event=>{
