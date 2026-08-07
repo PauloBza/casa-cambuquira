@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.3 Estoque + Preços Automáticos</title>
+<title>Casa Cambuquira — V10.4 Preços e Cotações Corrigidos</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1241,6 +1241,26 @@ footer{
 #stockPanel .stock-group th:last-child,
 #stockPanel .stock-group td:last-child{min-width:145px!important;width:145px}
 #priceDbPanel .price-db-badge{background:#102118!important;color:#8ef1b3!important;border-color:rgba(46,204,113,.22)!important}
+
+
+/* ===== V10.4 — PREÇOS/COTAÇÕES CORRIGIDOS ===== */
+#priceDbPanel .price-product-best{min-width:190px}
+#priceDbPanel .price-product-best span:last-child{
+  margin-top:3px;
+  font-size:10px;
+  color:var(--muted);
+}
+#priceDbPanel .price-product-title strong{color:#fff}
+#priceDbPanel .price-product-actions{align-items:center}
+#priceDbPanel .price-quote-row > div:last-child{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+@media(max-width:720px){
+  #priceDbPanel .price-product-best{min-width:0}
+}
 
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
@@ -3108,10 +3128,10 @@ footer{
     </div>
 
     <div class="form-cols">
-      <label>Quantidade contida na oferta
+      <label>Quantidade desta oferta (na unidade comparável)
         <input id="priceQuotePackageQty" type="number" min="0.0001" step="0.0001" value="1" required="">
       </label>
-      <label>Valor da oferta
+      <label>Preço total da oferta
         <input id="priceQuotePrice" type="number" min="0" step="0.01" value="0" required="">
       </label>
     </div>
@@ -4419,6 +4439,45 @@ renderAll();
       .format(Number(value) || 0);
 
   const numPriceDb = value => Number(value) || 0;
+
+  const roundQtyPriceDb = (value, digits=3) => {
+    const factor = 10 ** digits;
+    return Math.round((numPriceDb(value) + Number.EPSILON) * factor) / factor;
+  };
+
+  const normUnitPriceDb = value =>
+    String(value ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toLowerCase();
+
+  const isDiscreteUnitPriceDb = unit => {
+    const u = normUnitPriceDb(unit).replace(/\s+/g," ");
+    return [
+      "un","un.","unidade","unidades","pacote","pacotes","garrafa","garrafas",
+      "rolo","rolos","lata","latas","caixa","caixas","frasco","frascos",
+      "pote","potes","saco","sacos","kit","kits","par","pares","cartela","cartelas",
+      "barra","barras","galao","galoes","peca","pecas","botijao","botijoes",
+      "fardo","fardos","bandeja","bandejas","tubo","tubos","envelope","envelopes"
+    ].includes(u);
+  };
+
+  const normalizePurchaseQtyPriceDb = (value, unit) => {
+    const n = Math.max(0, numPriceDb(value));
+    if(n <= 0) return 0;
+    if(isDiscreteUnitPriceDb(unit)) return Math.max(1, Math.ceil(n - 1e-9));
+    return roundQtyPriceDb(n, 3);
+  };
+
+  const formatQtyPriceDb = (value, unit="") => {
+    const n = normalizePurchaseQtyPriceDb(value, unit);
+    return new Intl.NumberFormat("pt-BR", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: isDiscreteUnitPriceDb(unit) ? 0 : 3
+    }).format(n);
+  };
+
   const uidPriceDb = () =>
     Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
@@ -4472,13 +4531,17 @@ renderAll();
   }
 
   function desiredStockQty(item,isNew=false){
+    const unit=item.unit||"un.";
     const explicit=numPriceDb(item.buyQty);
-    if(explicit>0)return explicit;
+    if(explicit>0)return normalizePurchaseQtyPriceDb(explicit,unit);
 
-    const deficit=Math.max(numPriceDb(item.min)-numPriceDb(item.qty),0);
-    if(deficit>0)return deficit;
+    const rawDeficit=Math.max(numPriceDb(item.min)-numPriceDb(item.qty),0);
+    if(rawDeficit>1e-9){
+      return normalizePurchaseQtyPriceDb(rawDeficit,unit);
+    }
 
-    return isNew ? 1 : null;
+    // Mantém o produto disponível para consulta de preços mesmo sem compra urgente.
+    return isNew ? normalizePurchaseQtyPriceDb(1,unit) : null;
   }
 
   function syncLegacyStockQuote(product,item,field,city){
@@ -4718,7 +4781,7 @@ renderAll();
       .sort((a,b) => a.name.localeCompare(b.name, "pt-BR"))
       .map(product =>
         `<option value="${escPriceDb(product.id)}" ${product.id === selectedId ? "selected" : ""}>` +
-        `${escPriceDb(product.name)} — ${escPriceDb(product.qtyNeeded)} ${escPriceDb(product.unit)}` +
+        `${escPriceDb(product.name)} — ${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${escPriceDb(product.unit)}` +
         `</option>`
       ).join("");
 
@@ -4865,6 +4928,7 @@ renderAll();
                 </div>
                 <div>
                   ${isBest ? '<span class="price-best-tag">MAIS BARATO</span>' : ""}
+                  <button class="btn small quote-edit" data-id="${escPriceDb(quote.id)}">Editar</button>
                   <button class="btn small danger quote-delete" data-id="${escPriceDb(quote.id)}">Excluir</button>
                 </div>
               </div>`;
@@ -4876,22 +4940,25 @@ renderAll();
           <div class="price-product-title">
             <h3>${escPriceDb(product.name)} ${product.sourceStockId ? '<span class="price-best-tag" style="margin-left:6px">ESTOQUE</span>' : ""}</h3>
             <div>
-              ${escPriceDb(product.category)} • precisa de
-              <strong>${escPriceDb(product.qtyNeeded)} ${escPriceDb(product.unit)}</strong>
+              ${escPriceDb(product.category)} • quantidade de referência
+              <strong>${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${escPriceDb(product.unit)}</strong>
               ${product.spec ? ` • ${escPriceDb(product.spec)}` : ""}
             </div>
           </div>
 
           <div class="price-product-best">
-            <span>${best ? `${escPriceDb(best.store)} — ${escPriceDb(best.city)}` : "Sem preço"}</span>
-            <strong>${best ? `${brlPriceDb(estimated)} estimado` : "Adicionar cotação"}</strong>
+            <span>${best ? `Melhor: ${escPriceDb(best.store)} — ${escPriceDb(best.city)}` : "Sem cotações"}</span>
+            <strong>${best ? `${brlPriceDb(bestUnit)} / ${escPriceDb(product.unit)}` : "—"}</strong>
+            ${best ? `<span>${brlPriceDb(estimated)} para ${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${escPriceDb(product.unit)}</span>` : ""}
           </div>
 
           <div class="price-product-actions">
             <button class="btn small primary product-add-quote" data-id="${escPriceDb(product.id)}">+ Cotação</button>
             <button class="btn small product-buy" data-id="${escPriceDb(product.id)}">Compra</button>
             <button class="btn small product-edit" data-id="${escPriceDb(product.id)}">Editar</button>
-            <button class="btn small danger product-delete" data-id="${escPriceDb(product.id)}">Excluir</button>
+            ${product.sourceStockId
+              ? '<button class="btn small product-delete-quotes" data-id="'+escPriceDb(product.id)+'">Limpar cotações</button>'
+              : '<button class="btn small danger product-delete" data-id="'+escPriceDb(product.id)+'">Excluir</button>'}
           </div>
         </div>
 
@@ -4913,6 +4980,17 @@ renderAll();
       button.onclick = () => openProductDialog(button.dataset.id);
     });
 
+    container.querySelectorAll(".product-delete-quotes").forEach(button => {
+      button.onclick = () => {
+        const product=productById(button.dataset.id);
+        if(!product)return;
+        if(!confirm(`Limpar todas as cotações de "${product.name}"? O produto continuará vinculado ao Estoque.`))return;
+        priceDb.quotes=priceDb.quotes.filter(q=>q.productId!==product.id);
+        savePriceDb();
+        renderPriceDb();
+      };
+    });
+
     container.querySelectorAll(".product-delete").forEach(button => {
       button.onclick = () => {
         const product = productById(button.dataset.id);
@@ -4924,6 +5002,14 @@ renderAll();
         priceDb.quotes = priceDb.quotes.filter(quote => quote.productId !== product.id);
         savePriceDb();
         renderPriceDb();
+      };
+    });
+
+    container.querySelectorAll(".quote-edit").forEach(button => {
+      button.onclick = () => {
+        const quote=priceDb.quotes.find(q=>q.id===button.dataset.id);
+        if(!quote)return;
+        openQuoteDialog(quote.productId,quote.id);
       };
     });
 
@@ -5013,7 +5099,7 @@ renderAll();
     $("priceProductDialog").showModal();
   }
 
-  function openQuoteDialog(productId = ""){
+  function openQuoteDialog(productId = "", quoteId = ""){
     if(!priceDb.products.length){
       alert("Cadastre primeiro um produto.");
       openProductDialog();
@@ -5027,7 +5113,25 @@ renderAll();
     $("priceQuoteFreight").value = 0;
     $("priceQuoteDate").value = todayPriceDb();
 
-    populateProductSelects(productId);
+    let selectedProductId=productId;
+
+    if(quoteId){
+      const quote=priceDb.quotes.find(q=>q.id===quoteId);
+      if(quote){
+        selectedProductId=quote.productId;
+        $("priceQuoteId").value=quote.id;
+        $("priceQuoteStore").value=quote.store||"";
+        $("priceQuoteCity").value=quote.city||"";
+        $("priceQuotePackageQty").value=quote.packageQty||1;
+        $("priceQuotePrice").value=quote.price||0;
+        $("priceQuoteFreight").value=quote.freight||0;
+        $("priceQuoteDate").value=quote.date||todayPriceDb();
+        $("priceQuoteLink").value=quote.link||"";
+        $("priceQuoteNotes").value=quote.notes||"";
+      }
+    }
+
+    populateProductSelects(selectedProductId);
     updateQuotePreview();
     $("priceQuoteDialog").showModal();
   }
@@ -5078,7 +5182,7 @@ renderAll();
 
     $("priceQuotePreview").innerHTML =
       `<strong>${brlPriceDb(unitPrice)} por ${escPriceDb(product.unit)}</strong>` +
-      ` • estimativa para ${escPriceDb(product.qtyNeeded)} ${escPriceDb(product.unit)}: ` +
+      ` • estimativa para ${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${escPriceDb(product.unit)}: ` +
       `<strong>${brlPriceDb(estimated)}</strong>`;
   }
 
@@ -5119,8 +5223,8 @@ renderAll();
     const productId = $("priceQuoteProduct").value;
     if(!productId) return;
 
-    priceDb.quotes.push({
-      id: uidPriceDb(),
+    const quoteId=$("priceQuoteId").value;
+    const quoteData={
       productId,
       store: $("priceQuoteStore").value.trim(),
       city: $("priceQuoteCity").value.trim(),
@@ -5129,9 +5233,19 @@ renderAll();
       freight: numPriceDb($("priceQuoteFreight").value),
       date: $("priceQuoteDate").value,
       link: $("priceQuoteLink").value.trim(),
-      notes: $("priceQuoteNotes").value.trim(),
-      createdAt: new Date().toISOString()
-    });
+      notes: $("priceQuoteNotes").value.trim()
+    };
+
+    if(quoteId){
+      const quote=priceDb.quotes.find(q=>q.id===quoteId);
+      if(quote)Object.assign(quote,quoteData,{updatedAt:new Date().toISOString()});
+    }else{
+      priceDb.quotes.push({
+        id: uidPriceDb(),
+        ...quoteData,
+        createdAt: new Date().toISOString()
+      });
+    }
 
     savePriceDb();
     renderPriceDb();
