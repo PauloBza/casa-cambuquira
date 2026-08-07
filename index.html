@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Completo — V7</title>
+<title>Casa Cambuquira — Painel Completo — V8</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1079,6 +1079,82 @@ footer{
   }
 }
 
+
+/* ===== ESTOQUE ORGANIZADO — V8 ===== */
+.stock-groups{
+  display:grid;
+  gap:12px;
+}
+.stock-group{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  overflow:hidden;
+  background:rgba(18,20,27,.94);
+  box-shadow:0 10px 28px rgba(0,0,0,.22);
+}
+.stock-group summary{
+  cursor:pointer;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.01));
+  font-weight:800;
+}
+.stock-group summary::-webkit-details-marker{display:none}
+.stock-group-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+.stock-group-title strong{
+  font-size:15px;
+  color:var(--text);
+}
+.stock-group-meta{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+}
+.stock-group-count{
+  font-size:11px;
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,.08);
+  background:#171a22;
+  border-radius:999px;
+  padding:5px 9px;
+  white-space:nowrap;
+}
+.stock-group .table-wrap{
+  border:0!important;
+  border-top:1px solid rgba(255,255,255,.06)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+.stock-group table{min-width:1460px}
+.stock-group-empty{
+  padding:15px 16px;
+  color:var(--muted);
+  border-top:1px solid rgba(255,255,255,.06);
+  font-size:12px;
+}
+.stock-storage-note{
+  margin:-3px 0 12px;
+  color:var(--muted);
+  font-size:11px;
+}
+.stock-toolbar-location{min-width:190px}
+@media(max-width:760px){
+  .stock-group summary{align-items:flex-start;flex-direction:column}
+  .stock-group-meta{justify-content:flex-start}
+  .stock-toolbar-location{min-width:0}
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 </head>
@@ -1240,7 +1316,7 @@ footer{
 
 <section id="stockPanel" class="panel">
   <div class="help">
-    Cadastre a quantidade que existe em casa e o estoque mínimo. Quando a quantidade ficar abaixo do mínimo, o produto entra automaticamente na aba <strong>Comprar</strong>.
+    Organize o estoque por <strong>categoria</strong> e <strong>local de armazenamento</strong>. Produtos abaixo do mínimo continuam entrando automaticamente na lista de compras.
   </div>
   <div class="city-setting">
     <strong>Outra cidade para comparar:</strong>
@@ -1254,11 +1330,26 @@ footer{
     <div class="metric"><span>Valor do estoque</span><strong id="stockValue">R$ 0,00</strong></div>
   </div>
   <div class="toolbar">
-    <input id="stockSearch" type="search" placeholder="Buscar produto...">
+    <input id="stockSearch" type="search" placeholder="Buscar produto, local ou observação...">
     <select id="stockCategoryFilter">
       <option value="all">Todas as categorias</option>
-      <option>Alimentos</option><option>Limpeza</option><option>Higiene</option>
-      <option>Bebidas</option><option>Casa e outros</option>
+      <option>Alimentos</option>
+      <option>Bebidas e líquidos</option>
+      <option>Limpeza</option>
+      <option>Higiene</option>
+      <option>Manutenção e reparos</option>
+      <option>Outros</option>
+    </select>
+    <select id="stockLocationFilter" class="stock-toolbar-location">
+      <option value="all">Todos os locais</option>
+      <option>Despensa / Armário</option>
+      <option>Geladeira</option>
+      <option>Freezer</option>
+      <option>Área de serviço</option>
+      <option>Banheiro</option>
+      <option>Oficina / Ferramentas</option>
+      <option>Área externa / Depósito</option>
+      <option>Outro</option>
     </select>
     <select id="stockStatusFilter">
       <option value="all">Todos os estados</option>
@@ -1273,16 +1364,10 @@ footer{
     <button id="basicStockBtn" class="btn">Adicionar lista básica</button>
     <button id="exportStockCsv" class="btn">Exportar estoque CSV</button>
   </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr>
-        <th>Situação</th><th>Produto</th><th>Categoria</th><th>Em casa</th><th>Unidade</th>
-        <th>Mínimo</th><th>Validade</th><th>Cambuquira</th><th class="other-city-label">Outra cidade</th>
-        <th>São Paulo</th><th>Menor preço</th><th>Atualizado</th><th>Observação</th><th></th>
-      </tr></thead>
-      <tbody id="stockBody"></tbody>
-    </table>
+  <div class="stock-storage-note">
+    Seções: alimentos de armário, geladeira, freezer, bebidas/líquidos, limpeza, higiene, manutenção/reparos e outros.
   </div>
+  <div id="stockGroups" class="stock-groups"></div>
 </section>
 
 <section id="shoppingPanel" class="panel legacy-shopping-panel" hidden aria-hidden="true">
@@ -2093,13 +2178,34 @@ footer{
 <div class="form-grid">
   <label>Produto<input id="stockNameInput" required placeholder="Ex.: Arroz 5 kg"></label>
   <div class="form-cols">
-    <label>Categoria<select id="stockCategoryInput"><option>Alimentos</option><option>Limpeza</option><option>Higiene</option><option>Bebidas</option><option>Casa e outros</option></select></label>
-    <label>Unidade<input id="stockUnitInput" value="un." placeholder="un., kg, pacote, litro"></label>
+    <label>Categoria<select id="stockCategoryInput">
+      <option>Alimentos</option>
+      <option>Bebidas e líquidos</option>
+      <option>Limpeza</option>
+      <option>Higiene</option>
+      <option>Manutenção e reparos</option>
+      <option>Outros</option>
+    </select></label>
+    <label>Local / armazenamento<select id="stockLocationInput">
+      <option>Despensa / Armário</option>
+      <option>Geladeira</option>
+      <option>Freezer</option>
+      <option>Área de serviço</option>
+      <option>Banheiro</option>
+      <option>Oficina / Ferramentas</option>
+      <option>Área externa / Depósito</option>
+      <option>Outro</option>
+    </select></label>
   </div>
   <div class="form-cols">
     <label>Quantidade em casa<input id="stockQtyInput" type="number" min="0" step="0.01" value="0"></label>
-    <label>Estoque mínimo<input id="stockMinInput" type="number" min="0" step="0.01" value="1"></label>
+    <label>Unidade<input id="stockUnitInput" value="un." placeholder="un., kg, pacote, litro"></label>
   </div>
+  <div class="form-cols">
+    <label>Estoque mínimo<input id="stockMinInput" type="number" min="0" step="0.01" value="1"></label>
+    <label>Validade<input id="stockExpiryInput" type="date"></label>
+  </div>
+  <label>Observação<input id="stockNoteInput" placeholder="Marca, mercado, detalhe do armazenamento..."></label>
 </div>
 <div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Salvar</button></div>
 </form></dialog>
@@ -2107,7 +2213,7 @@ footer{
 <dialog id="manualBuyDialog"><form method="dialog" id="manualBuyForm" class="dialog-body">
 <h2>Adicionar item avulso</h2><div class="form-grid">
 <label>Item<input id="manualBuyName" required></label>
-<div class="form-cols"><label>Categoria<select id="manualBuyCategory"><option>Alimentos</option><option>Limpeza</option><option>Higiene</option><option>Bebidas</option><option>Casa e outros</option><option>Especial</option></select></label>
+<div class="form-cols"><label>Categoria<select id="manualBuyCategory"><option>Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option><option>Especial</option></select></label>
 <label>Unidade<input id="manualBuyUnit" value="un."></label></div>
 <label>Quantidade<input id="manualBuyQty" type="number" min="0.01" step="0.01" value="1"></label>
 </div><div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Adicionar</button></div>
@@ -2129,21 +2235,50 @@ const OLD_KEY = "casa-cambuquira-controle-v3";
 const OLDER_KEY = "casa-cambuquira-organizador-v2";
 
 const BASIC_STOCK = [
-["Arroz 5 kg","Alimentos","pacote",1],["Feijão 1 kg","Alimentos","pacote",2],["Macarrão","Alimentos","pacote",2],
-["Óleo de cozinha","Alimentos","garrafa",1],["Açúcar","Alimentos","pacote",1],["Sal","Alimentos","pacote",1],
-["Café","Alimentos","pacote",2],["Leite","Alimentos","litro",4],["Farinha de trigo","Alimentos","pacote",1],
-["Farinha de mandioca","Alimentos","pacote",1],["Molho de tomate","Alimentos","sachê",3],["Ovos","Alimentos","dúzia",1],
-["Manteiga ou margarina","Alimentos","pote",1],["Pão","Alimentos","pacote",1],["Queijo","Alimentos","kg",0.5],
-["Carne bovina","Alimentos","kg",1],["Frango","Alimentos","kg",1],["Legumes","Alimentos","kg",1],
-["Frutas","Alimentos","kg",2],["Temperos","Alimentos","kit",1],
-["Água mineral","Bebidas","garrafa",6],["Suco","Bebidas","litro",2],["Refrigerante","Bebidas","garrafa",1],
-["Detergente","Limpeza","frasco",2],["Sabão em pó ou líquido","Limpeza","un.",1],["Água sanitária","Limpeza","litro",2],
-["Desinfetante","Limpeza","litro",2],["Esponja","Limpeza","un.",3],["Sacos de lixo","Limpeza","rolo",2],
-["Panos de chão","Limpeza","un.",3],["Papel-toalha","Limpeza","rolo",2],["Álcool 70%","Limpeza","frasco",1],
-["Papel higiênico","Higiene","rolo",12],["Sabonete","Higiene","un.",4],["Pasta de dente","Higiene","un.",2],
-["Shampoo","Higiene","frasco",1],["Condicionador","Higiene","frasco",1],["Desodorante","Higiene","un.",2],
-["Gás de cozinha","Casa e outros","botijão",1],["Carvão","Casa e outros","saco",1],["Fósforos ou isqueiro","Casa e outros","un.",2],
-["Papel-alumínio","Casa e outros","rolo",1],["Filme plástico","Casa e outros","rolo",1],["Pilhas","Casa e outros","pacote",1]
+["Arroz 5 kg","Alimentos","Despensa / Armário","pacote",1],
+["Feijão 1 kg","Alimentos","Despensa / Armário","pacote",2],
+["Macarrão","Alimentos","Despensa / Armário","pacote",2],
+["Óleo de cozinha","Alimentos","Despensa / Armário","garrafa",1],
+["Açúcar","Alimentos","Despensa / Armário","pacote",1],
+["Sal","Alimentos","Despensa / Armário","pacote",1],
+["Café","Alimentos","Despensa / Armário","pacote",2],
+["Farinha de trigo","Alimentos","Despensa / Armário","pacote",1],
+["Farinha de mandioca","Alimentos","Despensa / Armário","pacote",1],
+["Molho de tomate","Alimentos","Despensa / Armário","sachê",3],
+["Pão","Alimentos","Despensa / Armário","pacote",1],
+["Temperos","Alimentos","Despensa / Armário","kit",1],
+["Leite","Alimentos","Geladeira","litro",4],
+["Ovos","Alimentos","Geladeira","dúzia",1],
+["Manteiga ou margarina","Alimentos","Geladeira","pote",1],
+["Queijo","Alimentos","Geladeira","kg",0.5],
+["Legumes","Alimentos","Geladeira","kg",1],
+["Frutas","Alimentos","Geladeira","kg",2],
+["Carne bovina","Alimentos","Freezer","kg",1],
+["Frango","Alimentos","Freezer","kg",1],
+["Água mineral","Bebidas e líquidos","Despensa / Armário","garrafa",6],
+["Suco","Bebidas e líquidos","Despensa / Armário","litro",2],
+["Refrigerante","Bebidas e líquidos","Despensa / Armário","garrafa",1],
+["Detergente","Limpeza","Área de serviço","frasco",2],
+["Sabão em pó ou líquido","Limpeza","Área de serviço","un.",1],
+["Água sanitária","Limpeza","Área de serviço","litro",2],
+["Desinfetante","Limpeza","Área de serviço","litro",2],
+["Esponja","Limpeza","Área de serviço","un.",3],
+["Sacos de lixo","Limpeza","Área de serviço","rolo",2],
+["Panos de chão","Limpeza","Área de serviço","un.",3],
+["Papel-toalha","Limpeza","Área de serviço","rolo",2],
+["Álcool 70%","Limpeza","Área de serviço","frasco",1],
+["Papel higiênico","Higiene","Banheiro","rolo",12],
+["Sabonete","Higiene","Banheiro","un.",4],
+["Pasta de dente","Higiene","Banheiro","un.",2],
+["Shampoo","Higiene","Banheiro","frasco",1],
+["Condicionador","Higiene","Banheiro","frasco",1],
+["Desodorante","Higiene","Banheiro","un.",2],
+["Pilhas","Manutenção e reparos","Oficina / Ferramentas","pacote",1],
+["Gás de cozinha","Outros","Área externa / Depósito","botijão",1],
+["Carvão","Outros","Área externa / Depósito","saco",1],
+["Fósforos ou isqueiro","Outros","Despensa / Armário","un.",2],
+["Papel-alumínio","Outros","Despensa / Armário","rolo",1],
+["Filme plástico","Outros","Despensa / Armário","rolo",1]
 ];
 
 const RURAL_REPAIR_TEMPLATE = [
@@ -2303,7 +2438,7 @@ function loadState(){
       s.houseNotes=p.notes||{};
       s.nextHouseId=p.nextId||501;
       (p.purchases||[]).forEach(x=>s.manualBuys.push({
-        id:uid(),name:x.name||"",category:x.category||"Casa e outros",qty:x.qty||1,unit:x.unit||"un.",
+        id:uid(),name:x.name||"",category:x.category||"Outros",qty:x.qty||1,unit:x.unit||"un.",
         priceC:x.estimated||0,priceO:0,priceSP:x.actual||0,where:"best",bought:!!x.done
       }));
       return s;
@@ -2628,7 +2763,7 @@ function addRepairMaterialsToShopping(item){
   materials.forEach(name=>{
     if(!existing.has(norm(name))){
       state.manualBuys.push({
-        id:uid(),name,category:"Casa e outros",qty:1,unit:"un.",
+        id:uid(),name,category:"Manutenção e reparos",qty:1,unit:"un.",
         priceC:0,priceO:0,priceSP:0,where:"best",bought:false,
         note:"Reparo: "+item.task
       });
@@ -2790,58 +2925,233 @@ document.addEventListener("webkitfullscreenchange",updatePhotoFullscreenButton);
 
 
 /* ESTOQUE */
+const STOCK_CATEGORIES = ["Alimentos","Bebidas e líquidos","Limpeza","Higiene","Manutenção e reparos","Outros"];
+const STOCK_LOCATIONS = ["Despensa / Armário","Geladeira","Freezer","Área de serviço","Banheiro","Oficina / Ferramentas","Área externa / Depósito","Outro"];
+const STOCK_GROUPS = [
+  {id:"food-pantry",title:"🥫 Alimentos — Armário / Despensa",match:x=>x.category==="Alimentos"&&x.location==="Despensa / Armário"},
+  {id:"food-fridge",title:"🧊 Alimentos — Geladeira",match:x=>x.category==="Alimentos"&&x.location==="Geladeira"},
+  {id:"food-freezer",title:"❄️ Alimentos — Freezer",match:x=>x.category==="Alimentos"&&x.location==="Freezer"},
+  {id:"food-other",title:"🍽️ Alimentos — Outros locais",match:x=>x.category==="Alimentos"&&!["Despensa / Armário","Geladeira","Freezer"].includes(x.location)},
+  {id:"beverages",title:"🥤 Bebidas e líquidos",match:x=>x.category==="Bebidas e líquidos"},
+  {id:"cleaning",title:"🧹 Limpeza",match:x=>x.category==="Limpeza"},
+  {id:"hygiene",title:"🧴 Higiene",match:x=>x.category==="Higiene"},
+  {id:"maintenance",title:"🛠️ Manutenção e reparos",match:x=>x.category==="Manutenção e reparos"},
+  {id:"others",title:"📦 Outros",match:x=>x.category==="Outros"}
+];
+const stockOpenGroups=new Set(STOCK_GROUPS.map(g=>g.id));
+
 function stockStatus(x){
   if(num(x.qty)<=0)return {key:"out",label:"Zerado",cls:"danger"};
   if(num(x.qty)<num(x.min))return {key:"low",label:"Baixo",cls:"warn"};
   return {key:"ok",label:"Suficiente",cls:"ok"};
 }
+function inferStockCategory(item){
+  const old=String(item.category||"");
+  if(old==="Bebidas")return "Bebidas e líquidos";
+  if(old==="Casa e outros"){
+    const n=norm(item.name);
+    if(/pilha|lampad|parafus|bucha|fita isol|veda rosca|silicone|cola|ferrament|fusivel|extensao|tomada/.test(n))return "Manutenção e reparos";
+    return "Outros";
+  }
+  if(STOCK_CATEGORIES.includes(old))return old;
+  return old==="Especial"?"Outros":"Outros";
+}
+function inferStockLocation(item){
+  const cat=inferStockCategory(item),n=norm(item.name);
+  if(cat==="Alimentos"){
+    if(/carne|frango|peixe|linguica|congel|sorvete/.test(n))return "Freezer";
+    if(/ovo|manteiga|margarina|queijo|iogurte|requeij|presunto|frios|leite|legume|fruta|verdura/.test(n))return "Geladeira";
+    return "Despensa / Armário";
+  }
+  if(cat==="Bebidas e líquidos")return "Despensa / Armário";
+  if(cat==="Limpeza")return "Área de serviço";
+  if(cat==="Higiene")return "Banheiro";
+  if(cat==="Manutenção e reparos")return "Oficina / Ferramentas";
+  if(/gas|carvao/.test(n))return "Área externa / Depósito";
+  if(/papel-aluminio|filme plastico|fosforo|isqueiro/.test(n))return "Despensa / Armário";
+  return "Outro";
+}
+function ensureStockStructure(){
+  let changed=false;
+  state.inventory.forEach(x=>{
+    const category=inferStockCategory(x);
+    if(x.category!==category){x.category=category;changed=true}
+    if(!STOCK_LOCATIONS.includes(x.location)){
+      x.location=inferStockLocation(x);changed=true;
+    }
+  });
+  state.manualBuys.forEach(x=>{
+    if(x.category==="Bebidas"){x.category="Bebidas e líquidos";changed=true}
+    if(x.category==="Casa e outros"){x.category="Outros";changed=true}
+  });
+  if(changed)save();
+}
+function stockGroupId(x){
+  return STOCK_GROUPS.find(g=>g.match(x))?.id||"others";
+}
+function stockRow(x){
+  const st=stockStatus(x),low=lowestPrice(x),expDays=daysUntil(x.expiry);
+  const tr=document.createElement("tr");tr.className=st.key;
+  tr.innerHTML=`
+    <td><span class="badge ${st.cls}">${st.label}</span>${expDays<=30?`<div><span class="badge danger">${expDays<0?"Vencido":expDays+" dias"}</span></div>`:""}</td>
+    <td><input data-k="name" value="${esc(x.name)}"></td>
+    <td><select data-k="category">${STOCK_CATEGORIES.map(v=>`<option ${x.category===v?"selected":""}>${v}</option>`).join("")}</select></td>
+    <td><select data-k="location">${STOCK_LOCATIONS.map(v=>`<option ${x.location===v?"selected":""}>${v}</option>`).join("")}</select></td>
+    <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(x.qty)}"></td>
+    <td><input data-k="unit" value="${esc(x.unit)}"></td>
+    <td><input data-k="min" type="number" min="0" step="0.01" value="${num(x.min)}"></td>
+    <td><input data-k="expiry" type="date" value="${esc(x.expiry||"")}"></td>
+    <td><input data-k="priceC" type="number" min="0" step="0.01" value="${num(x.priceC)}" class="${low.city==="Cambuquira"&&low.price?"price-best":""}"></td>
+    <td><input data-k="priceO" type="number" min="0" step="0.01" value="${num(x.priceO)}" class="${low.city===state.otherCity&&low.price?"price-best":""}"></td>
+    <td><input data-k="priceSP" type="number" min="0" step="0.01" value="${num(x.priceSP)}" class="${low.city==="São Paulo"&&low.price?"price-best":""}"></td>
+    <td><span class="money">${low.price?brl(low.price):"—"}</span><div class="muted">${esc(low.city)}</div></td>
+    <td><input data-k="updated" type="date" value="${esc(x.updated||"")}"></td>
+    <td><input data-k="note" value="${esc(x.note||"")}" placeholder="Mercado, marca..."></td>
+    <td><button class="btn small danger del-stock">Excluir</button></td>`;
+  tr.querySelectorAll("[data-k]").forEach(inp=>inp.onchange=()=>{
+    const k=inp.dataset.k;
+    x[k]=["qty","min","priceC","priceO","priceSP"].includes(k)?num(inp.value):inp.value;
+    save();renderAll();
+  });
+  tr.querySelector(".del-stock").onclick=()=>{
+    if(confirm("Excluir este produto do estoque?")){
+      state.inventory=state.inventory.filter(i=>i.id!==x.id);
+      save();renderAll();
+    }
+  };
+  return tr;
+}
 function renderStock(){
-  const q=norm(stockSearch.value),cat=stockCategoryFilter.value,status=stockStatusFilter.value;
-  stockBody.innerHTML="";
+  ensureStockStructure();
+  const q=norm(stockSearch.value),cat=stockCategoryFilter.value,loc=stockLocationFilter.value,status=stockStatusFilter.value;
   const filtered=state.inventory.filter(x=>{
     const st=stockStatus(x).key,exp=daysUntil(x.expiry)<=30;
-    return (!q||norm(x.name).includes(q))&&(cat==="all"||x.category===cat)&&(status==="all"||st===status||(status==="expiring"&&exp));
+    const searchable=norm([x.name,x.category,x.location,x.note].join(" "));
+    return (!q||searchable.includes(q)) &&
+      (cat==="all"||x.category===cat) &&
+      (loc==="all"||x.location===loc) &&
+      (status==="all"||st===status||(status==="expiring"&&exp));
   });
-  filtered.forEach(x=>{
-    const st=stockStatus(x),low=lowestPrice(x),expDays=daysUntil(x.expiry);
-    const tr=document.createElement("tr");tr.className=st.key;
-    tr.innerHTML=`
-      <td><span class="badge ${st.cls}">${st.label}</span>${expDays<=30?`<div><span class="badge danger">${expDays<0?"Vencido":expDays+" dias"}</span></div>`:""}</td>
-      <td><input data-k="name" value="${esc(x.name)}"></td>
-      <td><select data-k="category">${["Alimentos","Limpeza","Higiene","Bebidas","Casa e outros"].map(v=>`<option ${x.category===v?"selected":""}>${v}</option>`).join("")}</select></td>
-      <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(x.qty)}"></td>
-      <td><input data-k="unit" value="${esc(x.unit)}"></td>
-      <td><input data-k="min" type="number" min="0" step="0.01" value="${num(x.min)}"></td>
-      <td><input data-k="expiry" type="date" value="${esc(x.expiry||"")}"></td>
-      <td><input data-k="priceC" type="number" min="0" step="0.01" value="${num(x.priceC)}" class="${low.city==="Cambuquira"&&low.price?"price-best":""}"></td>
-      <td><input data-k="priceO" type="number" min="0" step="0.01" value="${num(x.priceO)}" class="${low.city===state.otherCity&&low.price?"price-best":""}"></td>
-      <td><input data-k="priceSP" type="number" min="0" step="0.01" value="${num(x.priceSP)}" class="${low.city==="São Paulo"&&low.price?"price-best":""}"></td>
-      <td><span class="money">${low.price?brl(low.price):"—"}</span><div class="muted">${esc(low.city)}</div></td>
-      <td><input data-k="updated" type="date" value="${esc(x.updated||"")}"></td>
-      <td><input data-k="note" value="${esc(x.note||"")}" placeholder="Mercado, marca..."></td>
-      <td><button class="btn small danger del-stock">Excluir</button></td>`;
-    tr.querySelectorAll("[data-k]").forEach(inp=>inp.onchange=()=>{const k=inp.dataset.k;x[k]=["qty","min","priceC","priceO","priceSP"].includes(k)?num(inp.value):inp.value;save();renderAll()});
-    tr.querySelector(".del-stock").onclick=()=>{if(confirm("Excluir este produto do estoque?")){state.inventory=state.inventory.filter(i=>i.id!==x.id);save();renderAll()}};
-    stockBody.appendChild(tr);
+
+  stockGroups.innerHTML="";
+  const defaultView=!q&&cat==="all"&&loc==="all"&&status==="all";
+  let renderedSections=0;
+
+  STOCK_GROUPS.forEach(group=>{
+    const items=filtered.filter(group.match);
+    if(!items.length&&!defaultView)return;
+    renderedSections++;
+
+    const lowCount=items.filter(x=>stockStatus(x).key==="low").length;
+    const outCount=items.filter(x=>stockStatus(x).key==="out").length;
+    const details=document.createElement("details");
+    details.className="stock-group";
+    details.dataset.group=group.id;
+    details.open=items.length?stockOpenGroups.has(group.id):false;
+    details.ontoggle=()=>details.open?stockOpenGroups.add(group.id):stockOpenGroups.delete(group.id);
+
+    const summary=document.createElement("summary");
+    summary.innerHTML=`
+      <span class="stock-group-title"><strong>${group.title}</strong></span>
+      <span class="stock-group-meta">
+        ${outCount?`<span class="badge danger">${outCount} zerado${outCount>1?"s":""}</span>`:""}
+        ${lowCount?`<span class="badge warn">${lowCount} baixo${lowCount>1?"s":""}</span>`:""}
+        <span class="stock-group-count">${items.length} ${items.length===1?"item":"itens"}</span>
+      </span>`;
+    details.appendChild(summary);
+
+    if(!items.length){
+      const empty=document.createElement("div");
+      empty.className="stock-group-empty";
+      empty.textContent="Nenhum item cadastrado nesta seção.";
+      details.appendChild(empty);
+    }else{
+      const wrap=document.createElement("div");
+      wrap.className="table-wrap";
+      wrap.innerHTML=`
+        <table>
+          <thead><tr>
+            <th>Situação</th><th>Produto</th><th>Categoria</th><th>Local</th><th>Em casa</th><th>Unidade</th>
+            <th>Mínimo</th><th>Validade</th><th>Cambuquira</th><th class="other-city-label">${esc(state.otherCity||"Outra cidade")}</th>
+            <th>São Paulo</th><th>Menor preço</th><th>Atualizado</th><th>Observação</th><th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>`;
+      const tbody=wrap.querySelector("tbody");
+      items.forEach(x=>tbody.appendChild(stockRow(x)));
+      details.appendChild(wrap);
+    }
+    stockGroups.appendChild(details);
   });
-  if(!filtered.length)stockBody.innerHTML='<tr><td colspan="14"><div class="empty">Nenhum produto encontrado.</div></td></tr>';
-  const out=state.inventory.filter(x=>num(x.qty)<=0).length,low=state.inventory.filter(x=>num(x.qty)>0&&num(x.qty)<num(x.min)).length;
+
+  if(!renderedSections){
+    stockGroups.innerHTML='<div class="empty">Nenhum produto encontrado com estes filtros.</div>';
+  }
+
+  const out=state.inventory.filter(x=>num(x.qty)<=0).length;
+  const low=state.inventory.filter(x=>num(x.qty)>0&&num(x.qty)<num(x.min)).length;
   const exp=state.inventory.filter(x=>daysUntil(x.expiry)<=30).length;
   const value=state.inventory.reduce((s,x)=>s+num(x.qty)*lowestPrice(x).price,0);
-  stockTotal.textContent=state.inventory.length;stockOut.textContent=out;stockLow.textContent=low;stockExpiry.textContent=exp;stockValue.textContent=brl(value);
+  stockTotal.textContent=state.inventory.length;
+  stockOut.textContent=out;
+  stockLow.textContent=low;
+  stockExpiry.textContent=exp;
+  stockValue.textContent=brl(value);
 }
-stockSearch.oninput=renderStock;stockCategoryFilter.onchange=renderStock;stockStatusFilter.onchange=renderStock;
+stockSearch.oninput=renderStock;
+stockCategoryFilter.onchange=renderStock;
+stockLocationFilter.onchange=renderStock;
+stockStatusFilter.onchange=renderStock;
 otherCityName.onchange=()=>{state.otherCity=otherCityName.value.trim()||"Outra cidade";save();renderAll()};
-addStockBtn.onclick=()=>{stockForm.reset();stockUnitInput.value="un.";stockMinInput.value=1;stockDialog.showModal()};
+
+function suggestedLocationForCategory(category){
+  if(category==="Limpeza")return "Área de serviço";
+  if(category==="Higiene")return "Banheiro";
+  if(category==="Manutenção e reparos")return "Oficina / Ferramentas";
+  if(category==="Outros")return "Outro";
+  return "Despensa / Armário";
+}
+stockCategoryInput.onchange=()=>{stockLocationInput.value=suggestedLocationForCategory(stockCategoryInput.value)};
+addStockBtn.onclick=()=>{
+  stockForm.reset();
+  stockCategoryInput.value="Alimentos";
+  stockLocationInput.value="Despensa / Armário";
+  stockUnitInput.value="un.";
+  stockMinInput.value=1;
+  stockDialog.showModal();
+};
 stockForm.onsubmit=e=>{
-  if(e.submitter?.value==="cancel")return;e.preventDefault();
-  state.inventory.push({id:uid(),name:stockNameInput.value.trim(),category:stockCategoryInput.value,qty:num(stockQtyInput.value),unit:stockUnitInput.value||"un.",min:num(stockMinInput.value),expiry:"",priceC:0,priceO:0,priceSP:0,updated:"",note:"",buyQty:0,bought:false,where:"best"});
+  if(e.submitter?.value==="cancel")return;
+  e.preventDefault();
+  state.inventory.push({
+    id:uid(),
+    name:stockNameInput.value.trim(),
+    category:stockCategoryInput.value,
+    location:stockLocationInput.value,
+    qty:num(stockQtyInput.value),
+    unit:stockUnitInput.value||"un.",
+    min:num(stockMinInput.value),
+    expiry:stockExpiryInput.value||"",
+    priceC:0,priceO:0,priceSP:0,updated:"",
+    note:stockNoteInput.value.trim(),
+    buyQty:0,bought:false,where:"best"
+  });
   save();renderAll();stockDialog.close();
 };
 basicStockBtn.onclick=()=>{
   const names=new Set(state.inventory.map(x=>norm(x.name)));let added=0;
-  BASIC_STOCK.forEach(([name,category,unit,min])=>{if(!names.has(norm(name))){state.inventory.push({id:uid(),name,category,qty:0,unit,min,expiry:"",priceC:0,priceO:0,priceSP:0,updated:"",note:"",buyQty:min,bought:false,where:"best"});added++}});
-  save();renderAll();alert(`${added} produtos adicionados. Os itens que já existiam não foram duplicados.`);
+  BASIC_STOCK.forEach(([name,category,location,unit,min])=>{
+    if(!names.has(norm(name))){
+      state.inventory.push({
+        id:uid(),name,category,location,qty:0,unit,min,expiry:"",
+        priceC:0,priceO:0,priceSP:0,updated:"",note:"",
+        buyQty:min,bought:false,where:"best"
+      });
+      added++;
+    }
+  });
+  save();renderAll();
+  alert(`${added} produtos adicionados. Os itens que já existiam não foram duplicados.`);
 };
 
 /* COMPRAS */
@@ -2971,9 +3281,9 @@ exportRepairsCsvBtn.onclick=()=>download("reparos-casa-rural-cambuquira.csv",csv
   ["Área","Reparo","Prioridade","Situação","Prazo","Responsável","Materiais","Estimado","Gasto real","Observações"],
   ...state.repairs.map(x=>[x.area,x.task,x.priority,x.status,x.due,x.owner,x.materials,x.estimated,x.actual,x.note])
 ]),"text/csv");
-exportStockCsv.onclick=()=>download("estoque-casa-cambuquira.csv",csv([["Produto","Categoria","Quantidade","Unidade","Mínimo","Validade","Cambuquira",state.otherCity,"São Paulo","Atualizado","Observação"],...state.inventory.map(x=>[x.name,x.category,x.qty,x.unit,x.min,x.expiry,x.priceC,x.priceO,x.priceSP,x.updated,x.note])]),"text/csv");
+exportStockCsv.onclick=()=>download("estoque-casa-cambuquira.csv",csv([["Produto","Categoria","Local","Quantidade","Unidade","Mínimo","Validade","Cambuquira",state.otherCity,"São Paulo","Atualizado","Observação"],...state.inventory.map(x=>[x.name,x.category,x.location||"",x.qty,x.unit,x.min,x.expiry,x.priceC,x.priceO,x.priceSP,x.updated,x.note])]),"text/csv");
 exportShoppingCsv.onclick=()=>download("lista-de-compras.csv",csv([["Item","Categoria","Quantidade","Unidade","Cambuquira",state.otherCity,"São Paulo","Menor preço","Cidade mais barata"],...shoppingItems().filter(x=>!x.bought).map(x=>[x.name,x.category,x.buyQty,x.unit,x.priceC,x.priceO,x.priceSP,lowestPrice(x).price,lowestPrice(x).city])]),"text/csv");
-exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:7,exportedAt:new Date().toISOString(),state},null,2),"application/json");
+exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:8,exportedAt:new Date().toISOString(),state},null,2),"application/json");
 importBackupBtn.onclick=()=>backupFile.click();
 backupFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());state={...freshState(),...(p.state||p)};save();renderAll();alert("Backup importado com sucesso.")}catch(err){alert("Arquivo inválido.")}e.target.value=""};
 resetAllBtn.onclick=()=>{if(!confirm("Apagar todos os dados e restaurar a lista inicial?"))return;state=freshState();save();renderAll()};
@@ -3629,7 +3939,7 @@ renderAll();
         product = {
           id: uidPriceDb(),
           name: item.name || "Produto",
-          category: item.category || "Casa e outros",
+          category: item.category || "Outros",
           qtyNeeded:
             numPriceDb(item.buyQty) ||
             Math.max(numPriceDb(item.min) - numPriceDb(item.qty), 1),
