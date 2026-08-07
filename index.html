@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.2 Estoque Legível</title>
+<title>Casa Cambuquira — V10.3 Estoque + Preços Automáticos</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1236,6 +1236,12 @@ footer{
   #stockPanel .stock-group td:nth-child(2) input{min-width:200px}
 }
 
+
+/* ===== V10.3 — ESTOQUE -> PREÇOS AUTOMÁTICO ===== */
+#stockPanel .stock-group th:last-child,
+#stockPanel .stock-group td:last-child{min-width:145px!important;width:145px}
+#priceDbPanel .price-db-badge{background:#102118!important;color:#8ef1b3!important;border-color:rgba(46,204,113,.22)!important}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -1248,7 +1254,7 @@ footer{
   <h1>Casa Cambuquira</h1>
   <div class="subtitle">Painel visual da casa: reparos, fotos, estoque, compras e organização rural.</div>
   <div class="tabs">
-    <button class="tab" data-panel="dashboardPanel">Resumo</button>
+    <button class="tab active" data-panel="dashboardPanel">Resumo</button>
     <button class="tab" data-panel="checklistPanel">Checklist da casa</button>
     <button class="tab" data-panel="repairsPanel">Reparos</button>
     <button class="tab" data-panel="photosPanel">Fotos</button>
@@ -1256,14 +1262,14 @@ footer{
     <button class="tab" data-panel="priceDbPanel">Preços &amp; Compras</button>
     <button class="tab" data-panel="financePanel">Financeiro</button>
     <button class="tab" data-panel="eventsPanel">Especiais</button>
-    <button class="tab active" data-panel="backupPanel">Backup</button>
+    <button class="tab" data-panel="backupPanel">Backup</button>
     <button class="tab" data-panel="supportPanel">Suporte</button>
   </div>
 </div>
 </header>
 
 <main>
-<section id="dashboardPanel" class="panel">
+<section id="dashboardPanel" class="panel active">
   <div class="cards">
     <div class="metric"><span>Itens da casa</span><strong id="dashHouseTotal">339</strong></div>
     <div class="metric alert"><span>Faltando na casa</span><strong id="dashHouseMissing">164</strong></div>
@@ -2109,9 +2115,9 @@ footer{
     <div class="price-db-banner">
       <div>
         <strong>Banco de preços e compras</strong>
-        <span>Cadastre cotações de qualquer cidade, loja, fornecedor ou site. O sistema compara o preço por unidade e destaca onde vale mais a pena comprar.</span>
+        <span>Itens cadastrados no Estoque aparecem aqui automaticamente. Para móveis, ferramentas, materiais, eletrodomésticos e compras únicas, use “+ Produto”. Depois, cadastre cotações de lojas, cidades ou sites para comparar.</span>
       </div>
-      <div class="price-db-badge">BASE LOCAL DE TESTE</div>
+      <div class="price-db-badge">ESTOQUE + COTAÇÕES</div>
     </div>
 
     <div class="price-db-metrics">
@@ -2126,7 +2132,7 @@ footer{
       <button id="priceDbAddProductBtn" class="btn primary">+ Produto</button>
       <button id="priceDbAddQuoteBtn" class="btn">+ Cotação</button>
       <button id="priceDbAddPurchaseBtn" class="btn">Registrar compra</button>
-      <button id="priceDbImportStockBtn" class="btn">Importar do estoque</button>
+      <button id="priceDbImportStockBtn" class="btn">Sincronizar estoque agora</button>
       <button id="priceDbExportBtn" class="btn">Exportar base</button>
       <button id="priceDbImportBtn" class="btn">Importar base</button>
       <input id="priceDbImportFile" type="file" accept=".json,application/json" hidden="">
@@ -2634,7 +2640,7 @@ footer{
   <div id="eventsList"><div class="empty">Nenhuma lista especial criada.</div></div>
 </section>
 
-<section id="backupPanel" class="panel active">
+<section id="backupPanel" class="panel">
   <div class="card" style="margin-bottom:12px">
     <div class="section-title"><h2>Banco compartilhado automático</h2></div>
     <p>Na V10, todos os aparelhos usam a <strong>mesma base no Supabase</strong>. Não há login. Ao abrir a página, os dados são carregados automaticamente; ao alterar algo, a mudança é enviada para a nuvem e os outros aparelhos recebem a atualização.</p>
@@ -3539,6 +3545,9 @@ function save(){
   if(window.CasaCloud && !window.CasaCloud.applyingRemote){
     window.CasaCloud.queueSave("main",state);
   }
+  try{
+    window.dispatchEvent(new CustomEvent("casa:main-saved"));
+  }catch(error){}
 }
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
@@ -4101,12 +4110,25 @@ function stockRow(x){
     <td><span class="money">${low.price?brl(low.price):"—"}</span><div class="muted">${esc(low.city)}</div></td>
     <td><input data-k="updated" type="date" value="${esc(x.updated||"")}"></td>
     <td><input data-k="note" value="${esc(x.note||"")}" placeholder="Mercado, marca..."></td>
-    <td><button class="btn small danger del-stock">Excluir</button></td>`;
+    <td>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="btn small stock-prices">Preços</button>
+        <button class="btn small danger del-stock">Excluir</button>
+      </div>
+    </td>`;
   tr.querySelectorAll("[data-k]").forEach(inp=>inp.onchange=()=>{
     const k=inp.dataset.k;
     x[k]=["qty","min","priceC","priceO","priceSP"].includes(k)?num(inp.value):inp.value;
     save();renderAll();
   });
+  tr.querySelector(".stock-prices").onclick=()=>{
+    openPanel("priceDbPanel");
+    const search=document.getElementById("priceDbSearch");
+    if(search){
+      search.value=x.name||"";
+      search.dispatchEvent(new Event("input",{bubbles:true}));
+    }
+  };
   tr.querySelector(".del-stock").onclick=()=>{
     if(confirm("Excluir este produto do estoque?")){
       state.inventory=state.inventory.filter(i=>i.id!==x.id);
@@ -4449,6 +4471,173 @@ renderAll();
     }
   }
 
+  function desiredStockQty(item,isNew=false){
+    const explicit=numPriceDb(item.buyQty);
+    if(explicit>0)return explicit;
+
+    const deficit=Math.max(numPriceDb(item.min)-numPriceDb(item.qty),0);
+    if(deficit>0)return deficit;
+
+    return isNew ? 1 : null;
+  }
+
+  function syncLegacyStockQuote(product,item,field,city){
+    const value=numPriceDb(item[field]);
+    if(value<=0)return false;
+
+    const sourceKey=`stock:${item.id}:${field}`;
+    let quote=priceDb.quotes.find(q=>q.sourceKey===sourceKey);
+
+    if(!quote){
+      // Evita duplicar uma cotação antiga que já tenha sido importada manualmente.
+      quote=priceDb.quotes.find(q=>
+        q.productId===product.id &&
+        normPriceDb(q.city)===normPriceDb(city) &&
+        numPriceDb(q.price)===value &&
+        /preço antigo do estoque|modelo antigo|estoque/i.test(String(q.store||"")+" "+String(q.notes||""))
+      );
+      if(quote)quote.sourceKey=sourceKey;
+    }
+
+    const data={
+      productId:product.id,
+      store:"Preço legado do estoque",
+      city,
+      packageQty:1,
+      price:value,
+      freight:0,
+      date:item.updated||todayPriceDb(),
+      link:"",
+      notes:"Valor trazido automaticamente do cadastro antigo do Estoque.",
+      sourceKey
+    };
+
+    if(!quote){
+      priceDb.quotes.push({
+        id:uidPriceDb(),
+        createdAt:new Date().toISOString(),
+        ...data
+      });
+      return true;
+    }
+
+    let changed=false;
+    Object.entries(data).forEach(([key,val])=>{
+      if(quote[key]!==val){
+        quote[key]=val;
+        changed=true;
+      }
+    });
+    return changed;
+  }
+
+  function syncInventoryToPriceDb(options={}){
+    const inventory=(typeof state!=="undefined" && Array.isArray(state.inventory))
+      ? state.inventory
+      : [];
+
+    let changed=false;
+    let added=0;
+    let linked=0;
+    let quotesAddedOrUpdated=0;
+
+    inventory.forEach(item=>{
+      const stockId=String(item.id||"");
+      const itemName=String(item.name||"").trim()||"Produto";
+
+      let product=priceDb.products.find(p=>
+        stockId && String(p.sourceStockId||"")===stockId
+      );
+
+      if(!product){
+        product=priceDb.products.find(p=>
+          normPriceDb(p.name)===normPriceDb(itemName)
+        );
+        if(product && stockId && product.sourceStockId!==stockId){
+          product.sourceStockId=stockId;
+          product.source="stock";
+          changed=true;
+          linked++;
+        }
+      }
+
+      const isNew=!product;
+      if(isNew){
+        product={
+          id:uidPriceDb(),
+          name:itemName,
+          category:item.category||"Outros",
+          qtyNeeded:desiredStockQty(item,true),
+          unit:item.unit||"un.",
+          spec:"",
+          notes:"Sincronizado automaticamente com a aba Estoque.",
+          source:"stock",
+          sourceStockId:stockId,
+          createdAt:new Date().toISOString()
+        };
+        priceDb.products.push(product);
+        changed=true;
+        added++;
+      }else{
+        const desiredQty=desiredStockQty(item,false);
+        const updates={
+          name:itemName,
+          category:item.category||"Outros",
+          unit:item.unit||"un.",
+          source:"stock",
+          sourceStockId:stockId
+        };
+        if(desiredQty!==null)updates.qtyNeeded=desiredQty;
+
+        Object.entries(updates).forEach(([key,val])=>{
+          if(product[key]!==val){
+            product[key]=val;
+            changed=true;
+          }
+        });
+      }
+
+      const otherCity=(typeof state!=="undefined" && state.otherCity)
+        ? state.otherCity
+        : "Outra cidade";
+
+      [
+        ["priceC","Cambuquira"],
+        ["priceO",otherCity],
+        ["priceSP","São Paulo"]
+      ].forEach(([field,city])=>{
+        if(syncLegacyStockQuote(product,item,field,city)){
+          changed=true;
+          quotesAddedOrUpdated++;
+        }
+      });
+    });
+
+    if(changed){
+      savePriceDb();
+      renderPriceDb();
+    }
+
+    if(options.showAlert){
+      alert(
+        `Estoque sincronizado. ${added} produto(s) novo(s), `+
+        `${linked} vínculo(s) criado(s) e `+
+        `${quotesAddedOrUpdated} preço(s) legado(s) atualizado(s).`
+      );
+    }
+
+    return {changed,added,linked,quotesAddedOrUpdated};
+  }
+
+  let stockSyncTimer=null;
+  function scheduleStockPriceSync(){
+    clearTimeout(stockSyncTimer);
+    stockSyncTimer=setTimeout(()=>syncInventoryToPriceDb(),180);
+  }
+
+  window.addEventListener("casa:main-saved",scheduleStockPriceSync);
+  window.CasaPriceDBAutoSync=syncInventoryToPriceDb;
+
   function productById(id){
     return priceDb.products.find(product => product.id === id);
   }
@@ -4685,7 +4874,7 @@ renderAll();
       card.innerHTML = `
         <div class="price-product-head">
           <div class="price-product-title">
-            <h3>${escPriceDb(product.name)}</h3>
+            <h3>${escPriceDb(product.name)} ${product.sourceStockId ? '<span class="price-best-tag" style="margin-left:6px">ESTOQUE</span>' : ""}</h3>
             <div>
               ${escPriceDb(product.category)} • precisa de
               <strong>${escPriceDb(product.qtyNeeded)} ${escPriceDb(product.unit)}</strong>
@@ -5002,97 +5191,7 @@ renderAll();
   };
 
   $("priceDbImportStockBtn").onclick = () => {
-    let mainState;
-
-    try{
-      mainState = JSON.parse(localStorage.getItem(MAIN_DB_KEY) || "{}");
-    }catch(error){
-      alert("Não foi possível ler o estoque atual.");
-      return;
-    }
-
-    const inventory = Array.isArray(mainState.inventory)
-      ? mainState.inventory
-      : [];
-
-    const candidates = inventory.filter(item =>
-      numPriceDb(item.buyQty) > 0 ||
-      numPriceDb(item.qty) < numPriceDb(item.min)
-    );
-
-    if(!candidates.length){
-      alert("Nenhum item abaixo do estoque mínimo foi encontrado.");
-      return;
-    }
-
-    let added = 0;
-    let quotesAdded = 0;
-
-    candidates.forEach(item => {
-      let product = priceDb.products.find(existing =>
-        normPriceDb(existing.name) === normPriceDb(item.name)
-      );
-
-      if(!product){
-        product = {
-          id: uidPriceDb(),
-          name: item.name || "Produto",
-          category: item.category || "Outros",
-          qtyNeeded:
-            numPriceDb(item.buyQty) ||
-            Math.max(numPriceDb(item.min) - numPriceDb(item.qty), 1),
-          unit: item.unit || "un.",
-          spec: "",
-          notes: "Importado da aba Estoque.",
-          createdAt: new Date().toISOString()
-        };
-
-        priceDb.products.push(product);
-        added++;
-      }
-
-      const legacyQuotes = [
-        ["Cambuquira", "Preço antigo do estoque", numPriceDb(item.priceC)],
-        [mainState.otherCity || "Outra cidade", "Preço antigo do estoque", numPriceDb(item.priceO)],
-        ["São Paulo", "Preço antigo do estoque", numPriceDb(item.priceSP)]
-      ];
-
-      legacyQuotes.forEach(([city, store, price]) => {
-        if(price <= 0) return;
-
-        const exists = priceDb.quotes.some(quote =>
-          quote.productId === product.id &&
-          quote.city === city &&
-          numPriceDb(quote.price) === price
-        );
-
-        if(exists) return;
-
-        priceDb.quotes.push({
-          id: uidPriceDb(),
-          productId: product.id,
-          store,
-          city,
-          packageQty: 1,
-          price,
-          freight: 0,
-          date: item.updated || todayPriceDb(),
-          link: "",
-          notes: "Importado do modelo antigo de três cidades.",
-          createdAt: new Date().toISOString()
-        });
-
-        quotesAdded++;
-      });
-    });
-
-    savePriceDb();
-    renderPriceDb();
-
-    alert(
-      `${added} produto(s) adicionado(s) e ` +
-      `${quotesAdded} preço(s) antigo(s) importado(s).`
-    );
+    syncInventoryToPriceDb({showAlert:true});
   };
 
   $("priceDbExportBtn").onclick = () => {
@@ -5154,6 +5253,7 @@ renderAll();
     }
   };
 
+  syncInventoryToPriceDb();
   renderPriceDb();
 })();
 </script>
@@ -6456,6 +6556,7 @@ renderAll();
         state={...freshState(),...(payload||{})};
         localStorage.setItem(KEY,JSON.stringify(state));
         renderAll();
+        setTimeout(()=>window.CasaPriceDBAutoSync?.(),120);
       }else if(section==="price_db" && window.CasaPriceDBCloud){
         window.CasaPriceDBCloud.replace(payload||{});
       }
@@ -6583,6 +6684,8 @@ renderAll();
       if(!confirm("Inicializar o banco compartilhado com os dados DESTE aparelho? Faça isso somente no aparelho que contém a base correta."))return;
 
       setStatus("Inicializando banco compartilhado…","warn");
+
+      window.CasaPriceDBAutoSync?.();
 
       const rows=[
         {section:"main",payload:currentPayload("main"),updated_at:new Date().toISOString()},
