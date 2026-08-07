@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.5 Comparador de Preços Simples</title>
+<title>Casa Cambuquira — V10.6 Especiais com Rateio</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1397,6 +1397,125 @@ footer{
   .price-product-head{padding:12px}
 }
 
+
+/* ===== V10.6 — ESPECIAIS / RATEIO POR PESSOA ===== */
+.event-head-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.event-price-reference{margin-top:5px;line-height:1.45}
+
+.event-split-calculator{
+  padding:13px 14px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:
+    radial-gradient(circle at 0% 0%,rgba(46,204,113,.08),transparent 34%),
+    #10141a;
+}
+.event-calc-title{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:baseline;
+  margin-bottom:10px;
+}
+.event-calc-title strong{font-size:14px}
+.event-calc-title span{color:var(--muted);font-size:10px}
+
+.event-calc-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+.event-calc-card{
+  display:block;
+  min-width:0;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:13px;
+  background:#171b23;
+}
+.event-calc-card>span{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.event-calc-card>strong{
+  display:block;
+  margin-top:5px;
+  color:#fff;
+  font-size:21px;
+}
+.event-calc-card>small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.4;
+}
+.event-calc-card.event-per-person{
+  border-color:rgba(46,204,113,.20);
+  background:linear-gradient(180deg,rgba(46,204,113,.08),transparent),#171b23;
+}
+.event-calc-card.event-per-person>strong{color:#8ef1b3}
+.event-calc-input input{
+  width:100%;
+  margin-top:5px;
+  min-height:38px;
+  font-size:17px;
+  font-weight:800;
+}
+
+.event-paid-help{
+  margin-bottom:10px;
+  padding:9px 10px;
+  border-radius:10px;
+  background:#151922;
+  border:1px solid rgba(255,255,255,.07);
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.45;
+}
+.event-paid-help strong{color:#fff}
+
+.event-table{min-width:1370px!important}
+.event-table th:nth-child(2),
+.event-table td:nth-child(2){min-width:180px}
+.event-table th:nth-child(5),
+.event-table td:nth-child(5){min-width:135px}
+.event-paid-input-wrap{
+  display:grid;
+  grid-template-columns:auto minmax(85px,1fr);
+  gap:5px;
+  align-items:center;
+}
+.event-paid-input-wrap>span{
+  color:#8ef1b3;
+  font-size:11px;
+  font-weight:800;
+}
+.event-paid-total{
+  font-weight:800!important;
+  border-color:rgba(46,204,113,.20)!important;
+}
+
+@media(max-width:950px){
+  .event-calc-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .event-head{flex-direction:column}
+  .event-head-actions{justify-content:flex-start;width:100%}
+  .event-head-actions .btn{flex:1}
+  .event-calc-title{align-items:flex-start;flex-direction:column}
+  .event-calc-grid{grid-template-columns:1fr 1fr}
+  .event-calc-card>strong{font-size:18px}
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -2787,7 +2906,7 @@ footer{
 
 <section id="eventsPanel" class="panel">
   <div class="help">
-    Crie listas separadas para churrasco, pizza, festa, almoço, viagem ou qualquer outra ocasião. As quantidades iniciais dos modelos são apenas sugestões e podem ser alteradas.
+    Crie listas para churrasco, pizza, festa, almoço, viagem ou qualquer outra ocasião. Informe o <strong>valor realmente pago</strong> em cada item e o sistema soma todos os gastos e calcula automaticamente quanto ficou por pessoa.
   </div>
   <div class="actions">
     <button id="newEventBtn" class="btn primary">+ Novo especial</button>
@@ -4522,36 +4641,234 @@ newEventBtn.onclick=()=>{eventForm.reset();eventPeople.value=10;eventDialog.show
 eventForm.onsubmit=e=>{
   if(e.submitter?.value==="cancel")return;e.preventDefault();
   const type=eventType.value,people=num(eventPeople.value);
-  state.events.push({id:uid(),type,name:eventName.value.trim(),date:eventDate.value,people,items:eventTemplate(type,people).map(([name,qty,unit])=>({id:uid(),name,qty,unit,bought:false,priceC:0,priceO:0,priceSP:0}))});
+  state.events.push({
+    id:uid(),
+    type,
+    name:eventName.value.trim(),
+    date:eventDate.value,
+    people,
+    extraCost:0,
+    items:eventTemplate(type,people).map(([name,qty,unit])=>({
+      id:uid(),name,qty,unit,bought:false,
+      paidTotal:0,
+      priceC:0,priceO:0,priceSP:0
+    }))
+  });
   save();renderAll();eventDialog.close();
 };
 function renderEvents(){
   eventsList.innerHTML="";
+
   state.events.forEach(ev=>{
-    const card=document.createElement("div");card.className="event-card";
-    const totals={c:0,o:0,s:0,best:0};ev.items.forEach(i=>{totals.c+=num(i.qty)*num(i.priceC);totals.o+=num(i.qty)*num(i.priceO);totals.s+=num(i.qty)*num(i.priceSP);totals.best+=num(i.qty)*lowestPrice(i).price});
-    card.innerHTML=`<div class="event-head"><div><h3>${esc(ev.name)}</h3><div class="muted">${esc(ev.type)} • ${ev.people} pessoas ${ev.date?"• "+ev.date:""}</div>
-      <div class="muted">Cambuquira: ${brl(totals.c)} | ${esc(state.otherCity)}: ${brl(totals.o)} | SP: ${brl(totals.s)} | Menor combinação: ${brl(totals.best)}</div></div>
-      <div><button class="btn small add-event-item">+ Item</button> <button class="btn small danger del-event">Excluir evento</button></div></div>
-      <div class="event-body"><div class="table-wrap"><table><thead><tr><th>OK</th><th>Item</th><th>Qtd.</th><th>Unidade</th><th>Cambuquira</th><th>${esc(state.otherCity)}</th><th>São Paulo</th><th>Menor</th><th></th></tr></thead><tbody class="event-tbody"></tbody></table></div></div>`;
-    const tbody=card.querySelector(".event-tbody");
+    const people=Math.max(1,num(ev.people));
+    const totals={c:0,o:0,s:0,best:0};
+
     ev.items.forEach(i=>{
-      const low=lowestPrice(i),tr=document.createElement("tr");if(i.bought)tr.className="done";
-      tr.innerHTML=`<td><input data-k="bought" type="checkbox" ${i.bought?"checked":""}></td><td><input data-k="name" value="${esc(i.name)}"></td>
-      <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(i.qty)}"></td><td><input data-k="unit" value="${esc(i.unit)}"></td>
-      <td><input data-k="priceC" type="number" min="0" step="0.01" value="${num(i.priceC)}"></td><td><input data-k="priceO" type="number" min="0" step="0.01" value="${num(i.priceO)}"></td>
-      <td><input data-k="priceSP" type="number" min="0" step="0.01" value="${num(i.priceSP)}"></td><td><span class="money">${low.price?brl(low.price*num(i.qty)):"—"}</span><div class="muted">${esc(low.city)}</div></td>
-      <td><button class="btn small danger del-event-item">Excluir</button></td>`;
-      tr.querySelectorAll("[data-k]").forEach(inp=>inp.onchange=()=>{const k=inp.dataset.k;i[k]=k==="bought"?inp.checked:["qty","priceC","priceO","priceSP"].includes(k)?num(inp.value):inp.value;save();renderAll()});
-      tr.querySelector(".del-event-item").onclick=()=>{ev.items=ev.items.filter(x=>x.id!==i.id);save();renderAll()};
+      totals.c+=num(i.qty)*num(i.priceC);
+      totals.o+=num(i.qty)*num(i.priceO);
+      totals.s+=num(i.qty)*num(i.priceSP);
+      totals.best+=num(i.qty)*lowestPrice(i).price;
+    });
+
+    const itemsPaid=ev.items.reduce((sum,i)=>sum+num(i.paidTotal),0);
+    const extraCost=num(ev.extraCost);
+    const totalSpent=itemsPaid+extraCost;
+    const perPerson=people>0 ? totalSpent/people : 0;
+    const paidCount=ev.items.filter(i=>num(i.paidTotal)>0).length;
+
+    const card=document.createElement("div");
+    card.className="event-card";
+
+    card.innerHTML=`
+      <div class="event-head">
+        <div class="event-title-wrap">
+          <h3>${esc(ev.name)}</h3>
+          <div class="muted">${esc(ev.type)} ${ev.date?"• "+ev.date:""}</div>
+          <div class="muted event-price-reference">
+            Referência de compra — Cambuquira: ${brl(totals.c)} |
+            ${esc(state.otherCity)}: ${brl(totals.o)} |
+            SP: ${brl(totals.s)} |
+            Menor combinação: ${brl(totals.best)}
+          </div>
+        </div>
+        <div class="event-head-actions">
+          <button class="btn small copy-event-share">Copiar rateio</button>
+          <button class="btn small add-event-item">+ Item</button>
+          <button class="btn small danger del-event">Excluir evento</button>
+        </div>
+      </div>
+
+      <div class="event-split-calculator">
+        <div class="event-calc-title">
+          <strong>Calculadora do evento</strong>
+          <span>Preencha “Valor pago” nos itens. O rateio é automático.</span>
+        </div>
+
+        <div class="event-calc-grid">
+          <div class="event-calc-card">
+            <span>Total gasto</span>
+            <strong>${brl(totalSpent)}</strong>
+            <small>${paidCount} item(ns) com valor informado</small>
+          </div>
+
+          <label class="event-calc-card event-calc-input">
+            <span>Número de pessoas</span>
+            <input class="event-people-input" type="number" min="1" step="1" value="${people}">
+            <small>Altere aqui para recalcular o rateio</small>
+          </label>
+
+          <div class="event-calc-card event-per-person">
+            <span>Valor por pessoa</span>
+            <strong>${brl(perPerson)}</strong>
+            <small>${brl(totalSpent)} ÷ ${people} pessoa(s)</small>
+          </div>
+
+          <label class="event-calc-card event-calc-input">
+            <span>Outros gastos</span>
+            <input class="event-extra-cost-input" type="number" min="0" step="0.01" value="${num(ev.extraCost)}">
+            <small>Ex.: entrega, transporte, taxa, aluguel</small>
+          </label>
+        </div>
+      </div>
+
+      <div class="event-body">
+        <div class="event-paid-help">
+          <strong>Valor pago:</strong> informe o total realmente gasto naquele item.
+          Ex.: se 7,4 kg de carne custaram R$ 220,00, digite <strong>220</strong>.
+        </div>
+
+        <div class="table-wrap">
+          <table class="event-table">
+            <thead>
+              <tr>
+                <th>OK</th>
+                <th>Item</th>
+                <th>Qtd.</th>
+                <th>Unidade</th>
+                <th>Valor pago</th>
+                <th>Cambuquira</th>
+                <th>${esc(state.otherCity)}</th>
+                <th>São Paulo</th>
+                <th>Menor</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody class="event-tbody"></tbody>
+          </table>
+        </div>
+      </div>`;
+
+    const tbody=card.querySelector(".event-tbody");
+
+    ev.items.forEach(i=>{
+      const low=lowestPrice(i);
+      const tr=document.createElement("tr");
+      if(i.bought)tr.className="done";
+
+      tr.innerHTML=`
+        <td><input data-k="bought" type="checkbox" ${i.bought?"checked":""}></td>
+        <td><input data-k="name" value="${esc(i.name)}"></td>
+        <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(i.qty)}"></td>
+        <td><input data-k="unit" value="${esc(i.unit)}"></td>
+        <td>
+          <div class="event-paid-input-wrap">
+            <span>R$</span>
+            <input class="event-paid-total" data-k="paidTotal" type="number" min="0" step="0.01" value="${num(i.paidTotal)}">
+          </div>
+        </td>
+        <td><input data-k="priceC" type="number" min="0" step="0.01" value="${num(i.priceC)}"></td>
+        <td><input data-k="priceO" type="number" min="0" step="0.01" value="${num(i.priceO)}"></td>
+        <td><input data-k="priceSP" type="number" min="0" step="0.01" value="${num(i.priceSP)}"></td>
+        <td>
+          <span class="money">${low.price?brl(low.price*num(i.qty)):"—"}</span>
+          <div class="muted">${esc(low.city)}</div>
+        </td>
+        <td><button class="btn small danger del-event-item">Excluir</button></td>`;
+
+      tr.querySelectorAll("[data-k]").forEach(inp=>{
+        inp.onchange=()=>{
+          const k=inp.dataset.k;
+          i[k]=k==="bought"
+            ? inp.checked
+            : ["qty","paidTotal","priceC","priceO","priceSP"].includes(k)
+              ? num(inp.value)
+              : inp.value;
+          save();
+          renderAll();
+        };
+      });
+
+      tr.querySelector(".del-event-item").onclick=()=>{
+        ev.items=ev.items.filter(x=>x.id!==i.id);
+        save();
+        renderAll();
+      };
+
       tbody.appendChild(tr);
     });
-    if(!ev.items.length)tbody.innerHTML='<tr><td colspan="9"><div class="empty">Nenhum item.</div></td></tr>';
-    card.querySelector(".add-event-item").onclick=()=>{ev.items.push({id:uid(),name:"Novo item",qty:1,unit:"un.",bought:false,priceC:0,priceO:0,priceSP:0});save();renderAll()};
-    card.querySelector(".del-event").onclick=()=>{if(confirm("Excluir este evento e sua lista?")){state.events=state.events.filter(x=>x.id!==ev.id);save();renderAll()}};
+
+    if(!ev.items.length){
+      tbody.innerHTML='<tr><td colspan="10"><div class="empty">Nenhum item.</div></td></tr>';
+    }
+
+    card.querySelector(".event-people-input").onchange=e=>{
+      ev.people=Math.max(1,Math.round(num(e.target.value)||1));
+      save();
+      renderAll();
+    };
+
+    card.querySelector(".event-extra-cost-input").onchange=e=>{
+      ev.extraCost=Math.max(0,num(e.target.value));
+      save();
+      renderAll();
+    };
+
+    card.querySelector(".copy-event-share").onclick=async()=>{
+      const line=[
+        ev.name,
+        `Total gasto: ${brl(totalSpent)}`,
+        `${people} pessoa(s)`,
+        `Valor por pessoa: ${brl(perPerson)}`
+      ].join(" | ");
+
+      try{
+        await navigator.clipboard.writeText(line);
+        alert("Rateio copiado.");
+      }catch(error){
+        prompt("Copie o rateio:",line);
+      }
+    };
+
+    card.querySelector(".add-event-item").onclick=()=>{
+      ev.items.push({
+        id:uid(),
+        name:"Novo item",
+        qty:1,
+        unit:"un.",
+        bought:false,
+        paidTotal:0,
+        priceC:0,
+        priceO:0,
+        priceSP:0
+      });
+      save();
+      renderAll();
+    };
+
+    card.querySelector(".del-event").onclick=()=>{
+      if(confirm("Excluir este evento e sua lista?")){
+        state.events=state.events.filter(x=>x.id!==ev.id);
+        save();
+        renderAll();
+      }
+    };
+
     eventsList.appendChild(card);
   });
-  if(!state.events.length)eventsList.innerHTML='<div class="empty">Nenhuma lista especial criada.</div>';
+
+  if(!state.events.length){
+    eventsList.innerHTML='<div class="empty">Nenhuma lista especial criada.</div>';
+  }
 }
 
 /* RESUMO */
