@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Completo — V9 Cloud</title>
+<title>Casa Cambuquira — Painel Completo — V10 Banco Compartilhado</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1177,6 +1177,8 @@ footer{
 
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
+<meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
+<meta name="casa-supabase-key" content="">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
@@ -1611,53 +1613,46 @@ footer{
 
 <section id="backupPanel" class="panel">
   <div class="card" style="margin-bottom:12px">
-    <div class="section-title"><h2>Sincronização entre computador e celular</h2></div>
-    <p>Na V9, o navegador continua guardando uma cópia local, mas o <strong>Supabase</strong> pode ser usado como banco central. Assim, computador e celular passam a trabalhar com os mesmos dados.</p>
+    <div class="section-title"><h2>Banco compartilhado automático</h2></div>
+    <p>Na V10, todos os aparelhos usam a <strong>mesma base no Supabase</strong>. Não há login. Ao abrir a página, os dados são carregados automaticamente; ao alterar algo, a mudança é enviada para a nuvem e os outros aparelhos recebem a atualização.</p>
 
     <div class="cloud-status">
       <span id="cloudDot" class="cloud-dot"></span>
-      <strong id="cloudStatus">Nuvem não configurada</strong>
+      <strong id="cloudStatus">Conectando ao banco compartilhado…</strong>
       <span id="cloudLastSync" class="muted"></span>
     </div>
 
     <div class="cloud-grid">
       <div class="cloud-box">
-        <h3>1. Conexão com o Supabase</h3>
+        <h3>Conexão do site</h3>
         <div class="cloud-row" style="margin-bottom:8px">
           <input id="cloudProjectUrl" type="url" placeholder="https://SEU-PROJETO.supabase.co" autocomplete="off">
         </div>
         <div class="cloud-row">
-          <input id="cloudAnonKey" class="cloud-secret" type="password" placeholder="Chave anon / publishable do Supabase" autocomplete="off">
+          <input id="cloudAnonKey" class="cloud-secret" type="password" placeholder="Publishable key do Supabase" autocomplete="off">
           <button id="cloudSaveConfigBtn" class="btn">Salvar conexão</button>
         </div>
-        <div class="cloud-help" style="margin-top:8px">A URL e a chave pública ficam salvas somente neste navegador. Não coloque a service_role key aqui.</div>
+        <div class="cloud-help" style="margin-top:8px">
+          Use apenas a <strong>Publishable key</strong> (<code>sb_publishable_...</code>) ou a anon key pública. Nunca use <code>service_role</code> ou secret key.
+          Depois de confirmar que funciona, use o botão abaixo para gerar um HTML já configurado para publicar no Render/GitHub.
+        </div>
       </div>
 
       <div class="cloud-box">
-        <h3>2. Entrar na conta da casa</h3>
-        <div class="cloud-row" style="margin-bottom:8px">
-          <input id="cloudEmail" type="email" placeholder="E-mail" autocomplete="username">
+        <h3>Operação automática</h3>
+        <div class="cloud-actions">
+          <button id="cloudRefreshBtn" class="btn">Atualizar agora</button>
+          <button id="cloudInitBtn" class="btn primary">Inicializar nuvem com ESTE aparelho</button>
+          <button id="cloudDownloadConfiguredBtn" class="btn">Baixar HTML configurado para publicar</button>
         </div>
-        <div class="cloud-row">
-          <input id="cloudPassword" type="password" placeholder="Senha" autocomplete="current-password">
-          <button id="cloudSignInBtn" class="btn primary">Entrar</button>
-          <button id="cloudSignUpBtn" class="btn">Criar conta</button>
+        <div class="cloud-sync-note">
+          <strong>Inicializar nuvem</strong> é usado apenas uma vez, no aparelho que contém os dados corretos, se o banco online ainda estiver vazio. Depois disso, a sincronização é automática.
         </div>
-        <div class="cloud-help" style="margin-top:8px">Use a mesma conta no computador e no celular. Se o Supabase exigir confirmação de e-mail, confirme antes do primeiro login.</div>
       </div>
     </div>
 
-    <div class="cloud-box" style="margin-top:12px">
-      <h3>3. Primeira sincronização</h3>
-      <div class="cloud-actions">
-        <button id="cloudPushBtn" class="btn primary">Enviar ESTE aparelho para a nuvem</button>
-        <button id="cloudPullBtn" class="btn">Usar dados DA NUVEM neste aparelho</button>
-        <button id="cloudRefreshBtn" class="btn">Atualizar agora</button>
-        <button id="cloudSignOutBtn" class="btn danger">Sair da nuvem</button>
-      </div>
-      <div class="cloud-sync-note">
-        Para começar, faça o backup do PC e do celular. Depois, no aparelho que contém os dados corretos, use <strong>Enviar ESTE aparelho para a nuvem</strong>. Nos demais aparelhos, use <strong>Usar dados DA NUVEM</strong>. Após isso, a sincronização automática fica ativada.
-      </div>
+    <div class="help" style="margin-top:12px;margin-bottom:0">
+      <strong>Atenção:</strong> esta versão é compartilhada sem login. Quem tiver acesso ao endereço do site poderá visualizar e alterar os dados do painel. Não publique a <em>service_role key</em>.
     </div>
   </div>
 
@@ -1719,8 +1714,8 @@ footer{
     <div class="support-card">
       <h3>Dados do painel</h3>
       <p>
-        Checklists, estoque e banco de preços ficam salvos neste navegador.
-        Use a aba Backup e a exportação da base de preços antes de trocar de computador.
+        Checklists, estoque e banco de preços usam o Supabase como base central compartilhada.
+        O navegador mantém uma cópia local de contingência e a aba Backup permite exportar tudo em arquivo.
       </p>
     </div>
 
@@ -5329,32 +5324,42 @@ renderAll();
 
 
 <script>
-/* ===== CASA CAMBUQUIRA V9 — SINCRONIZAÇÃO SUPABASE ===== */
+/* ===== CASA CAMBUQUIRA V10 — BANCO COMPARTILHADO SUPABASE, SEM LOGIN ===== */
 (() => {
-  const CONFIG_KEY="casa-cambuquira-cloud-config-v1";
-  const AUTO_KEY="casa-cambuquira-cloud-auto-v1";
-  const LAST_KEY="casa-cambuquira-cloud-last-v1";
-  const TABLE="casa_cambuquira_state";
+  const CONFIG_KEY="casa-cambuquira-cloud-config-v10";
+  const LEGACY_CONFIG_KEY="casa-cambuquira-cloud-config-v1";
+  const LAST_KEY="casa-cambuquira-cloud-last-v10";
+  const TABLE="casa_cambuquira_shared_state";
+  const POLL_MS=15000;
 
   const $c=id=>document.getElementById(id);
   const clone=value=>JSON.parse(JSON.stringify(value ?? {}));
 
   let client=null;
-  let user=null;
   let config=null;
-  let autoSync=localStorage.getItem(AUTO_KEY)==="1";
+  let cloudReady=false;
+  let remoteEmpty=false;
   let timers={};
   let pending={};
   let busy=false;
+  let pollTimer=null;
+  let realtimeChannel=null;
+  let realtimePullTimer=null;
 
   const api={
     applyingRemote:false,
     queueSave(section,payload){
-      if(api.applyingRemote || !autoSync || !client || !user)return;
+      if(api.applyingRemote)return;
       pending[section]=clone(payload);
+
+      if(!cloudReady || !client){
+        setStatus("Alteração salva localmente; aguardando conexão com a nuvem","warn");
+        return;
+      }
+
       clearTimeout(timers[section]);
-      timers[section]=setTimeout(()=>flushSection(section),900);
-      setStatus("Alteração local salva; enviando para a nuvem…","warn");
+      timers[section]=setTimeout(()=>flushSection(section),700);
+      setStatus("Alteração salva; sincronizando…","warn");
     }
   };
   window.CasaCloud=api;
@@ -5375,82 +5380,44 @@ renderAll();
     }).format(new Date());
   }
 
-  function saveLast(){
+  function saveLast(message="Sincronizado com a nuvem"){
     const value=formatNow();
     localStorage.setItem(LAST_KEY,value);
-    setStatus("Sincronizado com a nuvem","ok",value);
+    setStatus(message,"ok",value);
+  }
+
+  function metaConfig(){
+    const url=document.querySelector('meta[name="casa-supabase-url"]')?.content?.trim()||"";
+    const key=document.querySelector('meta[name="casa-supabase-key"]')?.content?.trim()||"";
+    return url && key ? {url,key,embedded:true} : null;
+  }
+
+  function storedConfig(){
+    try{
+      const v10=JSON.parse(localStorage.getItem(CONFIG_KEY)||"null");
+      if(v10?.url && v10?.key)return {...v10,embedded:false};
+    }catch{}
+
+    // Migra automaticamente a conexão que já foi salva na V9 neste mesmo navegador/domínio.
+    try{
+      const legacy=JSON.parse(localStorage.getItem(LEGACY_CONFIG_KEY)||"null");
+      if(legacy?.url && legacy?.key){
+        localStorage.setItem(CONFIG_KEY,JSON.stringify({url:legacy.url,key:legacy.key}));
+        return {url:legacy.url,key:legacy.key,embedded:false};
+      }
+    }catch{}
+    return null;
   }
 
   function readConfig(){
-    try{return JSON.parse(localStorage.getItem(CONFIG_KEY)||"null")}catch{return null}
+    return metaConfig() || storedConfig();
   }
 
   function fillConfig(){
     config=readConfig();
-    if(config){
-      if($c("cloudProjectUrl"))$c("cloudProjectUrl").value=config.url||"";
-      if($c("cloudAnonKey"))$c("cloudAnonKey").value=config.key||"";
-    }
-  }
-
-  async function makeClient(){
-    config=readConfig();
-    if(!config?.url || !config?.key){
-      client=null;user=null;
-      setStatus("Nuvem não configurada","","");
-      return false;
-    }
-    if(!window.supabase?.createClient){
-      setStatus("Biblioteca do Supabase não carregou","err");
-      return false;
-    }
-
-    client=window.supabase.createClient(config.url,config.key,{
-      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
-    });
-
-    client.auth.onAuthStateChange((_event,session)=>{
-      user=session?.user||null;
-      updateAuthUi();
-      if(user && autoSync){
-        setTimeout(()=>pullAll(false),150);
-      }
-    });
-
-    const {data,error}=await client.auth.getSession();
-    if(error){
-      setStatus("Erro ao abrir sessão: "+error.message,"err");
-      return false;
-    }
-    user=data.session?.user||null;
-    updateAuthUi();
-
-    if(user){
-      setStatus(autoSync?"Conectado; verificando dados…":"Conectado — escolha a primeira sincronização",autoSync?"warn":"ok");
-      if(autoSync)await pullAll(false);
-    }else{
-      setStatus("Supabase configurado — faça login","warn");
-    }
-    return true;
-  }
-
-  function updateAuthUi(){
-    const email=$c("cloudEmail");
-    if(user && email)email.value=user.email||email.value;
-    const signOut=$c("cloudSignOutBtn");
-    if(signOut)signOut.disabled=!user;
-  }
-
-  async function requireUser(){
-    if(!client){
-      const ok=await makeClient();
-      if(!ok)return false;
-    }
-    if(!user){
-      alert("Entre na conta do Supabase primeiro.");
-      return false;
-    }
-    return true;
+    const defaultUrl=document.querySelector('meta[name="casa-supabase-url"]')?.content?.trim()||"";
+    if($c("cloudProjectUrl"))$c("cloudProjectUrl").value=config?.url || defaultUrl || "";
+    if($c("cloudAnonKey"))$c("cloudAnonKey").value=config?.key || "";
   }
 
   function currentPayload(section){
@@ -5474,86 +5441,169 @@ renderAll();
     }
   }
 
+  function setInitButtonState(hasRemote){
+    const btn=$c("cloudInitBtn");
+    if(!btn)return;
+    btn.disabled=!!hasRemote;
+    btn.textContent=hasRemote
+      ? "Nuvem já inicializada"
+      : "Inicializar nuvem com ESTE aparelho";
+  }
+
+  async function makeClient(){
+    config=readConfig();
+    if(!config?.url || !config?.key){
+      client=null;
+      cloudReady=false;
+      remoteEmpty=false;
+      setInitButtonState(false);
+      setStatus("Falta configurar a Publishable key do Supabase","warn");
+      return false;
+    }
+
+    if(!window.supabase?.createClient){
+      setStatus("Biblioteca do Supabase não carregou","err");
+      return false;
+    }
+
+    cleanupRealtime();
+
+    client=window.supabase.createClient(config.url,config.key,{
+      auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}
+    });
+
+    setStatus("Conectando ao banco compartilhado…","warn");
+
+    const ok=await pullAll(false,{skipFlush:true});
+    if(ok && !remoteEmpty){
+      startRealtime();
+      startPolling();
+    }
+    return ok;
+  }
+
   async function getRemoteRows(){
     const {data,error}=await client
       .from(TABLE)
       .select("section,payload,updated_at")
-      .eq("user_id",user.id);
+      .in("section",["main","price_db"]);
     if(error)throw error;
     return Array.isArray(data)?data:[];
   }
 
-  async function pullAll(showMessage=true){
-    if(!(await requireUser()))return;
-    if(busy)return;
+  async function pullAll(showMessage=true,options={}){
+    if(!client){
+      if(showMessage)alert("Configure a conexão com o Supabase primeiro.");
+      return false;
+    }
+    if(busy)return false;
+
     busy=true;
-    setStatus("Baixando dados da nuvem…","warn");
+    setStatus("Atualizando dados compartilhados…","warn");
     try{
-      // Primeiro tenta enviar alterações locais já enfileiradas.
-      await flushAllPending();
+      if(!options.skipFlush)await flushAllPending();
+
       const rows=await getRemoteRows();
+
       if(!rows.length){
-        setStatus("A nuvem ainda está vazia — envie os dados do aparelho","warn");
-        if(showMessage)alert("Nenhum dado encontrado na nuvem. Use “Enviar ESTE aparelho para a nuvem” no aparelho que contém a base correta.");
-        return;
+        cloudReady=false;
+        remoteEmpty=true;
+        setInitButtonState(false);
+        setStatus("Banco online vazio — inicialize usando o aparelho com os dados corretos","warn");
+        if(showMessage){
+          alert("O banco compartilhado ainda está vazio. No aparelho com os dados corretos, clique em “Inicializar nuvem com ESTE aparelho”.");
+        }
+        return true;
       }
-      rows.forEach(row=>applyPayload(row.section,row.payload));
-      autoSync=true;
-      localStorage.setItem(AUTO_KEY,"1");
-      saveLast();
-      if(showMessage)alert("Dados da nuvem carregados neste aparelho.");
+
+      remoteEmpty=false;
+      cloudReady=true;
+      setInitButtonState(true);
+
+      rows.forEach(row=>{
+        // Se uma alteração local ainda estiver pendente para a mesma seção, ela é preservada.
+        if(!pending[row.section])applyPayload(row.section,row.payload);
+      });
+
+      saveLast("Dados compartilhados atualizados");
+      if(showMessage)alert("Dados atualizados a partir da nuvem.");
+      return true;
     }catch(error){
       console.error(error);
-      setStatus("Falha ao baixar: "+error.message,"err");
-      if(showMessage)alert("Não foi possível baixar os dados: "+error.message);
+      cloudReady=false;
+      setStatus("Falha de conexão: "+error.message,"err");
+      if(showMessage)alert("Não foi possível acessar o banco compartilhado: "+error.message);
+      return false;
     }finally{
       busy=false;
     }
   }
 
-  async function pushAll(){
-    if(!(await requireUser()))return;
-    if(!confirm("Enviar os dados DESTE aparelho para a nuvem? Se já houver dados online, eles serão substituídos pela versão deste aparelho."))return;
+  async function initializeCloud(){
+    if(!client){
+      alert("Configure a conexão com o Supabase primeiro.");
+      return;
+    }
+
     busy=true;
-    setStatus("Enviando base completa para a nuvem…","warn");
     try{
+      const existing=await getRemoteRows();
+      if(existing.length){
+        remoteEmpty=false;
+        cloudReady=true;
+        setInitButtonState(true);
+        alert("A nuvem já contém dados. Nada foi substituído.");
+        await pullAll(false,{skipFlush:true});
+        return;
+      }
+
+      if(!confirm("Inicializar o banco compartilhado com os dados DESTE aparelho? Faça isso somente no aparelho que contém a base correta."))return;
+
+      setStatus("Inicializando banco compartilhado…","warn");
+
       const rows=[
-        {user_id:user.id,section:"main",payload:currentPayload("main"),updated_at:new Date().toISOString()},
-        {user_id:user.id,section:"price_db",payload:currentPayload("price_db"),updated_at:new Date().toISOString()}
+        {section:"main",payload:currentPayload("main"),updated_at:new Date().toISOString()},
+        {section:"price_db",payload:currentPayload("price_db"),updated_at:new Date().toISOString()}
       ];
-      const {error}=await client.from(TABLE).upsert(rows,{onConflict:"user_id,section"});
+
+      const {error}=await client.from(TABLE).upsert(rows,{onConflict:"section"});
       if(error)throw error;
+
       pending={};
-      autoSync=true;
-      localStorage.setItem(AUTO_KEY,"1");
-      saveLast();
-      alert("Base deste aparelho enviada. Agora, no outro aparelho, entre na mesma conta e use “Usar dados DA NUVEM”.");
+      cloudReady=true;
+      remoteEmpty=false;
+      setInitButtonState(true);
+      saveLast("Banco compartilhado inicializado");
+      startRealtime();
+      startPolling();
+      alert("Banco compartilhado inicializado. A partir de agora, PC e celular sincronizam automaticamente.");
     }catch(error){
       console.error(error);
-      setStatus("Falha ao enviar: "+error.message,"err");
-      alert("Não foi possível enviar os dados: "+error.message);
+      setStatus("Falha ao inicializar: "+error.message,"err");
+      alert("Não foi possível inicializar a nuvem: "+error.message);
     }finally{
       busy=false;
     }
   }
 
   async function flushSection(section){
-    if(!pending[section] || !autoSync || !client || !user)return;
+    if(!pending[section] || !cloudReady || !client)return;
+
     const payload=pending[section];
     delete pending[section];
+
     try{
       const {error}=await client.from(TABLE).upsert({
-        user_id:user.id,
         section,
         payload,
         updated_at:new Date().toISOString()
-      },{onConflict:"user_id,section"});
+      },{onConflict:"section"});
       if(error)throw error;
       saveLast();
     }catch(error){
       pending[section]=payload;
       console.error(error);
-      setStatus("Sem sincronizar — dados continuam salvos neste aparelho","err");
+      setStatus("Sem sincronizar — alteração continua salva neste aparelho","err");
     }
   }
 
@@ -5565,101 +5615,113 @@ renderAll();
     }
   }
 
-  async function signIn(){
-    if(!client){
-      const ok=await makeClient();
-      if(!ok)return;
-    }
-    const email=$c("cloudEmail").value.trim();
-    const password=$c("cloudPassword").value;
-    if(!email||!password){
-      alert("Informe e-mail e senha.");
-      return;
-    }
-    setStatus("Entrando…","warn");
-    const {data,error}=await client.auth.signInWithPassword({email,password});
-    if(error){
-      setStatus("Falha no login: "+error.message,"err");
-      alert("Login não realizado: "+error.message);
-      return;
-    }
-    user=data.user;
-    updateAuthUi();
-    setStatus(autoSync?"Conectado; sincronização automática ativa":"Conectado — escolha a primeira sincronização","ok");
+  function startPolling(){
+    clearInterval(pollTimer);
+    pollTimer=setInterval(()=>{
+      if(document.visibilityState==="visible" && navigator.onLine && client && cloudReady){
+        pullAll(false);
+      }
+    },POLL_MS);
   }
 
-  async function signUp(){
-    if(!client){
-      const ok=await makeClient();
-      if(!ok)return;
+  function cleanupRealtime(){
+    clearTimeout(realtimePullTimer);
+    if(client && realtimeChannel){
+      try{client.removeChannel(realtimeChannel)}catch{}
     }
-    const email=$c("cloudEmail").value.trim();
-    const password=$c("cloudPassword").value;
-    if(!email||password.length<6){
-      alert("Informe um e-mail e uma senha com pelo menos 6 caracteres.");
-      return;
-    }
-    setStatus("Criando conta…","warn");
-    const {data,error}=await client.auth.signUp({email,password});
-    if(error){
-      setStatus("Falha ao criar conta: "+error.message,"err");
-      alert("Conta não criada: "+error.message);
-      return;
-    }
-    user=data.session?.user||null;
-    if(user){
-      updateAuthUi();
-      setStatus("Conta criada e conectada — escolha a primeira sincronização","ok");
-    }else{
-      setStatus("Conta criada — confirme o e-mail e depois entre","warn");
-      alert("Conta criada. Se o Supabase enviou confirmação por e-mail, confirme e depois clique em Entrar.");
+    realtimeChannel=null;
+  }
+
+  function startRealtime(){
+    if(!client || !cloudReady || realtimeChannel)return;
+
+    try{
+      realtimeChannel=client
+        .channel("casa-cambuquira-shared-v10")
+        .on("postgres_changes",
+          {event:"*",schema:"public",table:TABLE},
+          ()=>{
+            clearTimeout(realtimePullTimer);
+            realtimePullTimer=setTimeout(()=>pullAll(false),500);
+          }
+        )
+        .subscribe();
+    }catch(error){
+      console.warn("Realtime indisponível; polling continua ativo.",error);
     }
   }
 
-  async function signOut(){
-    if(client)await client.auth.signOut();
-    user=null;
-    autoSync=false;
-    localStorage.removeItem(AUTO_KEY);
-    setStatus("Sessão encerrada — dados locais preservados","warn");
-    updateAuthUi();
+  async function saveConnection(){
+    const url=$c("cloudProjectUrl").value.trim().replace(/\/+$/,"");
+    const key=$c("cloudAnonKey").value.trim();
+
+    if(!/^https:\/\/.+\.supabase\.co$/i.test(url)){
+      alert("Confira a URL do projeto Supabase.");
+      return;
+    }
+    if(key.length<20){
+      alert("Confira a Publishable key / anon key.");
+      return;
+    }
+    if(/service_role|secret/i.test(key)){
+      alert("Não use service_role ou secret key. Use somente a Publishable key / anon key.");
+      return;
+    }
+
+    localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));
+    setStatus("Conexão salva; conectando…","warn");
+    await makeClient();
+  }
+
+  function downloadConfiguredHtml(){
+    const cfg=readConfig();
+    if(!cfg?.url || !cfg?.key){
+      alert("Salve primeiro a URL e a Publishable key.");
+      return;
+    }
+
+    if(/service_role|secret/i.test(cfg.key)){
+      alert("Por segurança, não é permitido incorporar service_role/secret key.");
+      return;
+    }
+
+    const cloneDoc=document.documentElement.cloneNode(true);
+    const metaUrl=cloneDoc.querySelector('meta[name="casa-supabase-url"]');
+    const metaKey=cloneDoc.querySelector('meta[name="casa-supabase-key"]');
+    if(metaUrl)metaUrl.setAttribute("content",cfg.url);
+    if(metaKey)metaKey.setAttribute("content",cfg.key);
+
+    // Não grava valores digitados nos inputs no HTML; a configuração fica somente nas meta tags.
+    const urlInput=cloneDoc.querySelector("#cloudProjectUrl");
+    const keyInput=cloneDoc.querySelector("#cloudAnonKey");
+    if(urlInput)urlInput.removeAttribute("value");
+    if(keyInput)keyInput.removeAttribute("value");
+
+    const html="<!DOCTYPE html>\n"+cloneDoc.outerHTML;
+    const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+    const objectUrl=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=objectUrl;
+    a.download="Casa_Cambuquira_Painel_V10_Compartilhado_CONFIGURADO.html";
+    a.click();
+    URL.revokeObjectURL(objectUrl);
   }
 
   function wireUi(){
     fillConfig();
 
-    $c("cloudSaveConfigBtn")?.addEventListener("click",async()=>{
-      const url=$c("cloudProjectUrl").value.trim().replace(/\/+$/,"");
-      const key=$c("cloudAnonKey").value.trim();
-      if(!/^https:\/\/.+\.supabase\.co$/i.test(url)){
-        alert("Confira a URL do projeto Supabase.");
-        return;
-      }
-      if(key.length<20){
-        alert("Confira a chave anon / publishable.");
-        return;
-      }
-      localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));
-      autoSync=false;
-      localStorage.removeItem(AUTO_KEY);
-      setStatus("Conexão salva; verificando…","warn");
-      await makeClient();
-    });
-
-    $c("cloudSignInBtn")?.addEventListener("click",signIn);
-    $c("cloudSignUpBtn")?.addEventListener("click",signUp);
-    $c("cloudSignOutBtn")?.addEventListener("click",signOut);
-    $c("cloudPushBtn")?.addEventListener("click",pushAll);
-    $c("cloudPullBtn")?.addEventListener("click",()=>pullAll(true));
+    $c("cloudSaveConfigBtn")?.addEventListener("click",saveConnection);
     $c("cloudRefreshBtn")?.addEventListener("click",()=>pullAll(true));
+    $c("cloudInitBtn")?.addEventListener("click",initializeCloud);
+    $c("cloudDownloadConfiguredBtn")?.addEventListener("click",downloadConfiguredHtml);
 
-    // V9: backup realmente completo = estado principal + banco de preços.
+    // V10: backup completo = estado principal + banco de preços.
     const exportBtn=$c("exportBackupBtn");
     if(exportBtn){
       exportBtn.onclick=()=>{
         const payload={
           app:"Casa Cambuquira",
-          version:9,
+          version:10,
           exportedAt:new Date().toISOString(),
           state:clone(state),
           priceDb:currentPayload("price_db")
@@ -5668,7 +5730,7 @@ renderAll();
         const url=URL.createObjectURL(blob);
         const a=document.createElement("a");
         a.href=url;
-        a.download="backup-casa-cambuquira-v9.json";
+        a.download="backup-casa-cambuquira-v10.json";
         a.click();
         URL.revokeObjectURL(url);
       };
@@ -5691,7 +5753,15 @@ renderAll();
           }
           renderAll();
           api.applyingRemote=false;
-          alert("Backup importado neste aparelho. Se quiser torná-lo a base central, use “Enviar ESTE aparelho para a nuvem”.");
+
+          if(cloudReady){
+            pending.main=clone(state);
+            pending.price_db=currentPayload("price_db");
+            await flushAllPending();
+            alert("Backup importado e enviado para o banco compartilhado.");
+          }else{
+            alert("Backup importado neste aparelho. Se a nuvem estiver vazia, use “Inicializar nuvem com ESTE aparelho”.");
+          }
         }catch(error){
           api.applyingRemote=false;
           alert("Arquivo inválido: "+error.message);
@@ -5702,12 +5772,20 @@ renderAll();
     }
 
     document.addEventListener("visibilitychange",()=>{
-      if(document.visibilityState==="visible" && autoSync && user){
-        pullAll(false);
+      if(document.visibilityState==="visible" && client && cloudReady){
+        flushAllPending().then(()=>pullAll(false));
       }
     });
+
     window.addEventListener("online",()=>{
-      if(autoSync && user)flushAllPending().then(()=>pullAll(false));
+      if(client){
+        flushAllPending().then(()=>pullAll(false));
+      }
+    });
+
+    window.addEventListener("beforeunload",()=>{
+      // O navegador pode não aguardar a promessa; o dado continua preservado no localStorage.
+      if(cloudReady)flushAllPending();
     });
   }
 
