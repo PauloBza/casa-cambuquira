@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.8 Especiais com Comparação de Preços</title>
+<title>Casa Cambuquira — V10.9 Popup de Preços Melhorado</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1759,6 +1759,175 @@ footer{
 @media(max-width:820px){
   .event-price-compare-grid{grid-template-columns:1fr}
   .event-price-comparison-result{grid-template-columns:1fr}
+}
+
+
+/* ===== V10.9 — POPUP DE COMPARAÇÃO MAIS USÁVEL ===== */
+#eventPriceDialog{
+  width:min(1120px,calc(100vw - 32px))!important;
+  max-width:none!important;
+  max-height:92vh!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border-radius:18px!important;
+  background:#0f1218!important;
+  color:var(--text)!important;
+}
+#eventPriceDialog::backdrop{
+  background:rgba(0,0,0,.72)!important;
+  backdrop-filter:blur(3px);
+}
+#eventPriceDialog .event-price-dialog{
+  width:100%!important;
+  max-width:none!important;
+  max-height:92vh!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:0!important;
+  background:#0f1218!important;
+}
+#eventPriceDialog .event-price-modal-head{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 18px;
+  background:rgba(15,18,24,.98);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+#eventPriceDialog .event-price-modal-head h2{
+  margin:0!important;
+  font-size:20px!important;
+}
+#eventPriceDialog .event-price-close{
+  min-width:38px!important;
+  width:38px!important;
+  height:38px!important;
+  padding:0!important;
+  border-radius:999px!important;
+  font-size:20px!important;
+}
+#eventPriceDialog .event-price-modal-body{
+  padding:14px 16px 4px;
+}
+#eventPriceDialog .event-price-fixed-item{
+  margin:0 0 12px!important;
+}
+#eventPriceDialog .event-price-fixed-item strong{
+  font-size:17px!important;
+}
+#eventPriceDialog .event-price-compare-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+#eventPriceDialog .event-price-place{
+  min-width:0!important;
+  padding:12px!important;
+  gap:8px!important;
+}
+#eventPriceDialog .event-price-place h3{
+  font-size:15px!important;
+  padding-bottom:6px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+#eventPriceDialog .event-price-place label{
+  gap:5px!important;
+}
+#eventPriceDialog .event-price-place input{
+  width:100%!important;
+  min-width:0!important;
+}
+#eventPriceDialog .event-price-qty-row{
+  grid-template-columns:minmax(0,1fr) auto!important;
+}
+#eventPriceDialog .event-price-place-result{
+  min-height:78px!important;
+}
+#eventPriceDialog .event-price-comparison-result{
+  margin-top:12px!important;
+}
+#eventPriceDialog .event-paid-location{
+  margin:12px 0 0!important;
+}
+#eventPriceDialog .event-price-modal-footer{
+  position:sticky;
+  bottom:0;
+  z-index:10;
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  padding:12px 16px;
+  margin-top:14px;
+  background:rgba(15,18,24,.98);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+#eventPriceDialog .event-price-modal-footer .btn{
+  min-width:120px;
+}
+
+/* Evita qualquer barra horizontal no popup. */
+#eventPriceDialog,
+#eventPriceDialog *,
+#eventPriceDialog .event-price-dialog{
+  box-sizing:border-box!important;
+}
+#eventPriceDialog .event-price-dialog::-webkit-scrollbar{width:10px}
+#eventPriceDialog .event-price-dialog::-webkit-scrollbar-thumb{
+  background:#343a46;
+  border-radius:999px;
+}
+
+/* Notebook menor: 2 colunas + SP embaixo ocupando tudo. */
+@media(max-width:900px){
+  #eventPriceDialog{
+    width:min(760px,calc(100vw - 24px))!important;
+  }
+  #eventPriceDialog .event-price-compare-grid{
+    grid-template-columns:1fr 1fr!important;
+  }
+  #eventPriceDialog .event-price-place[data-place="SP"]{
+    grid-column:1/-1;
+  }
+}
+
+/* Celular: uma cidade por vez, sem aperto. */
+@media(max-width:620px){
+  #eventPriceDialog{
+    width:calc(100vw - 14px)!important;
+    max-height:95vh!important;
+    border-radius:14px!important;
+  }
+  #eventPriceDialog .event-price-dialog{
+    max-height:95vh!important;
+  }
+  #eventPriceDialog .event-price-modal-head{
+    padding:12px 13px;
+  }
+  #eventPriceDialog .event-price-modal-head h2{
+    font-size:17px!important;
+  }
+  #eventPriceDialog .event-price-modal-body{
+    padding:10px;
+  }
+  #eventPriceDialog .event-price-compare-grid{
+    grid-template-columns:1fr!important;
+  }
+  #eventPriceDialog .event-price-place[data-place="SP"]{
+    grid-column:auto;
+  }
+  #eventPriceDialog .event-price-comparison-result{
+    grid-template-columns:1fr!important;
+  }
+  #eventPriceDialog .event-price-modal-footer{
+    padding:10px;
+  }
+  #eventPriceDialog .event-price-modal-footer .btn{
+    flex:1;
+    min-width:0;
+  }
 }
 
 </style>
@@ -3864,7 +4033,11 @@ footer{
 
 <dialog id="eventPriceDialog">
   <form method="dialog" id="eventPriceForm" class="dialog-body event-price-dialog">
-    <h2 id="eventPriceTitle">Comparar preços</h2>
+    <div class="event-price-modal-head">
+      <h2 id="eventPriceTitle">Comparar preços</h2>
+      <button value="cancel" class="btn event-price-close" title="Fechar">×</button>
+    </div>
+    <div class="event-price-modal-body">
     <input id="eventPriceEventId" type="hidden">
     <input id="eventPriceItemId" type="hidden">
 
@@ -3942,7 +4115,8 @@ footer{
       <small>Se escolher um local, o preço total daquele local será usado automaticamente como “Valor pago”.</small>
     </label>
 
-    <div class="dialog-actions">
+    </div>
+    <div class="event-price-modal-footer">
       <button value="cancel" class="btn">Cancelar</button>
       <button value="save" class="btn primary">Salvar comparação</button>
     </div>
