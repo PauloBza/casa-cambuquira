@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — Painel Completo — V8</title>
+<title>Casa Cambuquira — Painel Completo — V9 Cloud</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1155,8 +1155,29 @@ footer{
   .stock-toolbar-location{min-width:0}
 }
 
+
+/* ===== V9 CLOUD / SUPABASE ===== */
+.cloud-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cloud-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cloud-row>input{flex:1;min-width:220px}
+.cloud-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+.cloud-dot{width:10px;height:10px;border-radius:50%;background:#98a2b3;display:inline-block}
+.cloud-dot.ok{background:#12b76a}.cloud-dot.warn{background:#f79009}.cloud-dot.err{background:#f04438}
+.cloud-box{border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--card)}
+.cloud-box h3{margin:0 0 8px;font-size:15px}
+.cloud-help{font-size:12px;color:var(--muted);line-height:1.45}
+.cloud-secret{font-family:monospace;font-size:12px}
+.cloud-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cloud-sync-note{font-size:12px;color:var(--muted);margin-top:7px}
+@media(max-width:760px){
+  .cloud-grid{grid-template-columns:1fr}
+  .cloud-row{align-items:stretch}
+  .cloud-row>input,.cloud-row>button{width:100%;min-width:0}
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <header>
@@ -1589,9 +1610,60 @@ footer{
 </section>
 
 <section id="backupPanel" class="panel">
+  <div class="card" style="margin-bottom:12px">
+    <div class="section-title"><h2>Sincronização entre computador e celular</h2></div>
+    <p>Na V9, o navegador continua guardando uma cópia local, mas o <strong>Supabase</strong> pode ser usado como banco central. Assim, computador e celular passam a trabalhar com os mesmos dados.</p>
+
+    <div class="cloud-status">
+      <span id="cloudDot" class="cloud-dot"></span>
+      <strong id="cloudStatus">Nuvem não configurada</strong>
+      <span id="cloudLastSync" class="muted"></span>
+    </div>
+
+    <div class="cloud-grid">
+      <div class="cloud-box">
+        <h3>1. Conexão com o Supabase</h3>
+        <div class="cloud-row" style="margin-bottom:8px">
+          <input id="cloudProjectUrl" type="url" placeholder="https://SEU-PROJETO.supabase.co" autocomplete="off">
+        </div>
+        <div class="cloud-row">
+          <input id="cloudAnonKey" class="cloud-secret" type="password" placeholder="Chave anon / publishable do Supabase" autocomplete="off">
+          <button id="cloudSaveConfigBtn" class="btn">Salvar conexão</button>
+        </div>
+        <div class="cloud-help" style="margin-top:8px">A URL e a chave pública ficam salvas somente neste navegador. Não coloque a service_role key aqui.</div>
+      </div>
+
+      <div class="cloud-box">
+        <h3>2. Entrar na conta da casa</h3>
+        <div class="cloud-row" style="margin-bottom:8px">
+          <input id="cloudEmail" type="email" placeholder="E-mail" autocomplete="username">
+        </div>
+        <div class="cloud-row">
+          <input id="cloudPassword" type="password" placeholder="Senha" autocomplete="current-password">
+          <button id="cloudSignInBtn" class="btn primary">Entrar</button>
+          <button id="cloudSignUpBtn" class="btn">Criar conta</button>
+        </div>
+        <div class="cloud-help" style="margin-top:8px">Use a mesma conta no computador e no celular. Se o Supabase exigir confirmação de e-mail, confirme antes do primeiro login.</div>
+      </div>
+    </div>
+
+    <div class="cloud-box" style="margin-top:12px">
+      <h3>3. Primeira sincronização</h3>
+      <div class="cloud-actions">
+        <button id="cloudPushBtn" class="btn primary">Enviar ESTE aparelho para a nuvem</button>
+        <button id="cloudPullBtn" class="btn">Usar dados DA NUVEM neste aparelho</button>
+        <button id="cloudRefreshBtn" class="btn">Atualizar agora</button>
+        <button id="cloudSignOutBtn" class="btn danger">Sair da nuvem</button>
+      </div>
+      <div class="cloud-sync-note">
+        Para começar, faça o backup do PC e do celular. Depois, no aparelho que contém os dados corretos, use <strong>Enviar ESTE aparelho para a nuvem</strong>. Nos demais aparelhos, use <strong>Usar dados DA NUVEM</strong>. Após isso, a sincronização automática fica ativada.
+      </div>
+    </div>
+  </div>
+
   <div class="card">
-    <div class="section-title"><h2>Segurança dos dados</h2></div>
-    <p>As informações ficam salvas neste navegador. Exporte um backup para não perder seus dados ao trocar de aparelho, navegador ou limpar o histórico.</p>
+    <div class="section-title"><h2>Backup local</h2></div>
+    <p>O banco online melhora a sincronização, mas o backup em arquivo continua recomendado antes de mudanças importantes.</p>
     <div class="actions">
       <button id="exportBackupBtn" class="btn primary">Exportar backup completo</button>
       <button id="importBackupBtn" class="btn">Importar backup</button>
@@ -2450,7 +2522,12 @@ function loadState(){
 }
 let state=loadState();
 let houseOpen=new Set(),houseEdit=false,editingHouseCat=null,editingHouseItem=null;
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(state));
+  if(window.CasaCloud && !window.CasaCloud.applyingRemote){
+    window.CasaCloud.queueSave("main",state);
+  }
+}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
 function norm(v){return String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()}
@@ -3283,7 +3360,7 @@ exportRepairsCsvBtn.onclick=()=>download("reparos-casa-rural-cambuquira.csv",csv
 ]),"text/csv");
 exportStockCsv.onclick=()=>download("estoque-casa-cambuquira.csv",csv([["Produto","Categoria","Local","Quantidade","Unidade","Mínimo","Validade","Cambuquira",state.otherCity,"São Paulo","Atualizado","Observação"],...state.inventory.map(x=>[x.name,x.category,x.location||"",x.qty,x.unit,x.min,x.expiry,x.priceC,x.priceO,x.priceSP,x.updated,x.note])]),"text/csv");
 exportShoppingCsv.onclick=()=>download("lista-de-compras.csv",csv([["Item","Categoria","Quantidade","Unidade","Cambuquira",state.otherCity,"São Paulo","Menor preço","Cidade mais barata"],...shoppingItems().filter(x=>!x.bought).map(x=>[x.name,x.category,x.buyQty,x.unit,x.priceC,x.priceO,x.priceSP,lowestPrice(x).price,lowestPrice(x).city])]),"text/csv");
-exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:8,exportedAt:new Date().toISOString(),state},null,2),"application/json");
+exportBackupBtn.onclick=()=>download("backup-casa-cambuquira.json",JSON.stringify({app:"Casa Cambuquira",version:9,exportedAt:new Date().toISOString(),state},null,2),"application/json");
 importBackupBtn.onclick=()=>backupFile.click();
 backupFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const p=JSON.parse(await f.text());state={...freshState(),...(p.state||p)};save();renderAll();alert("Backup importado com sucesso.")}catch(err){alert("Arquivo inválido.")}e.target.value=""};
 resetAllBtn.onclick=()=>{if(!confirm("Apagar todos os dados e restaurar a lista inicial?"))return;state=freshState();save();renderAll()};
@@ -3349,6 +3426,9 @@ renderAll();
 
   function savePriceDb(){
     localStorage.setItem(PRICE_DB_KEY, JSON.stringify(priceDb));
+    if(window.CasaCloud && !window.CasaCloud.applyingRemote){
+      window.CasaCloud.queueSave("price_db",priceDb);
+    }
   }
 
   function productById(id){
@@ -4038,6 +4118,21 @@ renderAll();
       alert("Arquivo inválido: " + error.message);
     }finally{
       event.target.value = "";
+    }
+  };
+
+  window.CasaPriceDBCloud={
+    get:()=>JSON.parse(JSON.stringify(priceDb)),
+    replace:(payload)=>{
+      priceDb={
+        ...emptyDb(),
+        ...(payload||{}),
+        products:Array.isArray(payload?.products)?payload.products:[],
+        quotes:Array.isArray(payload?.quotes)?payload.quotes:[],
+        purchases:Array.isArray(payload?.purchases)?payload.purchases:[]
+      };
+      localStorage.setItem(PRICE_DB_KEY,JSON.stringify(priceDb));
+      renderPriceDb();
     }
   };
 
@@ -5229,6 +5324,403 @@ renderAll();
   // Repete após a inicialização do estado/localStorage.
   setTimeout(removeLegacyPhotoPlaceholder, 300);
   setTimeout(removeLegacyPhotoPlaceholder, 1200);
+})();
+</script>
+
+
+<script>
+/* ===== CASA CAMBUQUIRA V9 — SINCRONIZAÇÃO SUPABASE ===== */
+(() => {
+  const CONFIG_KEY="casa-cambuquira-cloud-config-v1";
+  const AUTO_KEY="casa-cambuquira-cloud-auto-v1";
+  const LAST_KEY="casa-cambuquira-cloud-last-v1";
+  const TABLE="casa_cambuquira_state";
+
+  const $c=id=>document.getElementById(id);
+  const clone=value=>JSON.parse(JSON.stringify(value ?? {}));
+
+  let client=null;
+  let user=null;
+  let config=null;
+  let autoSync=localStorage.getItem(AUTO_KEY)==="1";
+  let timers={};
+  let pending={};
+  let busy=false;
+
+  const api={
+    applyingRemote:false,
+    queueSave(section,payload){
+      if(api.applyingRemote || !autoSync || !client || !user)return;
+      pending[section]=clone(payload);
+      clearTimeout(timers[section]);
+      timers[section]=setTimeout(()=>flushSection(section),900);
+      setStatus("Alteração local salva; enviando para a nuvem…","warn");
+    }
+  };
+  window.CasaCloud=api;
+
+  function setStatus(message,kind="",last=""){
+    const status=$c("cloudStatus"),dot=$c("cloudDot"),lastEl=$c("cloudLastSync");
+    if(status)status.textContent=message;
+    if(dot)dot.className="cloud-dot"+(kind?` ${kind}`:"");
+    if(lastEl){
+      const saved=last || localStorage.getItem(LAST_KEY) || "";
+      lastEl.textContent=saved?`Última sincronização: ${saved}`:"";
+    }
+  }
+
+  function formatNow(){
+    return new Intl.DateTimeFormat("pt-BR",{
+      dateStyle:"short",timeStyle:"medium"
+    }).format(new Date());
+  }
+
+  function saveLast(){
+    const value=formatNow();
+    localStorage.setItem(LAST_KEY,value);
+    setStatus("Sincronizado com a nuvem","ok",value);
+  }
+
+  function readConfig(){
+    try{return JSON.parse(localStorage.getItem(CONFIG_KEY)||"null")}catch{return null}
+  }
+
+  function fillConfig(){
+    config=readConfig();
+    if(config){
+      if($c("cloudProjectUrl"))$c("cloudProjectUrl").value=config.url||"";
+      if($c("cloudAnonKey"))$c("cloudAnonKey").value=config.key||"";
+    }
+  }
+
+  async function makeClient(){
+    config=readConfig();
+    if(!config?.url || !config?.key){
+      client=null;user=null;
+      setStatus("Nuvem não configurada","","");
+      return false;
+    }
+    if(!window.supabase?.createClient){
+      setStatus("Biblioteca do Supabase não carregou","err");
+      return false;
+    }
+
+    client=window.supabase.createClient(config.url,config.key,{
+      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+    });
+
+    client.auth.onAuthStateChange((_event,session)=>{
+      user=session?.user||null;
+      updateAuthUi();
+      if(user && autoSync){
+        setTimeout(()=>pullAll(false),150);
+      }
+    });
+
+    const {data,error}=await client.auth.getSession();
+    if(error){
+      setStatus("Erro ao abrir sessão: "+error.message,"err");
+      return false;
+    }
+    user=data.session?.user||null;
+    updateAuthUi();
+
+    if(user){
+      setStatus(autoSync?"Conectado; verificando dados…":"Conectado — escolha a primeira sincronização",autoSync?"warn":"ok");
+      if(autoSync)await pullAll(false);
+    }else{
+      setStatus("Supabase configurado — faça login","warn");
+    }
+    return true;
+  }
+
+  function updateAuthUi(){
+    const email=$c("cloudEmail");
+    if(user && email)email.value=user.email||email.value;
+    const signOut=$c("cloudSignOutBtn");
+    if(signOut)signOut.disabled=!user;
+  }
+
+  async function requireUser(){
+    if(!client){
+      const ok=await makeClient();
+      if(!ok)return false;
+    }
+    if(!user){
+      alert("Entre na conta do Supabase primeiro.");
+      return false;
+    }
+    return true;
+  }
+
+  function currentPayload(section){
+    if(section==="main")return clone(state);
+    if(section==="price_db" && window.CasaPriceDBCloud)return window.CasaPriceDBCloud.get();
+    return {};
+  }
+
+  function applyPayload(section,payload){
+    api.applyingRemote=true;
+    try{
+      if(section==="main"){
+        state={...freshState(),...(payload||{})};
+        localStorage.setItem(KEY,JSON.stringify(state));
+        renderAll();
+      }else if(section==="price_db" && window.CasaPriceDBCloud){
+        window.CasaPriceDBCloud.replace(payload||{});
+      }
+    }finally{
+      api.applyingRemote=false;
+    }
+  }
+
+  async function getRemoteRows(){
+    const {data,error}=await client
+      .from(TABLE)
+      .select("section,payload,updated_at")
+      .eq("user_id",user.id);
+    if(error)throw error;
+    return Array.isArray(data)?data:[];
+  }
+
+  async function pullAll(showMessage=true){
+    if(!(await requireUser()))return;
+    if(busy)return;
+    busy=true;
+    setStatus("Baixando dados da nuvem…","warn");
+    try{
+      // Primeiro tenta enviar alterações locais já enfileiradas.
+      await flushAllPending();
+      const rows=await getRemoteRows();
+      if(!rows.length){
+        setStatus("A nuvem ainda está vazia — envie os dados do aparelho","warn");
+        if(showMessage)alert("Nenhum dado encontrado na nuvem. Use “Enviar ESTE aparelho para a nuvem” no aparelho que contém a base correta.");
+        return;
+      }
+      rows.forEach(row=>applyPayload(row.section,row.payload));
+      autoSync=true;
+      localStorage.setItem(AUTO_KEY,"1");
+      saveLast();
+      if(showMessage)alert("Dados da nuvem carregados neste aparelho.");
+    }catch(error){
+      console.error(error);
+      setStatus("Falha ao baixar: "+error.message,"err");
+      if(showMessage)alert("Não foi possível baixar os dados: "+error.message);
+    }finally{
+      busy=false;
+    }
+  }
+
+  async function pushAll(){
+    if(!(await requireUser()))return;
+    if(!confirm("Enviar os dados DESTE aparelho para a nuvem? Se já houver dados online, eles serão substituídos pela versão deste aparelho."))return;
+    busy=true;
+    setStatus("Enviando base completa para a nuvem…","warn");
+    try{
+      const rows=[
+        {user_id:user.id,section:"main",payload:currentPayload("main"),updated_at:new Date().toISOString()},
+        {user_id:user.id,section:"price_db",payload:currentPayload("price_db"),updated_at:new Date().toISOString()}
+      ];
+      const {error}=await client.from(TABLE).upsert(rows,{onConflict:"user_id,section"});
+      if(error)throw error;
+      pending={};
+      autoSync=true;
+      localStorage.setItem(AUTO_KEY,"1");
+      saveLast();
+      alert("Base deste aparelho enviada. Agora, no outro aparelho, entre na mesma conta e use “Usar dados DA NUVEM”.");
+    }catch(error){
+      console.error(error);
+      setStatus("Falha ao enviar: "+error.message,"err");
+      alert("Não foi possível enviar os dados: "+error.message);
+    }finally{
+      busy=false;
+    }
+  }
+
+  async function flushSection(section){
+    if(!pending[section] || !autoSync || !client || !user)return;
+    const payload=pending[section];
+    delete pending[section];
+    try{
+      const {error}=await client.from(TABLE).upsert({
+        user_id:user.id,
+        section,
+        payload,
+        updated_at:new Date().toISOString()
+      },{onConflict:"user_id,section"});
+      if(error)throw error;
+      saveLast();
+    }catch(error){
+      pending[section]=payload;
+      console.error(error);
+      setStatus("Sem sincronizar — dados continuam salvos neste aparelho","err");
+    }
+  }
+
+  async function flushAllPending(){
+    const sections=Object.keys(pending);
+    for(const section of sections){
+      clearTimeout(timers[section]);
+      await flushSection(section);
+    }
+  }
+
+  async function signIn(){
+    if(!client){
+      const ok=await makeClient();
+      if(!ok)return;
+    }
+    const email=$c("cloudEmail").value.trim();
+    const password=$c("cloudPassword").value;
+    if(!email||!password){
+      alert("Informe e-mail e senha.");
+      return;
+    }
+    setStatus("Entrando…","warn");
+    const {data,error}=await client.auth.signInWithPassword({email,password});
+    if(error){
+      setStatus("Falha no login: "+error.message,"err");
+      alert("Login não realizado: "+error.message);
+      return;
+    }
+    user=data.user;
+    updateAuthUi();
+    setStatus(autoSync?"Conectado; sincronização automática ativa":"Conectado — escolha a primeira sincronização","ok");
+  }
+
+  async function signUp(){
+    if(!client){
+      const ok=await makeClient();
+      if(!ok)return;
+    }
+    const email=$c("cloudEmail").value.trim();
+    const password=$c("cloudPassword").value;
+    if(!email||password.length<6){
+      alert("Informe um e-mail e uma senha com pelo menos 6 caracteres.");
+      return;
+    }
+    setStatus("Criando conta…","warn");
+    const {data,error}=await client.auth.signUp({email,password});
+    if(error){
+      setStatus("Falha ao criar conta: "+error.message,"err");
+      alert("Conta não criada: "+error.message);
+      return;
+    }
+    user=data.session?.user||null;
+    if(user){
+      updateAuthUi();
+      setStatus("Conta criada e conectada — escolha a primeira sincronização","ok");
+    }else{
+      setStatus("Conta criada — confirme o e-mail e depois entre","warn");
+      alert("Conta criada. Se o Supabase enviou confirmação por e-mail, confirme e depois clique em Entrar.");
+    }
+  }
+
+  async function signOut(){
+    if(client)await client.auth.signOut();
+    user=null;
+    autoSync=false;
+    localStorage.removeItem(AUTO_KEY);
+    setStatus("Sessão encerrada — dados locais preservados","warn");
+    updateAuthUi();
+  }
+
+  function wireUi(){
+    fillConfig();
+
+    $c("cloudSaveConfigBtn")?.addEventListener("click",async()=>{
+      const url=$c("cloudProjectUrl").value.trim().replace(/\/+$/,"");
+      const key=$c("cloudAnonKey").value.trim();
+      if(!/^https:\/\/.+\.supabase\.co$/i.test(url)){
+        alert("Confira a URL do projeto Supabase.");
+        return;
+      }
+      if(key.length<20){
+        alert("Confira a chave anon / publishable.");
+        return;
+      }
+      localStorage.setItem(CONFIG_KEY,JSON.stringify({url,key}));
+      autoSync=false;
+      localStorage.removeItem(AUTO_KEY);
+      setStatus("Conexão salva; verificando…","warn");
+      await makeClient();
+    });
+
+    $c("cloudSignInBtn")?.addEventListener("click",signIn);
+    $c("cloudSignUpBtn")?.addEventListener("click",signUp);
+    $c("cloudSignOutBtn")?.addEventListener("click",signOut);
+    $c("cloudPushBtn")?.addEventListener("click",pushAll);
+    $c("cloudPullBtn")?.addEventListener("click",()=>pullAll(true));
+    $c("cloudRefreshBtn")?.addEventListener("click",()=>pullAll(true));
+
+    // V9: backup realmente completo = estado principal + banco de preços.
+    const exportBtn=$c("exportBackupBtn");
+    if(exportBtn){
+      exportBtn.onclick=()=>{
+        const payload={
+          app:"Casa Cambuquira",
+          version:9,
+          exportedAt:new Date().toISOString(),
+          state:clone(state),
+          priceDb:currentPayload("price_db")
+        };
+        const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement("a");
+        a.href=url;
+        a.download="backup-casa-cambuquira-v9.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+    }
+
+    const importBtn=$c("importBackupBtn"),file=$c("backupFile");
+    if(importBtn && file){
+      importBtn.onclick=()=>file.click();
+      file.onchange=async event=>{
+        const f=event.target.files?.[0];
+        if(!f)return;
+        try{
+          const parsed=JSON.parse(await f.text());
+          const main=parsed.state||parsed;
+          api.applyingRemote=true;
+          state={...freshState(),...main};
+          localStorage.setItem(KEY,JSON.stringify(state));
+          if(parsed.priceDb && window.CasaPriceDBCloud){
+            window.CasaPriceDBCloud.replace(parsed.priceDb);
+          }
+          renderAll();
+          api.applyingRemote=false;
+          alert("Backup importado neste aparelho. Se quiser torná-lo a base central, use “Enviar ESTE aparelho para a nuvem”.");
+        }catch(error){
+          api.applyingRemote=false;
+          alert("Arquivo inválido: "+error.message);
+        }finally{
+          event.target.value="";
+        }
+      };
+    }
+
+    document.addEventListener("visibilitychange",()=>{
+      if(document.visibilityState==="visible" && autoSync && user){
+        pullAll(false);
+      }
+    });
+    window.addEventListener("online",()=>{
+      if(autoSync && user)flushAllPending().then(()=>pullAll(false));
+    });
+  }
+
+  async function boot(){
+    wireUi();
+    await makeClient();
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",boot,{once:true});
+  }else{
+    boot();
+  }
 })();
 </script>
 
