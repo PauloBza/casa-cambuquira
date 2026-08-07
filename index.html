@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.4 Preços e Cotações Corrigidos</title>
+<title>Casa Cambuquira — V10.5 Comparador de Preços Simples</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1262,6 +1262,141 @@ footer{
   #priceDbPanel .price-product-best{min-width:0}
 }
 
+
+/* ===== V10.5 — COMPARADOR DE PREÇOS SIMPLES ===== */
+.price-fixed-product{
+  display:grid;
+  gap:3px;
+  padding:12px 13px;
+  margin-bottom:12px;
+  border-radius:13px;
+  background:#151922;
+  border:1px solid rgba(255,255,255,.08);
+}
+.price-fixed-product span{
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  font-weight:800;
+}
+.price-fixed-product strong{font-size:18px;color:#fff}
+.price-fixed-product small{color:var(--muted)}
+
+.price-simple-dialog label{font-size:12px}
+.price-optional-details{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  overflow:hidden;
+}
+.price-optional-details summary{
+  cursor:pointer;
+  padding:10px 12px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+  background:#151922;
+}
+.price-optional-grid{padding:11px}
+
+.price-region-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  padding:11px 13px 13px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.price-region-card{
+  min-width:0;
+  padding:11px;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#151922;
+}
+.price-region-card.has-price{
+  background:linear-gradient(180deg,rgba(46,204,113,.06),transparent),#151922;
+}
+.price-region-top{
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+  align-items:center;
+  color:#dfe6f3;
+  font-size:11px;
+}
+.price-region-value{
+  margin-top:7px;
+  color:#fff;
+  font-size:19px;
+  font-weight:900;
+}
+.price-region-card.has-price .price-region-value{color:#8ef1b3}
+.price-region-unit{margin-top:1px;color:var(--muted);font-size:10px}
+.price-region-store{
+  margin:6px 0 8px;
+  min-height:15px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#cbd5e1;
+  font-size:10px;
+}
+.price-region-card .btn{width:100%}
+
+.price-paid-tag,.price-research-tag{
+  display:inline-flex;
+  align-items:center;
+  min-height:21px;
+  padding:0 6px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:900;
+}
+.price-paid-tag{background:#102118;color:#8ef1b3}
+.price-research-tag{background:#20293a;color:#9cc1ff}
+.price-quote-tags{display:flex;gap:4px;flex-wrap:wrap}
+
+.price-product-details{
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.price-product-details summary{
+  cursor:pointer;
+  list-style:none;
+  padding:10px 13px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+.price-product-details summary::-webkit-details-marker{display:none}
+.price-product-details summary span{
+  display:inline-flex;
+  margin-left:5px;
+  min-width:22px;
+  height:22px;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  background:#20242d;
+  color:#fff;
+}
+.price-quote-empty-compact{
+  padding:14px;
+  color:var(--muted);
+  font-size:11px;
+}
+.price-quote-row-simple{
+  grid-template-columns:minmax(170px,1.4fr) 110px 150px 90px 120px auto!important;
+}
+
+@media(max-width:950px){
+  .price-region-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .price-region-grid{grid-template-columns:1fr 1fr;padding:9px}
+  .price-region-value{font-size:17px}
+  .price-product-head{padding:12px}
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -2135,7 +2270,7 @@ footer{
     <div class="price-db-banner">
       <div>
         <strong>Banco de preços e compras</strong>
-        <span>Itens cadastrados no Estoque aparecem aqui automaticamente. Para móveis, ferramentas, materiais, eletrodomésticos e compras únicas, use “+ Produto”. Depois, cadastre cotações de lojas, cidades ou sites para comparar.</span>
+        <span>Escolha um produto e compare rapidamente quanto custa em Cambuquira, São Paulo, outra cidade ou Internet. Para adicionar um valor, use “+ Preço” no próprio produto — não é preciso selecionar o produto novamente.</span>
       </div>
       <div class="price-db-badge">ESTOQUE + COTAÇÕES</div>
     </div>
@@ -2150,8 +2285,8 @@ footer{
 
     <div class="price-db-actions">
       <button id="priceDbAddProductBtn" class="btn primary">+ Produto</button>
-      <button id="priceDbAddQuoteBtn" class="btn">+ Cotação</button>
-      <button id="priceDbAddPurchaseBtn" class="btn">Registrar compra</button>
+      <button id="priceDbAddQuoteBtn" class="btn" hidden>+ Preço</button>
+      <button id="priceDbAddPurchaseBtn" class="btn" hidden>Registrar compra</button>
       <button id="priceDbImportStockBtn" class="btn">Sincronizar estoque agora</button>
       <button id="priceDbExportBtn" class="btn">Exportar base</button>
       <button id="priceDbImportBtn" class="btn">Importar base</button>
@@ -3110,56 +3245,79 @@ footer{
 </dialog>
 
 <dialog id="priceQuoteDialog">
-  <form method="dialog" id="priceQuoteForm" class="dialog-body price-dialog-large">
-    <h2>Adicionar cotação</h2>
+  <form method="dialog" id="priceQuoteForm" class="dialog-body price-dialog-large price-simple-dialog">
+    <h2 id="priceQuoteTitle">Adicionar preço</h2>
     <input id="priceQuoteId" type="hidden">
 
-    <label>Produto
-      <select id="priceQuoteProduct" required=""><option value="">Selecione...</option></select>
-    </label>
+    <div class="price-fixed-product">
+      <span>Produto</span>
+      <strong id="priceQuoteProductName">—</strong>
+      <small id="priceQuoteProductMeta"></small>
+    </div>
+    <select id="priceQuoteProduct" required hidden><option value="">Selecione...</option></select>
 
     <div class="form-cols">
-      <label>Loja, mercado, fornecedor ou site
-        <input id="priceQuoteStore" required="" placeholder="Ex.: Depósito São José">
+      <label>Onde você viu ou pagou esse preço?
+        <select id="priceQuoteRegion" required>
+          <option value="Cambuquira">Cambuquira</option>
+          <option value="São Paulo">São Paulo</option>
+          <option value="Outra cidade">Outra cidade</option>
+          <option value="Internet">Internet</option>
+        </select>
       </label>
-      <label>Cidade ou origem
-        <input id="priceQuoteCity" required="" placeholder="Ex.: Varginha / Internet">
+      <label>Loja, mercado ou fornecedor
+        <input id="priceQuoteStore" required placeholder="Ex.: Mercado Central">
       </label>
     </div>
 
     <div class="form-cols">
-      <label>Quantidade desta oferta (na unidade comparável)
-        <input id="priceQuotePackageQty" type="number" min="0.0001" step="0.0001" value="1" required="">
+      <label>Preço
+        <input id="priceQuotePrice" type="number" min="0" step="0.01" value="0" required>
       </label>
-      <label>Preço total da oferta
-        <input id="priceQuotePrice" type="number" min="0" step="0.01" value="0" required="">
+      <label>Quantidade que esse preço compra
+        <input id="priceQuotePackageQty" type="number" min="0.0001" step="0.0001" value="1" required>
       </label>
     </div>
 
     <div class="form-cols">
-      <label>Frete ou custo adicional
-        <input id="priceQuoteFreight" type="number" min="0" step="0.01" value="0">
+      <label>Este valor é
+        <select id="priceQuoteKind">
+          <option value="pesquisado">Preço pesquisado / cotação</option>
+          <option value="pago">Preço que eu paguei</option>
+        </select>
       </label>
-      <label>Data da cotação
-        <input id="priceQuoteDate" type="date" required="">
+      <label>Data
+        <input id="priceQuoteDate" type="date" required>
       </label>
     </div>
 
-    <label>Link, telefone ou referência
-      <input id="priceQuoteLink" placeholder="https://... ou telefone do fornecedor">
-    </label>
-
-    <label>Observação
-      <textarea id="priceQuoteNotes" rows="3" placeholder="Prazo, disponibilidade, desconto à vista, marca..."></textarea>
-    </label>
+    <details class="price-optional-details">
+      <summary>Detalhes opcionais</summary>
+      <div class="form-grid price-optional-grid">
+        <div class="form-cols">
+          <label>Cidade / origem detalhada
+            <input id="priceQuoteCityDetail" placeholder="Ex.: Varginha / Mercado Livre">
+          </label>
+          <label>Frete ou custo adicional
+            <input id="priceQuoteFreight" type="number" min="0" step="0.01" value="0">
+          </label>
+        </div>
+        <label>Link, telefone ou referência
+          <input id="priceQuoteLink" placeholder="https://... ou telefone">
+        </label>
+        <label>Observação
+          <textarea id="priceQuoteNotes" rows="2" placeholder="Marca, prazo, desconto, condição..."></textarea>
+        </label>
+      </div>
+    </details>
 
     <div id="priceQuotePreview" class="price-dialog-hint">
-      Informe quantidade e valor para calcular o preço por unidade.
+      Informe quantidade e preço para calcular o valor comparável.
     </div>
 
     <div class="dialog-actions">
       <button value="cancel" class="btn">Cancelar</button>
-      <button value="save" class="btn primary">Salvar cotação</button>
+      <button value="save" class="btn primary">Salvar preço</button>
     </div>
   </form>
 </dialog>
@@ -3168,9 +3326,12 @@ footer{
   <form method="dialog" id="pricePurchaseForm" class="dialog-body price-dialog-large">
     <h2>Registrar compra realizada</h2>
 
-    <label>Produto
-      <select id="pricePurchaseProduct" required=""><option value="">Selecione...</option></select>
-    </label>
+    <div class="price-fixed-product">
+      <span>Produto</span>
+      <strong id="pricePurchaseProductName">—</strong>
+      <small id="pricePurchaseProductMeta"></small>
+    </div>
+    <select id="pricePurchaseProduct" required hidden><option value="">Selecione...</option></select>
 
     <div class="form-cols">
       <label>Onde foi comprado
@@ -4565,6 +4726,7 @@ renderAll();
     const data={
       productId:product.id,
       store:"Preço legado do estoque",
+      region: city==="Cambuquira" ? "Cambuquira" : (city==="São Paulo" ? "São Paulo" : "Outra cidade"),
       city,
       packageQty:1,
       price:value,
@@ -4713,6 +4875,28 @@ renderAll();
     const packageQty = numPriceDb(quote.packageQty);
     if(packageQty <= 0) return 0;
     return (numPriceDb(quote.price) + numPriceDb(quote.freight)) / packageQty;
+  }
+
+  function quoteRegion(quote){
+    if(quote?.region)return quote.region;
+    const city=normPriceDb(quote?.city||"");
+    if(city.includes("cambuquira"))return "Cambuquira";
+    if(city.includes("sao paulo") || city==="sp")return "São Paulo";
+    if(city.includes("internet") || city.includes("online") || city.includes("mercado livre") || city.includes("amazon"))return "Internet";
+    return "Outra cidade";
+  }
+
+  function bestQuoteForRegion(productId,region){
+    return quotesFor(productId)
+      .filter(q=>quoteRegion(q)===region && quoteUnitPrice(q)>0)
+      .slice()
+      .sort((a,b)=>quoteUnitPrice(a)-quoteUnitPrice(b))[0] || null;
+  }
+
+  function regionShortLabel(region){
+    if(region==="São Paulo")return "São Paulo";
+    if(region==="Outra cidade")return "Outra cidade";
+    return region;
   }
 
   function sortedQuotes(productId){
@@ -4880,12 +5064,13 @@ renderAll();
       container.innerHTML = `
         <div class="price-db-empty">
           <strong>Nenhum produto encontrado.</strong>
-          Cadastre um produto ou importe os itens que estão faltando no estoque.
+          Cadastre um produto ou sincronize o Estoque.
         </div>`;
       return;
     }
 
     container.innerHTML = "";
+    const regions=["Cambuquira","São Paulo","Outra cidade","Internet"];
 
     products.forEach(product => {
       const quotes = sortedQuotes(product.id);
@@ -4893,76 +5078,94 @@ renderAll();
       const bestUnit = best ? quoteUnitPrice(best) : 0;
       const estimated = bestUnit * numPriceDb(product.qtyNeeded);
 
-      const card = document.createElement("article");
-      card.className = "price-product";
+      const regionCards=regions.map(region=>{
+        const q=bestQuoteForRegion(product.id,region);
+        const unit=q ? quoteUnitPrice(q) : 0;
+        return `
+          <div class="price-region-card ${q ? "has-price" : ""}">
+            <div class="price-region-top">
+              <strong>${escPriceDb(regionShortLabel(region))}</strong>
+              ${q?.kind==="pago" ? '<span class="price-paid-tag">PAGUEI</span>' : ""}
+            </div>
+            <div class="price-region-value">${q ? brlPriceDb(unit) : "—"}</div>
+            <div class="price-region-unit">${q ? `por ${escPriceDb(product.unit)}` : "sem preço"}</div>
+            <div class="price-region-store">${q ? escPriceDb(q.store||"Sem loja") : "&nbsp;"}</div>
+            <button class="btn small region-add-price" data-id="${escPriceDb(product.id)}" data-region="${escPriceDb(region)}">
+              ${q ? "Adicionar outro" : "+ Adicionar"}
+            </button>
+          </div>`;
+      }).join("");
 
       const quoteRows = quotes.length
-        ? quotes.map((quote, index) => {
+        ? quotes.map(quote => {
             const unitPrice = quoteUnitPrice(quote);
             const totalOffer = numPriceDb(quote.price) + numPriceDb(quote.freight);
             const isBest = best && quote.id === best.id;
-
-            const link = quote.link
-              ? `<a class="price-link" href="${escPriceDb(quote.link)}" target="_blank" rel="noopener noreferrer">${escPriceDb(quote.link)}</a>`
-              : `<span class="price-quote-muted">${escPriceDb(quote.notes || "Sem referência")}</span>`;
+            const detailedCity = quote.city && quote.city!==quoteRegion(quote)
+              ? ` • ${escPriceDb(quote.city)}`
+              : "";
 
             return `
-              <div class="price-quote-row">
+              <div class="price-quote-row price-quote-row-simple">
                 <div class="price-quote-store">
                   <strong>${escPriceDb(quote.store)}</strong>
-                  ${link}
-                </div>
-                <div class="quote-city">
-                  ${escPriceDb(quote.city)}
+                  <span class="price-quote-muted">${escPriceDb(quoteRegion(quote))}${detailedCity}</span>
                 </div>
                 <div>
-                  <span class="price-quote-muted">Oferta</span><br>
+                  <span class="price-quote-muted">Preço</span><br>
                   <span class="price-quote-total">${brlPriceDb(totalOffer)}</span>
                 </div>
                 <div>
-                  <span class="price-quote-muted">Por ${escPriceDb(product.unit)}</span><br>
-                  <span class="price-quote-unit">${unitPrice ? brlPriceDb(unitPrice) : "—"}</span>
+                  <span class="price-quote-muted">Comparável</span><br>
+                  <span class="price-quote-unit">${unitPrice ? `${brlPriceDb(unitPrice)} / ${escPriceDb(product.unit)}` : "—"}</span>
                 </div>
                 <div class="quote-date">
                   ${formatDatePriceDb(quote.date)}
                 </div>
+                <div class="price-quote-tags">
+                  ${quote.kind==="pago" ? '<span class="price-paid-tag">PAGUEI</span>' : '<span class="price-research-tag">COTAÇÃO</span>'}
+                  ${isBest ? '<span class="price-best-tag">MENOR</span>' : ""}
+                </div>
                 <div>
-                  ${isBest ? '<span class="price-best-tag">MAIS BARATO</span>' : ""}
                   <button class="btn small quote-edit" data-id="${escPriceDb(quote.id)}">Editar</button>
                   <button class="btn small danger quote-delete" data-id="${escPriceDb(quote.id)}">Excluir</button>
                 </div>
               </div>`;
           }).join("")
-        : `<div class="price-db-empty"><strong>Sem cotações.</strong>Adicione preços de lojas, cidades ou sites para comparar.</div>`;
+        : `<div class="price-quote-empty-compact">Ainda não há preços cadastrados para este produto.</div>`;
 
+      const card = document.createElement("article");
+      card.className = "price-product price-product-v105";
       card.innerHTML = `
         <div class="price-product-head">
           <div class="price-product-title">
             <h3>${escPriceDb(product.name)} ${product.sourceStockId ? '<span class="price-best-tag" style="margin-left:6px">ESTOQUE</span>' : ""}</h3>
             <div>
-              ${escPriceDb(product.category)} • quantidade de referência
+              ${escPriceDb(product.category)} • referência:
               <strong>${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${escPriceDb(product.unit)}</strong>
               ${product.spec ? ` • ${escPriceDb(product.spec)}` : ""}
             </div>
           </div>
 
           <div class="price-product-best">
-            <span>${best ? `Melhor: ${escPriceDb(best.store)} — ${escPriceDb(best.city)}` : "Sem cotações"}</span>
+            <span>${best ? `Menor encontrado: ${escPriceDb(best.store)} — ${escPriceDb(quoteRegion(best))}` : "Ainda sem preços"}</span>
             <strong>${best ? `${brlPriceDb(bestUnit)} / ${escPriceDb(product.unit)}` : "—"}</strong>
             ${best ? `<span>${brlPriceDb(estimated)} para ${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${escPriceDb(product.unit)}</span>` : ""}
           </div>
 
           <div class="price-product-actions">
-            <button class="btn small primary product-add-quote" data-id="${escPriceDb(product.id)}">+ Cotação</button>
-            <button class="btn small product-buy" data-id="${escPriceDb(product.id)}">Compra</button>
-            <button class="btn small product-edit" data-id="${escPriceDb(product.id)}">Editar</button>
-            ${product.sourceStockId
-              ? '<button class="btn small product-delete-quotes" data-id="'+escPriceDb(product.id)+'">Limpar cotações</button>'
-              : '<button class="btn small danger product-delete" data-id="'+escPriceDb(product.id)+'">Excluir</button>'}
+            <button class="btn small primary product-add-quote" data-id="${escPriceDb(product.id)}">+ Preço</button>
+            <button class="btn small product-buy" data-id="${escPriceDb(product.id)}">Registrar compra</button>
+            <button class="btn small product-edit" data-id="${escPriceDb(product.id)}">Editar item</button>
           </div>
         </div>
 
-        <div class="price-quotes">${quoteRows}</div>
+        <div class="price-region-grid">${regionCards}</div>
+
+        <details class="price-product-details" ${quotes.length && quotes.length<=2 ? "open" : ""}>
+          <summary>Histórico de preços <span>${quotes.length}</span></summary>
+          <div class="price-quotes">${quoteRows}</div>
+        </details>
       `;
 
       container.appendChild(card);
@@ -4970,6 +5173,10 @@ renderAll();
 
     container.querySelectorAll(".product-add-quote").forEach(button => {
       button.onclick = () => openQuoteDialog(button.dataset.id);
+    });
+
+    container.querySelectorAll(".region-add-price").forEach(button => {
+      button.onclick = () => openQuoteDialog(button.dataset.id,"",button.dataset.region);
     });
 
     container.querySelectorAll(".product-buy").forEach(button => {
@@ -4980,43 +5187,17 @@ renderAll();
       button.onclick = () => openProductDialog(button.dataset.id);
     });
 
-    container.querySelectorAll(".product-delete-quotes").forEach(button => {
-      button.onclick = () => {
-        const product=productById(button.dataset.id);
-        if(!product)return;
-        if(!confirm(`Limpar todas as cotações de "${product.name}"? O produto continuará vinculado ao Estoque.`))return;
-        priceDb.quotes=priceDb.quotes.filter(q=>q.productId!==product.id);
-        savePriceDb();
-        renderPriceDb();
-      };
-    });
-
-    container.querySelectorAll(".product-delete").forEach(button => {
-      button.onclick = () => {
-        const product = productById(button.dataset.id);
-        if(!product) return;
-
-        if(!confirm(`Excluir "${product.name}" e todas as suas cotações?`)) return;
-
-        priceDb.products = priceDb.products.filter(item => item.id !== product.id);
-        priceDb.quotes = priceDb.quotes.filter(quote => quote.productId !== product.id);
-        savePriceDb();
-        renderPriceDb();
-      };
-    });
-
     container.querySelectorAll(".quote-edit").forEach(button => {
       button.onclick = () => {
         const quote=priceDb.quotes.find(q=>q.id===button.dataset.id);
         if(!quote)return;
-        openQuoteDialog(quote.productId,quote.id);
+        openQuoteDialog(quote.productId,quote.id,quoteRegion(quote));
       };
     });
 
     container.querySelectorAll(".quote-delete").forEach(button => {
       button.onclick = () => {
-        if(!confirm("Excluir esta cotação?")) return;
-
+        if(!confirm("Excluir este preço?")) return;
         priceDb.quotes = priceDb.quotes.filter(quote => quote.id !== button.dataset.id);
         savePriceDb();
         renderPriceDb();
@@ -5099,12 +5280,14 @@ renderAll();
     $("priceProductDialog").showModal();
   }
 
-  function openQuoteDialog(productId = "", quoteId = ""){
-    if(!priceDb.products.length){
-      alert("Cadastre primeiro um produto.");
-      openProductDialog();
+  function openQuoteDialog(productId = "", quoteId = "", preferredRegion = "Cambuquira"){
+    if(!productId){
+      alert("Use o botão “+ Preço” do produto que deseja comparar.");
       return;
     }
+
+    const product=productById(productId);
+    if(!product)return;
 
     $("priceQuoteForm").reset();
     $("priceQuoteId").value = "";
@@ -5112,26 +5295,39 @@ renderAll();
     $("priceQuotePrice").value = 0;
     $("priceQuoteFreight").value = 0;
     $("priceQuoteDate").value = todayPriceDb();
+    $("priceQuoteKind").value = "pesquisado";
+    $("priceQuoteRegion").value = preferredRegion || "Cambuquira";
+    $("priceQuoteCityDetail").value = "";
 
-    let selectedProductId=productId;
+    populateProductSelects(productId);
+    $("priceQuoteProduct").value=productId;
+    $("priceQuoteProductName").textContent=product.name;
+    $("priceQuoteProductMeta").textContent=
+      `${product.category} • ${formatQtyPriceDb(product.qtyNeeded,product.unit)} ${product.unit}`;
+    $("priceQuoteTitle").textContent=`Adicionar preço — ${product.name}`;
 
     if(quoteId){
       const quote=priceDb.quotes.find(q=>q.id===quoteId);
       if(quote){
-        selectedProductId=quote.productId;
         $("priceQuoteId").value=quote.id;
+        $("priceQuoteRegion").value=quoteRegion(quote);
         $("priceQuoteStore").value=quote.store||"";
-        $("priceQuoteCity").value=quote.city||"";
         $("priceQuotePackageQty").value=quote.packageQty||1;
         $("priceQuotePrice").value=quote.price||0;
         $("priceQuoteFreight").value=quote.freight||0;
         $("priceQuoteDate").value=quote.date||todayPriceDb();
         $("priceQuoteLink").value=quote.link||"";
         $("priceQuoteNotes").value=quote.notes||"";
+        $("priceQuoteKind").value=quote.kind||"pesquisado";
+
+        const region=quoteRegion(quote);
+        $("priceQuoteCityDetail").value=
+          quote.city && quote.city!==region ? quote.city : "";
+
+        $("priceQuoteTitle").textContent=`Editar preço — ${product.name}`;
       }
     }
 
-    populateProductSelects(selectedProductId);
     updateQuotePreview();
     $("priceQuoteDialog").showModal();
   }
@@ -5148,6 +5344,13 @@ renderAll();
     $("pricePurchaseDate").value = todayPriceDb();
 
     populateProductSelects(productId);
+    $("pricePurchaseProduct").value=productId;
+    const fixedProduct=productById(productId);
+    if(fixedProduct){
+      $("pricePurchaseProductName").textContent=fixedProduct.name;
+      $("pricePurchaseProductMeta").textContent=
+        `${fixedProduct.category} • ${formatQtyPriceDb(fixedProduct.qtyNeeded,fixedProduct.unit)} ${fixedProduct.unit}`;
+    }
 
     const best = bestQuote(productId);
     if(best){
@@ -5173,7 +5376,7 @@ renderAll();
 
     if(!product || packageQty <= 0){
       $("priceQuotePreview").textContent =
-        "Informe produto, quantidade e valor para calcular o preço por unidade.";
+        "Informe quantidade e preço para calcular o valor comparável.";
       return;
     }
 
@@ -5224,14 +5427,18 @@ renderAll();
     if(!productId) return;
 
     const quoteId=$("priceQuoteId").value;
+    const region=$("priceQuoteRegion").value;
+    const cityDetail=$("priceQuoteCityDetail").value.trim();
     const quoteData={
       productId,
       store: $("priceQuoteStore").value.trim(),
-      city: $("priceQuoteCity").value.trim(),
+      region,
+      city: cityDetail || region,
       packageQty: numPriceDb($("priceQuotePackageQty").value),
       price: numPriceDb($("priceQuotePrice").value),
       freight: numPriceDb($("priceQuoteFreight").value),
       date: $("priceQuoteDate").value,
+      kind: $("priceQuoteKind").value,
       link: $("priceQuoteLink").value.trim(),
       notes: $("priceQuoteNotes").value.trim()
     };
@@ -5281,6 +5488,7 @@ renderAll();
 
   [
     "priceQuoteProduct",
+    "priceQuoteRegion",
     "priceQuotePackageQty",
     "priceQuotePrice",
     "priceQuoteFreight"
@@ -5290,8 +5498,8 @@ renderAll();
   });
 
   $("priceDbAddProductBtn").onclick = () => openProductDialog();
-  $("priceDbAddQuoteBtn").onclick = () => openQuoteDialog();
-  $("priceDbAddPurchaseBtn").onclick = () => openPurchaseDialog();
+  $("priceDbAddQuoteBtn").onclick = () => alert("Escolha o produto e clique em “+ Preço”.");
+  $("priceDbAddPurchaseBtn").onclick = () => alert("Escolha o produto e clique em “Registrar compra”.");
 
   $("priceDbSearch").oninput = renderProductList;
   $("priceDbCategoryFilter").onchange = renderProductList;
