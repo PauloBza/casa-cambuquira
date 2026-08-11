@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.13 Lista de Compras no Resumo</title>
+<title>Casa Cambuquira — V10.14 Controle de Viagens</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -2382,6 +2382,94 @@ footer{
   }
 }
 
+
+/* ===== V10.14 — CONTROLE DE VIAGENS SP ⇄ CAMBUQUIRA ===== */
+.travel-shell{display:grid;gap:12px}
+.travel-hero{
+  display:flex;justify-content:space-between;gap:14px;align-items:center;
+  padding:15px 16px;border-radius:17px;
+  border:1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 15% 0%,rgba(229,9,20,.16),transparent 40%),
+    linear-gradient(180deg,rgba(255,255,255,.035),transparent),#12151b;
+}
+.travel-hero h2{margin:0 0 4px;font-size:21px}
+.travel-hero p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+.travel-hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+.travel-metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.travel-metric{
+  padding:13px;border-radius:15px;border:1px solid rgba(255,255,255,.08);
+  background:#13161d;color:var(--muted);font-size:11px
+}
+.travel-metric strong{display:block;margin-top:5px;color:#fff;font-size:19px}
+.travel-metric.fuel strong{color:#ffd166}
+.travel-metric.food strong{color:#9cc1ff}
+.travel-metric.total strong{color:#8ef1b3}
+.travel-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) 170px auto;gap:8px}
+.travel-list{display:grid;gap:11px}
+.travel-card{
+  border:1px solid rgba(255,255,255,.08);border-radius:17px;background:#12151b;
+  overflow:hidden;box-shadow:0 14px 34px rgba(0,0,0,.20)
+}
+.travel-card-head{
+  display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
+  padding:14px 15px;border-bottom:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),transparent)
+}
+.travel-card-head h3{margin:0 0 4px;font-size:17px}
+.travel-card-head p{margin:0;color:var(--muted);font-size:10px;line-height:1.5}
+.travel-card-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.travel-card-summary{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;padding:12px 14px
+}
+.travel-summary-box{
+  padding:10px 11px;border-radius:12px;background:#171b23;
+  border:1px solid rgba(255,255,255,.06);font-size:9px;color:var(--muted)
+}
+.travel-summary-box strong{display:block;color:#fff;font-size:14px;margin-top:4px}
+.travel-summary-box.total strong{color:#8ef1b3;font-size:16px}
+.travel-note{padding:0 14px 11px;color:var(--muted);font-size:10px}
+.travel-expenses{padding:0 14px 14px}
+.travel-expenses-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:2px 0 8px}
+.travel-expenses-head h4{margin:0;font-size:13px}
+.travel-expenses-head span{color:var(--muted);font-size:10px}
+.travel-table-wrap{overflow:auto;border:1px solid rgba(255,255,255,.07);border-radius:12px}
+.travel-table{min-width:1050px!important}
+.travel-expense-category{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.travel-expense-category .badge{min-height:21px}
+.travel-fuel-details{display:block;margin-top:3px;color:#ffd166;font-size:9px}
+.travel-expense-actions{display:flex;gap:5px;flex-wrap:wrap}
+.travel-empty{
+  padding:28px;text-align:center;border:1px dashed rgba(255,255,255,.12);
+  border-radius:14px;background:#11141a;color:var(--muted)
+}
+.travel-empty strong{display:block;color:#fff;margin-bottom:5px}
+.travel-dialog-large{width:min(760px,calc(100vw - 24px))}
+.travel-fuel-box{
+  display:grid;gap:9px;padding:11px;border:1px solid rgba(245,158,11,.18);
+  border-radius:12px;background:#1b1811
+}
+.travel-fuel-box[hidden]{display:none!important}
+.travel-fuel-box-title{color:#ffd166;font-size:11px;font-weight:800}
+.travel-dialog-hint{
+  padding:9px 10px;border-radius:10px;background:#161b24;color:var(--muted);
+  font-size:10px;line-height:1.5;border:1px solid rgba(255,255,255,.07)
+}
+@media(max-width:1100px){
+  .travel-metrics{grid-template-columns:repeat(3,1fr)}
+  .travel-card-summary{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:760px){
+  .travel-hero{align-items:flex-start;flex-direction:column}
+  .travel-hero-actions{width:100%}.travel-hero-actions .btn{flex:1}
+  .travel-metrics{grid-template-columns:1fr 1fr}
+  .travel-toolbar{grid-template-columns:1fr}
+  .travel-card-head{flex-direction:column}
+  .travel-card-actions{justify-content:flex-start;width:100%}
+  .travel-card-actions .btn{flex:1}
+  .travel-card-summary{grid-template-columns:1fr 1fr}
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -2405,6 +2493,7 @@ footer{
     <button class="tab" data-panel="stockPanel">Estoque</button>
     <button class="tab" data-panel="priceDbPanel">Preços &amp; Compras</button>
     <button class="tab" data-panel="financePanel">Financeiro</button>
+    <button class="tab" data-panel="travelPanel">Viagens</button>
     <button class="tab" data-panel="eventsPanel">Especiais</button>
     <button class="tab" data-panel="backupPanel">Backup</button>
     <button class="tab" data-panel="supportPanel">Suporte</button>
@@ -3774,6 +3863,40 @@ footer{
   </div>
 </section>
 
+
+<section id="travelPanel" class="panel">
+  <div class="travel-shell">
+    <div class="travel-hero">
+      <div>
+        <h2>Viagens SP ⇄ Cambuquira</h2>
+        <p>Registre cada ida e volta e acompanhe combustível, pedágios, cafés, refeições, paradas e outros gastos da viagem.</p>
+      </div>
+      <div class="travel-hero-actions">
+        <button id="travelAddTripBtn" class="btn primary">+ Nova viagem</button>
+      </div>
+    </div>
+
+    <div class="travel-metrics">
+      <div class="travel-metric"><span>Viagens registradas</span><strong id="travelMetricTrips">0</strong></div>
+      <div class="travel-metric total"><span>Total gasto</span><strong id="travelMetricTotal">R$ 0,00</strong></div>
+      <div class="travel-metric fuel"><span>Combustível</span><strong id="travelMetricFuel">R$ 0,00</strong></div>
+      <div class="travel-metric"><span>Pedágios</span><strong id="travelMetricTolls">R$ 0,00</strong></div>
+      <div class="travel-metric food"><span>Alimentação / paradas</span><strong id="travelMetricFood">R$ 0,00</strong></div>
+      <div class="travel-metric"><span>Média por viagem</span><strong id="travelMetricAverage">R$ 0,00</strong></div>
+    </div>
+
+    <div class="travel-toolbar">
+      <input id="travelSearch" type="search" placeholder="Buscar viagem, veículo, finalidade, local ou gasto...">
+      <select id="travelYearFilter"><option value="all">Todos os anos</option></select>
+      <button id="travelClearFiltersBtn" class="btn">Limpar filtros</button>
+    </div>
+
+    <div id="travelList" class="travel-list">
+      <div class="travel-empty"><strong>Nenhuma viagem registrada.</strong>Crie a primeira viagem de São Paulo para Cambuquira.</div>
+    </div>
+  </div>
+</section>
+
 <section id="eventsPanel" class="panel">
   <div class="help">
     Crie listas para churrasco, pizza, festa, almoço, viagem ou qualquer outra ocasião. Informe o <strong>valor realmente pago</strong> em cada item e o sistema soma todos os gastos e calcula automaticamente quanto ficou por pessoa.
@@ -4191,6 +4314,134 @@ footer{
     <div class="dialog-actions">
       <button value="cancel" class="btn">Cancelar</button>
       <button value="save" class="btn primary">Confirmar pagamento</button>
+    </div>
+  </form>
+</dialog>
+
+
+<dialog id="travelTripDialog">
+  <form method="dialog" id="travelTripForm" class="dialog-body travel-dialog-large">
+    <h2 id="travelTripDialogTitle">Nova viagem</h2>
+    <input id="travelTripId" type="hidden">
+    <div class="form-grid">
+      <div class="form-cols">
+        <label>Data da ida
+          <input id="travelStartDate" type="date" required>
+        </label>
+        <label>Data da volta
+          <input id="travelEndDate" type="date">
+        </label>
+      </div>
+      <div class="form-cols">
+        <label>Origem
+          <input id="travelOrigin" value="São Paulo — SP" required>
+        </label>
+        <label>Destino
+          <input id="travelDestination" value="Cambuquira — MG" required>
+        </label>
+      </div>
+      <div class="form-cols">
+        <label>Veículo
+          <input id="travelVehicle" placeholder="Ex.: carro, modelo ou placa">
+        </label>
+        <label>Número de pessoas
+          <input id="travelPeople" type="number" min="1" step="1" value="1">
+        </label>
+      </div>
+      <div class="form-cols">
+        <label>KM na saída
+          <input id="travelKmStart" type="number" min="0" step="0.1" placeholder="Opcional">
+        </label>
+        <label>KM no retorno
+          <input id="travelKmEnd" type="number" min="0" step="0.1" placeholder="Opcional">
+        </label>
+      </div>
+      <label>Finalidade / motivo da viagem
+        <input id="travelPurpose" placeholder="Ex.: manutenção da casa, evento, compras...">
+      </label>
+      <label>Observações
+        <textarea id="travelNotes" rows="3" placeholder="Informações gerais da viagem"></textarea>
+      </label>
+      <div class="travel-dialog-hint">Depois de criar a viagem, use <strong>+ Combustível</strong> ou <strong>+ Gasto</strong> para registrar cada abastecimento, pedágio, café, refeição ou outra despesa.</div>
+    </div>
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Salvar viagem</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="travelExpenseDialog">
+  <form method="dialog" id="travelExpenseForm" class="dialog-body travel-dialog-large">
+    <h2 id="travelExpenseDialogTitle">Novo gasto da viagem</h2>
+    <input id="travelExpenseTripId" type="hidden">
+    <input id="travelExpenseId" type="hidden">
+    <div class="form-grid">
+      <div class="form-cols">
+        <label>Data
+          <input id="travelExpenseDate" type="date" required>
+        </label>
+        <label>Categoria
+          <select id="travelExpenseCategory" required>
+            <option>Combustível</option>
+            <option>Pedágio</option>
+            <option>Alimentação</option>
+            <option>Estacionamento</option>
+            <option>Hospedagem</option>
+            <option>Outros</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-cols">
+        <label>Tipo / detalhe
+          <select id="travelExpenseType">
+            <option value="">—</option>
+            <option>Gasolina</option>
+            <option>Etanol</option>
+            <option>Diesel</option>
+            <option>Outro combustível</option>
+            <option>Café</option>
+            <option>Refeição</option>
+            <option>Lanche</option>
+            <option>Água / bebida</option>
+            <option>Outro</option>
+          </select>
+        </label>
+        <label>Valor pago
+          <input id="travelExpenseAmount" type="number" min="0" step="0.01" required>
+        </label>
+      </div>
+
+      <div id="travelFuelBox" class="travel-fuel-box">
+        <div class="travel-fuel-box-title">Detalhes do abastecimento</div>
+        <div class="form-cols">
+          <label>Litros
+            <input id="travelFuelLiters" type="number" min="0" step="0.001" placeholder="Opcional">
+          </label>
+          <label>Preço por litro
+            <input id="travelFuelPrice" type="number" min="0" step="0.001" placeholder="Opcional">
+          </label>
+        </div>
+      </div>
+
+      <div class="form-cols">
+        <label>Local / estabelecimento
+          <input id="travelExpensePlace" placeholder="Ex.: posto, praça de pedágio, restaurante...">
+        </label>
+        <label>Forma de pagamento
+          <input id="travelExpensePayment" list="financePaymentMethods" placeholder="Pix, débito, crédito, dinheiro...">
+        </label>
+      </div>
+      <label>Descrição
+        <input id="travelExpenseDescription" placeholder="Ex.: abastecimento na ida, café na parada...">
+      </label>
+      <label>Observação
+        <textarea id="travelExpenseNotes" rows="2"></textarea>
+      </label>
+    </div>
+    <div class="dialog-actions">
+      <button value="cancel" class="btn">Cancelar</button>
+      <button value="save" class="btn primary">Salvar gasto</button>
     </div>
   </form>
 </dialog>
@@ -4811,7 +5062,8 @@ function freshState(){
       },
       housePayments:[],
       bills:[],
-      payees:[]
+      payees:[],
+      trips:[]
     },
     photoGalleryUrl:"https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec",otherCity:"Três Corações",hideBought:false
   };
@@ -8648,6 +8900,337 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
   ensureFinance();
   save();
   renderFinance();
+})();
+</script>
+
+<script>
+/* ===== CASA CAMBUQUIRA V10.14 — VIAGENS SP ⇄ CAMBUQUIRA ===== */
+(() => {
+  const $t=id=>document.getElementById(id);
+  const tnum=v=>Number(v)||0;
+  const tesc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+  const tnorm=v=>String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  const tbrl=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(tnum(v));
+  const tdate=v=>{
+    if(!v)return "—";
+    const [y,m,d]=String(v).split("-");
+    return y&&m&&d?`${d}/${m}/${y}`:v;
+  };
+  const todayT=()=>{
+    const now=new Date();
+    const off=now.getTimezoneOffset()*60000;
+    return new Date(now-off).toISOString().slice(0,10);
+  };
+
+  function ensureTravel(){
+    if(!state.finance || typeof state.finance!=="object")state.finance={};
+    if(!Array.isArray(state.finance.trips))state.finance.trips=[];
+    state.finance.trips.forEach(trip=>{
+      if(!Array.isArray(trip.expenses))trip.expenses=[];
+      if(!trip.people)trip.people=1;
+    });
+  }
+
+  function tripExpenses(trip){return Array.isArray(trip?.expenses)?trip.expenses:[]}
+  function expenseTotal(trip,category=""){
+    return tripExpenses(trip)
+      .filter(e=>!category || e.category===category)
+      .reduce((sum,e)=>sum+tnum(e.amount),0);
+  }
+  function tripTotal(trip){return expenseTotal(trip)}
+  function tripKm(trip){
+    const start=tnum(trip.kmStart),end=tnum(trip.kmEnd);
+    return end>start&&start>=0?end-start:0;
+  }
+  function tripDays(trip){
+    if(!trip.startDate||!trip.endDate)return 0;
+    const a=new Date(trip.startDate+"T00:00:00"),b=new Date(trip.endDate+"T00:00:00");
+    if(Number.isNaN(a.getTime())||Number.isNaN(b.getTime())||b<a)return 0;
+    return Math.floor((b-a)/86400000)+1;
+  }
+  function categoryClass(cat){
+    if(cat==="Combustível")return "warn";
+    if(cat==="Alimentação")return "info";
+    if(cat==="Pedágio")return "danger";
+    return "info";
+  }
+
+  function updateYearFilter(){
+    const sel=$t("travelYearFilter"); if(!sel)return;
+    const current=sel.value||"all";
+    const years=[...new Set(state.finance.trips.map(t=>String(t.startDate||"").slice(0,4)).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
+    sel.innerHTML='<option value="all">Todos os anos</option>'+years.map(y=>`<option value="${tesc(y)}">${tesc(y)}</option>`).join("");
+    sel.value=years.includes(current)?current:"all";
+  }
+
+  function renderTravelMetrics(){
+    const trips=state.finance.trips;
+    const total=trips.reduce((s,t)=>s+tripTotal(t),0);
+    const fuel=trips.reduce((s,t)=>s+expenseTotal(t,"Combustível"),0);
+    const tolls=trips.reduce((s,t)=>s+expenseTotal(t,"Pedágio"),0);
+    const food=trips.reduce((s,t)=>s+expenseTotal(t,"Alimentação"),0);
+    $t("travelMetricTrips").textContent=trips.length;
+    $t("travelMetricTotal").textContent=tbrl(total);
+    $t("travelMetricFuel").textContent=tbrl(fuel);
+    $t("travelMetricTolls").textContent=tbrl(tolls);
+    $t("travelMetricFood").textContent=tbrl(food);
+    $t("travelMetricAverage").textContent=tbrl(trips.length?total/trips.length:0);
+  }
+
+  function searchableTripText(trip){
+    return tnorm([
+      trip.origin,trip.destination,trip.vehicle,trip.purpose,trip.notes,
+      ...tripExpenses(trip).flatMap(e=>[e.category,e.type,e.place,e.description,e.paymentMethod,e.notes])
+    ].join(" "));
+  }
+
+  function renderTravelList(){
+    const list=$t("travelList"); if(!list)return;
+    const q=tnorm($t("travelSearch")?.value||"");
+    const year=$t("travelYearFilter")?.value||"all";
+    const trips=[...state.finance.trips]
+      .filter(t=>(year==="all"||String(t.startDate||"").startsWith(year)) && (!q||searchableTripText(t).includes(q)))
+      .sort((a,b)=>String(b.startDate||"").localeCompare(String(a.startDate||"")));
+
+    if(!trips.length){
+      list.innerHTML='<div class="travel-empty"><strong>Nenhuma viagem encontrada.</strong>Crie uma nova viagem ou ajuste os filtros.</div>';
+      return;
+    }
+
+    list.innerHTML=trips.map(trip=>{
+      const total=tripTotal(trip);
+      const fuel=expenseTotal(trip,"Combustível");
+      const tolls=expenseTotal(trip,"Pedágio");
+      const food=expenseTotal(trip,"Alimentação");
+      const other=Math.max(0,total-fuel-tolls-food);
+      const km=tripKm(trip);
+      const days=tripDays(trip);
+      const people=Math.max(1,parseInt(trip.people)||1);
+      const expenses=[...tripExpenses(trip)].sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
+      const route=`${trip.origin||"São Paulo — SP"} → ${trip.destination||"Cambuquira — MG"}`;
+      const period=trip.endDate?`${tdate(trip.startDate)} a ${tdate(trip.endDate)}`:`Ida em ${tdate(trip.startDate)} • volta não informada`;
+
+      return `<article class="travel-card" data-id="${tesc(trip.id)}">
+        <div class="travel-card-head">
+          <div>
+            <h3>${tesc(route)}</h3>
+            <p>${tesc(period)}${trip.vehicle?` • ${tesc(trip.vehicle)}`:""}${trip.purpose?` • ${tesc(trip.purpose)}`:""}</p>
+          </div>
+          <div class="travel-card-actions">
+            <button class="btn small primary travel-add-fuel" data-id="${tesc(trip.id)}">+ Combustível</button>
+            <button class="btn small travel-add-expense" data-id="${tesc(trip.id)}">+ Gasto</button>
+            <button class="btn small travel-edit-trip" data-id="${tesc(trip.id)}">Editar viagem</button>
+            <button class="btn small danger travel-delete-trip" data-id="${tesc(trip.id)}">Excluir</button>
+          </div>
+        </div>
+        <div class="travel-card-summary">
+          <div class="travel-summary-box total"><span>Total da viagem</span><strong>${tbrl(total)}</strong></div>
+          <div class="travel-summary-box"><span>Combustível</span><strong>${tbrl(fuel)}</strong></div>
+          <div class="travel-summary-box"><span>Pedágios</span><strong>${tbrl(tolls)}</strong></div>
+          <div class="travel-summary-box"><span>Alimentação</span><strong>${tbrl(food)}</strong></div>
+          <div class="travel-summary-box"><span>Outros</span><strong>${tbrl(other)}</strong></div>
+          <div class="travel-summary-box"><span>Por pessoa</span><strong>${tbrl(total/people)}</strong></div>
+        </div>
+        <div class="travel-note">
+          ${days?`${days} dia(s) • `:""}${people} pessoa(s)${km?` • ${km.toLocaleString("pt-BR",{maximumFractionDigits:1})} km percorridos`:""}${trip.notes?` • ${tesc(trip.notes)}`:""}
+        </div>
+        <div class="travel-expenses">
+          <div class="travel-expenses-head"><h4>Gastos desta viagem</h4><span>${expenses.length} lançamento(s)</span></div>
+          ${expenses.length?`<div class="travel-table-wrap"><table class="travel-table">
+            <thead><tr><th>Data</th><th>Categoria</th><th>Descrição</th><th>Local</th><th>Pagamento</th><th>Valor</th><th></th></tr></thead>
+            <tbody>${expenses.map(e=>`<tr>
+              <td>${tdate(e.date)}</td>
+              <td><div class="travel-expense-category"><span class="badge ${categoryClass(e.category)}">${tesc(e.category||"Outros")}</span>${e.type?`<span>${tesc(e.type)}</span>`:""}</div>${e.category==="Combustível"&&(tnum(e.liters)||tnum(e.pricePerLiter))?`<span class="travel-fuel-details">${tnum(e.liters)?`${tnum(e.liters).toLocaleString("pt-BR",{maximumFractionDigits:3})} L`:""}${tnum(e.liters)&&tnum(e.pricePerLiter)?" • ":""}${tnum(e.pricePerLiter)?`${tbrl(e.pricePerLiter)}/L`:""}</span>`:""}</td>
+              <td>${tesc(e.description||"—")}${e.notes?`<span class="muted" style="display:block;margin-top:3px">${tesc(e.notes)}</span>`:""}</td>
+              <td>${tesc(e.place||"—")}</td>
+              <td>${tesc(e.paymentMethod||"—")}</td>
+              <td class="money">${tbrl(e.amount)}</td>
+              <td><div class="travel-expense-actions"><button class="btn small travel-edit-expense" data-trip="${tesc(trip.id)}" data-id="${tesc(e.id)}">Editar</button><button class="btn small danger travel-delete-expense" data-trip="${tesc(trip.id)}" data-id="${tesc(e.id)}">Excluir</button></div></td>
+            </tr>`).join("")}</tbody>
+          </table></div>`:'<div class="travel-empty"><strong>Nenhum gasto registrado nesta viagem.</strong>Adicione combustível, pedágio, alimentação ou outro gasto.</div>'}
+        </div>
+      </article>`;
+    }).join("");
+
+    list.querySelectorAll(".travel-add-fuel").forEach(b=>b.onclick=()=>openExpense(b.dataset.id,"", "Combustível"));
+    list.querySelectorAll(".travel-add-expense").forEach(b=>b.onclick=()=>openExpense(b.dataset.id));
+    list.querySelectorAll(".travel-edit-trip").forEach(b=>b.onclick=()=>openTrip(b.dataset.id));
+    list.querySelectorAll(".travel-delete-trip").forEach(b=>b.onclick=()=>deleteTrip(b.dataset.id));
+    list.querySelectorAll(".travel-edit-expense").forEach(b=>b.onclick=()=>openExpense(b.dataset.trip,b.dataset.id));
+    list.querySelectorAll(".travel-delete-expense").forEach(b=>b.onclick=()=>deleteExpense(b.dataset.trip,b.dataset.id));
+  }
+
+  function renderTrips(){
+    ensureTravel();
+    updateYearFilter();
+    renderTravelMetrics();
+    renderTravelList();
+  }
+
+  function getTrip(id){return state.finance.trips.find(t=>t.id===id)}
+
+  function openTrip(id=""){
+    ensureTravel();
+    const form=$t("travelTripForm"); form.reset();
+    $t("travelTripId").value="";
+    $t("travelTripDialogTitle").textContent=id?"Editar viagem":"Nova viagem";
+    $t("travelStartDate").value=todayT();
+    $t("travelEndDate").value="";
+    $t("travelOrigin").value="São Paulo — SP";
+    $t("travelDestination").value="Cambuquira — MG";
+    $t("travelPeople").value=1;
+    if(id){
+      const trip=getTrip(id); if(!trip)return;
+      $t("travelTripId").value=trip.id;
+      $t("travelStartDate").value=trip.startDate||todayT();
+      $t("travelEndDate").value=trip.endDate||"";
+      $t("travelOrigin").value=trip.origin||"São Paulo — SP";
+      $t("travelDestination").value=trip.destination||"Cambuquira — MG";
+      $t("travelVehicle").value=trip.vehicle||"";
+      $t("travelPeople").value=trip.people||1;
+      $t("travelKmStart").value=trip.kmStart||"";
+      $t("travelKmEnd").value=trip.kmEnd||"";
+      $t("travelPurpose").value=trip.purpose||"";
+      $t("travelNotes").value=trip.notes||"";
+    }
+    $t("travelTripDialog").showModal();
+  }
+
+  function syncExpenseTypeOptions(){
+    const cat=$t("travelExpenseCategory").value;
+    const type=$t("travelExpenseType");
+    const previous=type.value;
+    const opts=cat==="Combustível"
+      ? ["","Gasolina","Etanol","Diesel","Outro combustível"]
+      : cat==="Alimentação"
+      ? ["","Café","Refeição","Lanche","Água / bebida","Outro"]
+      : ["","Outro"];
+    type.innerHTML=opts.map(v=>`<option value="${tesc(v)}"${v===previous?' selected':''}>${v||"—"}</option>`).join("");
+    $t("travelFuelBox").hidden=cat!=="Combustível";
+  }
+
+  function openExpense(tripId,expenseId="",presetCategory=""){
+    const trip=getTrip(tripId); if(!trip)return;
+    $t("travelExpenseForm").reset();
+    $t("travelExpenseTripId").value=trip.id;
+    $t("travelExpenseId").value="";
+    $t("travelExpenseDialogTitle").textContent=expenseId?"Editar gasto":"Novo gasto da viagem";
+    $t("travelExpenseDate").value=trip.startDate||todayT();
+    $t("travelExpenseCategory").value=presetCategory||"Combustível";
+    syncExpenseTypeOptions();
+    if(presetCategory==="Combustível")$t("travelExpenseType").value="Gasolina";
+
+    if(expenseId){
+      const e=tripExpenses(trip).find(x=>x.id===expenseId); if(!e)return;
+      $t("travelExpenseId").value=e.id;
+      $t("travelExpenseDate").value=e.date||trip.startDate||todayT();
+      $t("travelExpenseCategory").value=e.category||"Outros";
+      syncExpenseTypeOptions();
+      if(e.type && [...$t("travelExpenseType").options].some(o=>o.value===e.type))$t("travelExpenseType").value=e.type;
+      $t("travelExpenseAmount").value=tnum(e.amount)||"";
+      $t("travelFuelLiters").value=tnum(e.liters)||"";
+      $t("travelFuelPrice").value=tnum(e.pricePerLiter)||"";
+      $t("travelExpensePlace").value=e.place||"";
+      $t("travelExpensePayment").value=e.paymentMethod||"";
+      $t("travelExpenseDescription").value=e.description||"";
+      $t("travelExpenseNotes").value=e.notes||"";
+    }
+    $t("travelExpenseDialog").showModal();
+  }
+
+  function deleteTrip(id){
+    const trip=getTrip(id); if(!trip)return;
+    if(!confirm(`Excluir a viagem de ${tdate(trip.startDate)} e todos os seus ${tripExpenses(trip).length} gasto(s)?`))return;
+    state.finance.trips=state.finance.trips.filter(t=>t.id!==id);
+    save(); renderTrips();
+  }
+
+  function deleteExpense(tripId,expenseId){
+    const trip=getTrip(tripId); if(!trip)return;
+    const e=tripExpenses(trip).find(x=>x.id===expenseId); if(!e)return;
+    if(!confirm(`Excluir este gasto de ${tbrl(e.amount)}?`))return;
+    trip.expenses=trip.expenses.filter(x=>x.id!==expenseId);
+    save(); renderTrips();
+  }
+
+  $t("travelTripForm")?.addEventListener("submit",event=>{
+    if(event.submitter?.value==="cancel")return;
+    event.preventDefault();
+    const id=$t("travelTripId").value;
+    const data={
+      startDate:$t("travelStartDate").value,
+      endDate:$t("travelEndDate").value,
+      origin:$t("travelOrigin").value.trim()||"São Paulo — SP",
+      destination:$t("travelDestination").value.trim()||"Cambuquira — MG",
+      vehicle:$t("travelVehicle").value.trim(),
+      people:Math.max(1,parseInt($t("travelPeople").value)||1),
+      kmStart:tnum($t("travelKmStart").value),
+      kmEnd:tnum($t("travelKmEnd").value),
+      purpose:$t("travelPurpose").value.trim(),
+      notes:$t("travelNotes").value.trim()
+    };
+    if(data.endDate && data.startDate && data.endDate<data.startDate){
+      alert("A data da volta não pode ser anterior à data da ida."); return;
+    }
+    if(id){
+      const trip=getTrip(id); if(trip)Object.assign(trip,data);
+    }else{
+      state.finance.trips.push({id:uid(),...data,expenses:[],createdAt:new Date().toISOString()});
+    }
+    save(); renderTrips(); $t("travelTripDialog").close();
+  });
+
+  $t("travelExpenseForm")?.addEventListener("submit",event=>{
+    if(event.submitter?.value==="cancel")return;
+    event.preventDefault();
+    const trip=getTrip($t("travelExpenseTripId").value); if(!trip)return;
+    const id=$t("travelExpenseId").value;
+    const category=$t("travelExpenseCategory").value;
+    const liters=category==="Combustível"?tnum($t("travelFuelLiters").value):0;
+    const pricePerLiter=category==="Combustível"?tnum($t("travelFuelPrice").value):0;
+    let amount=tnum($t("travelExpenseAmount").value);
+    if(!amount && liters && pricePerLiter)amount=liters*pricePerLiter;
+    const data={
+      date:$t("travelExpenseDate").value,
+      category,
+      type:$t("travelExpenseType").value,
+      amount,
+      liters,pricePerLiter,
+      place:$t("travelExpensePlace").value.trim(),
+      paymentMethod:$t("travelExpensePayment").value.trim(),
+      description:$t("travelExpenseDescription").value.trim(),
+      notes:$t("travelExpenseNotes").value.trim()
+    };
+    if(id){
+      const e=trip.expenses.find(x=>x.id===id); if(e)Object.assign(e,data);
+    }else{
+      trip.expenses.push({id:uid(),...data,createdAt:new Date().toISOString()});
+    }
+    save(); renderTrips(); $t("travelExpenseDialog").close();
+  });
+
+  $t("travelExpenseCategory")?.addEventListener("change",syncExpenseTypeOptions);
+  $t("travelFuelLiters")?.addEventListener("input",()=>{
+    const liters=tnum($t("travelFuelLiters").value),price=tnum($t("travelFuelPrice").value);
+    if(liters&&price)$t("travelExpenseAmount").value=(liters*price).toFixed(2);
+  });
+  $t("travelFuelPrice")?.addEventListener("input",()=>{
+    const liters=tnum($t("travelFuelLiters").value),price=tnum($t("travelFuelPrice").value);
+    if(liters&&price)$t("travelExpenseAmount").value=(liters*price).toFixed(2);
+  });
+  $t("travelAddTripBtn")?.addEventListener("click",()=>openTrip());
+  $t("travelSearch")?.addEventListener("input",renderTravelList);
+  $t("travelYearFilter")?.addEventListener("change",renderTravelList);
+  $t("travelClearFiltersBtn")?.addEventListener("click",()=>{
+    $t("travelSearch").value="";$t("travelYearFilter").value="all";renderTravelList();
+  });
+
+  const previousRenderAll=renderAll;
+  renderAll=function(){previousRenderAll();renderTrips();};
+
+  ensureTravel();
+  save();
+  renderTrips();
 })();
 </script>
 
