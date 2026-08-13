@@ -2764,6 +2764,218 @@ tr.event-meat-row td:nth-child(3) select{
   .event-guest-row .remove-event-guest{width:100%}
 }
 
+
+/* ===== V10.20 — EVENTOS REALIZADOS / ARQUIVO AUTOMÁTICO ===== */
+.event-archive-section{
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.event-archive-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.event-archive-head h2{margin:0;font-size:18px}
+.event-archive-head p{margin:4px 0 0;color:var(--muted);font-size:10px}
+.event-archive-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:32px;
+  height:28px;
+  padding:0 9px;
+  border-radius:999px;
+  background:#1b2029;
+  color:#dce4f1;
+  border:1px solid rgba(255,255,255,.08);
+  font-size:11px;
+  font-weight:900;
+}
+.event-archive-list{display:grid;gap:8px}
+.event-archive-card{
+  display:grid;
+  grid-template-columns:minmax(220px,1.4fr) repeat(3,minmax(120px,.55fr)) auto;
+  gap:10px;
+  align-items:center;
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#12151b;
+}
+.event-archive-main{min-width:0}
+.event-archive-main strong{
+  display:block;
+  color:#fff;
+  font-size:13px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.event-archive-main small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:9px;
+}
+.event-archive-value span{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+  text-transform:uppercase;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+.event-archive-value strong{
+  display:block;
+  margin-top:3px;
+  color:#fff;
+  font-size:12px;
+}
+.event-archive-value.received strong{color:#8ef1b3}
+.event-archive-value.balance.negative strong{color:#ff9999}
+.event-archive-value.balance.positive strong{color:#8ef1b3}
+.event-archive-empty{
+  padding:20px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed rgba(255,255,255,.12);
+  border-radius:13px;
+  background:#101319;
+  font-size:11px;
+}
+.event-archive-details-btn{white-space:nowrap}
+
+#eventArchiveDialog{
+  width:min(920px,calc(100vw - 24px));
+  max-width:none;
+  max-height:92vh;
+  padding:0;
+  border:0;
+  border-radius:18px;
+  overflow:hidden;
+  background:#0f1218;
+  color:var(--text);
+}
+#eventArchiveDialog::backdrop{
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(3px);
+}
+.event-archive-dialog-shell{
+  display:flex;
+  flex-direction:column;
+  max-height:92vh;
+}
+.event-archive-dialog-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:15px 17px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:#12161d;
+}
+.event-archive-dialog-head h2{margin:0;font-size:19px}
+.event-archive-dialog-head p{margin:4px 0 0;color:var(--muted);font-size:10px}
+.event-archive-dialog-close{
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  padding:0!important;
+  border-radius:999px!important;
+  font-size:18px!important;
+}
+.event-archive-dialog-body{
+  overflow:auto;
+  padding:13px 16px 16px;
+}
+.event-archive-metrics{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-bottom:12px;
+}
+.event-archive-metric{
+  padding:10px 11px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.07);
+  background:#171b23;
+}
+.event-archive-metric span{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+}
+.event-archive-metric strong{
+  display:block;
+  margin-top:4px;
+  color:#fff;
+  font-size:16px;
+}
+.event-archive-metric.received strong{color:#8ef1b3}
+.event-archive-metric.balance-positive strong{color:#8ef1b3}
+.event-archive-metric.balance-negative strong{color:#ff9999}
+.event-archive-detail-section{
+  margin-top:12px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:13px;
+  overflow:hidden;
+  background:#12151b;
+}
+.event-archive-detail-section h3{
+  margin:0;
+  padding:10px 12px;
+  font-size:13px;
+  background:#171b23;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.event-archive-detail-table-wrap{overflow:auto}
+.event-archive-detail-table{
+  min-width:690px!important;
+  font-size:10px;
+}
+.event-archive-detail-table th{
+  position:static!important;
+  font-size:9px!important;
+}
+.event-archive-detail-table td{font-size:10px}
+.event-archive-note{
+  padding:10px 12px;
+  color:var(--muted);
+  font-size:10px;
+}
+@media(max-width:820px){
+  .event-archive-card{
+    grid-template-columns:minmax(180px,1fr) repeat(2,minmax(105px,.55fr)) auto;
+  }
+  .event-archive-card .event-archive-value.balance{display:none}
+  .event-archive-metrics{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .event-archive-head{align-items:center}
+  .event-archive-card{
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .event-archive-main{grid-column:1/-1}
+  .event-archive-main strong{white-space:normal}
+  .event-archive-card .event-archive-value.balance{display:block}
+  .event-archive-details-btn{grid-column:1/-1;width:100%}
+  #eventArchiveDialog{
+    width:calc(100vw - 10px);
+    max-height:95vh;
+    border-radius:13px;
+  }
+  .event-archive-dialog-shell{max-height:95vh}
+  .event-archive-metrics{grid-template-columns:1fr 1fr}
+  .event-archive-dialog-head{padding:12px}
+  .event-archive-dialog-body{padding:10px}
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -4199,6 +4411,19 @@ tr.event-meat-row td:nth-child(3) select{
     <button id="newEventBtn" class="btn primary">+ Novo especial</button>
   </div>
   <div id="eventsList"><div class="empty">Nenhuma lista especial criada.</div></div>
+
+  <section class="event-archive-section">
+    <div class="event-archive-head">
+      <div>
+        <h2>Eventos realizados</h2>
+        <p>Eventos com data já encerrada são arquivados automaticamente aqui.</p>
+      </div>
+      <span id="eventsArchiveCount" class="event-archive-count">0</span>
+    </div>
+    <div id="eventsArchiveList" class="event-archive-list">
+      <div class="event-archive-empty">Nenhum evento realizado ainda.</div>
+    </div>
+  </section>
 </section>
 
 <section id="backupPanel" class="panel">
@@ -6836,10 +7061,235 @@ function eventGuestRowsHtml(ev,stats){
   }).join("");
 }
 
+
+function eventTodayKey(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function eventIsRealized(ev){
+  const date=String(ev?.date||"").trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
+  return date<eventTodayKey();
+}
+
+function eventArchiveSummary(ev){
+  ensureEventContribution(ev);
+  ev.items=Array.isArray(ev.items)?ev.items:[];
+  const people=Math.max(1,num(ev.people));
+  const itemsPaid=ev.items.reduce((sum,i)=>sum+num(i.paidTotal),0);
+  const extraCost=num(ev.extraCost);
+  const totalSpent=itemsPaid+extraCost;
+  const perPerson=people>0?totalSpent/people:0;
+  const stats=eventContributionStats(ev,totalSpent,perPerson);
+  const balance=stats.collected-totalSpent;
+  return {people,itemsPaid,extraCost,totalSpent,perPerson,stats,balance};
+}
+
+function eventGuestReceivedValue(g,stats){
+  if(g.special==="free" || !g.paid)return 0;
+  if(g.special==="custom")return Math.max(0,num(g.specialAmount));
+  return stats.contribution;
+}
+
+function eventArchiveDetailsHtml(ev){
+  const s=eventArchiveSummary(ev);
+  const stats=s.stats;
+  const balanceText=s.balance>=0?brl(s.balance):`- ${brl(Math.abs(s.balance))}`;
+  const dateText=eventDateBR(ev.date);
+  const timeText=eventTimeBR(ev.time);
+  const location=String(ev.location||"").trim();
+
+  const itemRows=ev.items.length
+    ? ev.items.map(i=>`
+        <tr>
+          <td>${esc(i.name||"Item")}</td>
+          <td>${esc(String(i.qty||""))} ${esc(i.unit||"")}</td>
+          <td>${brl(num(i.paidTotal))}</td>
+          <td>${esc(i.paidWhere||"—")}</td>
+        </tr>`).join("")
+    : `<tr><td colspan="4" class="muted">Nenhum item cadastrado.</td></tr>`;
+
+  const guestRows=stats.guests.length
+    ? stats.guests.map(g=>{
+        const status=g.special==="free"?"Isento":g.paid?"Pago":"Pendente";
+        const received=eventGuestReceivedValue(g,stats);
+        const special=g.special==="custom"?"Valor especial":g.special==="free"?"Não precisava pagar":"Normal";
+        return `
+          <tr>
+            <td>${esc(g.name||"Sem nome")}</td>
+            <td>${esc(status)}</td>
+            <td>${esc(special)}</td>
+            <td>${brl(received)}</td>
+          </tr>`;
+      }).join("")
+    : `<tr><td colspan="4" class="muted">Nenhum convidado cadastrado.</td></tr>`;
+
+  return `
+    <div class="event-archive-dialog-shell">
+      <div class="event-archive-dialog-head">
+        <div>
+          <h2>${esc(ev.name||"Evento")}</h2>
+          <p>
+            ${esc(eventCapitalize(ev.type||"evento"))}
+            ${ev.date?` • ${esc(dateText)}`:""}
+            ${timeText?` • ${esc(timeText)}`:""}
+            ${location?` • ${esc(location)}`:""}
+          </p>
+        </div>
+        <button class="btn event-archive-dialog-close" type="button" title="Fechar">×</button>
+      </div>
+
+      <div class="event-archive-dialog-body">
+        <div class="event-archive-metrics">
+          <div class="event-archive-metric">
+            <span>Total gasto</span>
+            <strong>${brl(s.totalSpent)}</strong>
+          </div>
+          <div class="event-archive-metric received">
+            <span>Total recebido</span>
+            <strong>${brl(stats.collected)}</strong>
+          </div>
+          <div class="event-archive-metric ${s.balance>=0?"balance-positive":"balance-negative"}">
+            <span>${s.balance>=0?"Saldo":"Faltou"}</span>
+            <strong>${s.balance>=0?brl(s.balance):brl(Math.abs(s.balance))}</strong>
+          </div>
+          <div class="event-archive-metric">
+            <span>Convidados</span>
+            <strong>${stats.guests.length}</strong>
+          </div>
+        </div>
+
+        <div class="event-archive-note">
+          Base do evento: ${s.people} pessoa(s) • ajuda por pessoa: ${brl(stats.contribution)} •
+          ${stats.paidCount} pago(s) • ${stats.pendingCount} pendente(s) • ${stats.exemptCount} isento(s).
+        </div>
+
+        <div class="event-archive-detail-section">
+          <h3>Gastos do evento</h3>
+          <div class="event-archive-detail-table-wrap">
+            <table class="event-archive-detail-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Quantidade</th>
+                  <th>Valor pago</th>
+                  <th>Onde / observação</th>
+                </tr>
+              </thead>
+              <tbody>${itemRows}</tbody>
+            </table>
+          </div>
+          ${s.extraCost>0?`<div class="event-archive-note">Outros gastos: <strong>${brl(s.extraCost)}</strong></div>`:""}
+        </div>
+
+        <div class="event-archive-detail-section">
+          <h3>Convidados e recebimentos</h3>
+          <div class="event-archive-detail-table-wrap">
+            <table class="event-archive-detail-table">
+              <thead>
+                <tr>
+                  <th>Convidado</th>
+                  <th>Situação</th>
+                  <th>Tipo</th>
+                  <th>Recebido</th>
+                </tr>
+              </thead>
+              <tbody>${guestRows}</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function openArchivedEventDetails(eventId){
+  const ev=state.events.find(x=>String(x.id)===String(eventId));
+  if(!ev)return;
+
+  const dialog=document.getElementById("eventArchiveDialog");
+  const content=document.getElementById("eventArchiveDialogContent");
+  if(!dialog || !content)return;
+
+  content.innerHTML=eventArchiveDetailsHtml(ev);
+  content.querySelector(".event-archive-dialog-close")?.addEventListener("click",()=>dialog.close());
+
+  if(typeof dialog.showModal==="function")dialog.showModal();
+}
+
+function renderArchivedEvents(){
+  const list=document.getElementById("eventsArchiveList");
+  const count=document.getElementById("eventsArchiveCount");
+  if(!list || !count)return;
+
+  const archived=state.events
+    .filter(eventIsRealized)
+    .slice()
+    .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+
+  count.textContent=String(archived.length);
+
+  if(!archived.length){
+    list.innerHTML='<div class="event-archive-empty">Nenhum evento realizado ainda.</div>';
+    return;
+  }
+
+  list.innerHTML=archived.map(ev=>{
+    const s=eventArchiveSummary(ev);
+    const location=String(ev.location||"").trim();
+    const balance=s.balance;
+    return `
+      <div class="event-archive-card" data-event-id="${esc(ev.id)}">
+        <div class="event-archive-main">
+          <strong>${esc(ev.name||"Evento")}</strong>
+          <small>
+            ${esc(eventDateBR(ev.date))}
+            ${location?` • ${esc(location)}`:""}
+            • ${esc(eventCapitalize(ev.type||"evento"))}
+          </small>
+        </div>
+        <div class="event-archive-value">
+          <span>Gasto</span>
+          <strong>${brl(s.totalSpent)}</strong>
+        </div>
+        <div class="event-archive-value received">
+          <span>Recebido</span>
+          <strong>${brl(s.stats.collected)}</strong>
+        </div>
+        <div class="event-archive-value balance ${balance<0?"negative":"positive"}">
+          <span>${balance<0?"Faltou":"Saldo"}</span>
+          <strong>${brl(Math.abs(balance))}</strong>
+        </div>
+        <button class="btn small event-archive-details-btn" type="button">Ver detalhes</button>
+      </div>`;
+  }).join("");
+
+  list.querySelectorAll(".event-archive-details-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const card=btn.closest(".event-archive-card");
+      openArchivedEventDetails(card?.dataset.eventId);
+    });
+  });
+}
+
+let eventArchiveLastDay=eventTodayKey();
+setInterval(()=>{
+  const today=eventTodayKey();
+  if(today!==eventArchiveLastDay){
+    eventArchiveLastDay=today;
+    renderAll();
+  }
+},60000);
+
 function renderEvents(){
   eventsList.innerHTML="";
 
-  state.events.forEach(ev=>{
+  const activeEvents=state.events.filter(ev=>!eventIsRealized(ev));
+
+  activeEvents.forEach(ev=>{
     ev.items=Array.isArray(ev.items)?ev.items:[];
 
     const people=Math.max(1,num(ev.people));
@@ -6895,6 +7345,7 @@ function renderEvents(){
           </div>
         </div>
         <div class="event-head-actions">
+          <button class="btn small edit-event-name">Editar nome</button>
           <button class="btn small copy-event-share">Copiar convite</button>
           <button class="btn small add-event-item">+ Item</button>
           <button class="btn small danger del-event">Excluir evento</button>
@@ -7270,6 +7721,22 @@ function renderEvents(){
 
     card.querySelector(".copy-event-share").onclick=copyContributionMessage;
 
+    card.querySelector(".edit-event-name").onclick=()=>{
+      const current=String(ev.name||"").trim();
+      const edited=prompt("Editar nome do evento:",current);
+      if(edited===null)return;
+
+      const clean=String(edited).trim();
+      if(!clean){
+        alert("Digite um nome para o evento.");
+        return;
+      }
+
+      ev.name=clean;
+      save();
+      renderAll();
+    };
+
     card.querySelector(".add-event-item").onclick=()=>{
       ev.items.push({
         id:uid(),
@@ -7300,9 +7767,11 @@ function renderEvents(){
     eventsList.appendChild(card);
   });
 
-  if(!state.events.length){
-    eventsList.innerHTML='<div class="empty">Nenhuma lista especial criada.</div>';
+  if(!activeEvents.length){
+    eventsList.innerHTML='<div class="empty">Nenhum evento futuro ou em andamento.</div>';
   }
+
+  renderArchivedEvents();
 }
 
 /* RESUMO */
@@ -10606,5 +11075,10 @@ function showCasaSaveToast(message,kind="warn",duration=2200){
 </script>
 
 
+
+
+<dialog id="eventArchiveDialog">
+  <div id="eventArchiveDialogContent"></div>
+</dialog>
 
 </body></html>
