@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.15 Carne x Pessoas</title>
+<title>Casa Cambuquira — V10.17 Convidados & Pagamentos</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -2569,6 +2569,201 @@ tr.event-meat-row td:nth-child(3) select{
   .event-meat-card>strong{font-size:18px}
 }
 
+
+/* ===== V10.16 — ESPECIAIS / CONVIDADOS, ARRECADAÇÃO E MENSAGEM ===== */
+.event-contribution-planner{
+  padding:13px 14px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:
+    radial-gradient(circle at 0% 0%,rgba(156,193,255,.08),transparent 36%),
+    #10141a;
+}
+.event-contribution-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-bottom:10px;
+}
+.event-contribution-card{
+  min-width:0;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:13px;
+  background:#171b23;
+}
+.event-contribution-card>span{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.event-contribution-card>strong{
+  display:block;
+  margin-top:5px;
+  color:#fff;
+  font-size:20px;
+}
+.event-contribution-card>small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.4;
+}
+.event-contribution-card.collected{
+  border-color:rgba(46,204,113,.22);
+  background:linear-gradient(180deg,rgba(46,204,113,.07),transparent),#171b23;
+}
+.event-contribution-card.collected>strong{color:#8ef1b3}
+.event-contribution-card.missing>strong{color:#ffd166}
+.event-contribution-card.closed>strong{color:#8ef1b3}
+
+.event-contribution-settings{
+  display:grid;
+  grid-template-columns:150px 120px minmax(170px,.8fr) minmax(150px,.7fr) minmax(220px,1fr);
+  gap:8px;
+  margin-bottom:10px;
+}
+.event-contribution-settings label,
+.event-message-final label{
+  display:grid;
+  gap:5px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+}
+.event-contribution-settings input{width:100%;min-width:0}
+.event-contribution-help{
+  margin:-3px 0 10px;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.45;
+}
+
+.event-guests-box{
+  overflow:hidden;
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  background:#13161d;
+}
+.event-guests-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 11px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.event-guests-head strong{font-size:12px}
+.event-guests-actions{display:flex;gap:6px;flex-wrap:wrap}
+.event-guests-list{display:grid}
+.event-guest-row{
+  display:grid;
+  grid-template-columns:36px minmax(170px,1fr) 88px 135px 110px auto;
+  gap:7px;
+  align-items:center;
+  padding:8px 10px;
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+.event-guest-row:last-child{border-bottom:0}
+.event-guest-row.paid{background:rgba(46,204,113,.055)}
+.event-guest-row.exempt{background:rgba(156,193,255,.045)}
+.event-guest-row input[type="checkbox"]{
+  width:19px;
+  height:19px;
+  min-height:19px;
+  justify-self:center;
+}
+.event-guest-row .guest-name,
+.event-guest-row .event-guest-special,
+.event-guest-row .event-guest-special-amount{min-width:0;width:100%}
+.event-guest-special-amount[hidden]{display:none!important}
+.event-guest-status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:25px;
+  padding:0 7px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.event-guest-status.paid{background:#102118;color:#8ef1b3}
+.event-guest-status.pending{background:#30230e;color:#ffd166}
+.event-guest-status.exempt{background:#20293a;color:#9cc1ff}
+.event-guests-empty{
+  padding:14px 12px;
+  color:var(--muted);
+  font-size:10px;
+  text-align:center;
+}
+.event-guest-total{
+  padding:8px 11px;
+  color:var(--muted);
+  font-size:9px;
+  border-top:1px solid rgba(255,255,255,.06);
+  background:#11151c;
+}
+
+.event-message-final{
+  margin-top:10px;
+  padding:10px 11px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  background:#13161d;
+}
+.event-message-final textarea{
+  width:100%;
+  min-height:145px;
+  line-height:1.45;
+  background:#0f1319!important;
+}
+.event-message-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:7px;
+  justify-content:flex-end;
+}
+
+@media(max-width:1100px){
+  .event-contribution-settings{grid-template-columns:1fr 1fr}
+}
+@media(max-width:950px){
+  .event-contribution-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:780px){
+  .event-guest-row{
+    grid-template-columns:34px minmax(0,1fr) 90px;
+  }
+  .event-guest-status{grid-column:3}
+  .event-guest-special{grid-column:2}
+  .event-guest-special-amount{grid-column:3}
+  .event-guest-row .remove-event-guest{grid-column:3}
+}
+@media(max-width:520px){
+  .event-contribution-grid{grid-template-columns:1fr 1fr}
+  .event-contribution-settings{grid-template-columns:1fr}
+  .event-guests-head{align-items:flex-start;flex-direction:column}
+  .event-guests-actions{width:100%}
+  .event-guests-actions .btn{flex:1}
+  .event-guest-row{
+    grid-template-columns:30px minmax(0,1fr);
+    gap:6px;
+  }
+  .event-guest-status,
+  .event-guest-special,
+  .event-guest-special-amount,
+  .event-guest-row .remove-event-guest{
+    grid-column:2;
+  }
+  .event-guest-row .remove-event-guest{width:100%}
+}
+
 </style>
 <!-- CASA CAMBUQUIRA V7 | GALERIA FIXA V4: https://script.google.com/macros/s/AKfycbxEeo2Zhdlx2LgFj6CcmeJdQBCHocyHxL_k8zRmvMGclj666E1QHhjR8s1s60xLiTcA/exec -->
 <meta name="casa-supabase-url" content="https://ggoymbyocyrbjvbjqxuk.supabase.co">
@@ -4834,7 +5029,12 @@ tr.event-meat-row td:nth-child(3) select{
 <h2>Novo especial</h2><div class="form-grid">
 <label>Tipo<select id="eventType"><option value="churrasco">Churrasco</option><option value="pizza">Pizza</option><option value="outro">Outro</option></select></label>
 <label>Nome<input id="eventName" required="" placeholder="Ex.: Churrasco de sábado"></label>
-<div class="form-cols"><label>Data<input id="eventDate" type="date"></label><label>Número de pessoas<input id="eventPeople" type="number" min="1" value="10"></label></div>
+<div class="form-cols">
+  <label>Data<input id="eventDate" type="date"></label>
+  <label>Horário<input id="eventTime" type="time"></label>
+</div>
+<label>Local<input id="eventLocation" placeholder="Ex.: No Xororó"></label>
+<label>Número de pessoas<input id="eventPeople" type="number" min="1" value="10"></label>
 </div><div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Criar lista</button></div>
 </form></dialog>
 
@@ -6212,8 +6412,14 @@ eventForm.onsubmit=e=>{
     type,
     name:eventName.value.trim(),
     date:eventDate.value,
+    time:eventTime.value,
+    location:eventLocation.value.trim(),
     people,
     extraCost:0,
+    guests:[],
+    pixName:EVENT_DEFAULT_PIX_NAME,
+    pixKey:EVENT_DEFAULT_PIX_KEY,
+    contributionManual:null,
     items:eventTemplate(type,people).map(([name,qty,unit])=>({
       id:uid(),name,qty,unit,bought:false,
       paidTotal:0,
@@ -6453,6 +6659,183 @@ eventPriceForm.onsubmit=e=>{
   eventPriceDialog.close();
 };
 
+
+/* ===== V10.17 — CONVIDADOS, PAGAMENTOS ESPECIAIS E MENSAGEM FINAL ===== */
+const EVENT_DEFAULT_PIX_NAME="Lauren";
+const EVENT_DEFAULT_PIX_KEY="29855807812";
+
+function ensureEventContribution(ev){
+  if(!Array.isArray(ev.guests))ev.guests=[];
+  ev.guests.forEach(g=>{
+    if(!g.id)g.id=uid();
+    if(g.name===undefined)g.name="";
+    if(g.paid===undefined)g.paid=false;
+    if(!["normal","custom","free"].includes(g.special))g.special="normal";
+    if(g.specialAmount===undefined || g.specialAmount===null)g.specialAmount=0;
+    if(g.special==="free")g.paid=false;
+  });
+  if(ev.time===undefined)ev.time="";
+  if(ev.location===undefined)ev.location="";
+  if(ev.pixName===undefined)ev.pixName=EVENT_DEFAULT_PIX_NAME;
+  if(ev.pixKey===undefined)ev.pixKey=EVENT_DEFAULT_PIX_KEY;
+  if(ev.contributionManual===undefined)ev.contributionManual=null;
+}
+
+function eventRoundedContribution(value){
+  const amount=Math.max(0,num(value));
+  if(amount<=0)return 0;
+  const base=Math.floor(amount/10)*10;
+  const remainder=amount-base;
+  const rounded=remainder<=5?base:base+10;
+  return Math.max(10,rounded);
+}
+
+function eventContributionValue(ev,perPerson){
+  const manualRaw=ev.contributionManual;
+  const hasManual=
+    manualRaw!==undefined &&
+    manualRaw!==null &&
+    String(manualRaw).trim()!=="" &&
+    num(manualRaw)>0;
+  return hasManual?num(manualRaw):eventRoundedContribution(perPerson);
+}
+
+function eventDateBR(value){
+  if(!value)return "a definir";
+  const parts=String(value).split("-");
+  return parts.length===3?`${parts[2]}/${parts[1]}/${parts[0]}`:String(value);
+}
+
+function eventTimeBR(value){
+  const s=String(value||"").trim();
+  if(!s)return "";
+  const parts=s.split(":");
+  if(parts.length<2)return s;
+  const hour=Number(parts[0]);
+  const min=parts[1];
+  if(!Number.isFinite(hour))return s;
+  return `${hour}h${min==="00"?"":min}`;
+}
+
+function eventCapitalize(value){
+  const s=String(value||"evento").trim();
+  return s?s.charAt(0).toUpperCase()+s.slice(1):"Evento";
+}
+
+function eventContributionStats(ev,totalSpent,perPerson){
+  ensureEventContribution(ev);
+  const contribution=eventContributionValue(ev,perPerson);
+  const guests=ev.guests;
+
+  const collected=guests.reduce((sum,g)=>{
+    if(g.special==="free" || !g.paid)return sum;
+    if(g.special==="custom")return sum+Math.max(0,num(g.specialAmount));
+    return sum+contribution;
+  },0);
+
+  const exemptCount=guests.filter(g=>g.special==="free").length;
+  const payableGuests=guests.filter(g=>g.special!=="free");
+  const paidCount=payableGuests.filter(g=>g.paid).length;
+  const pendingCount=Math.max(0,payableGuests.length-paidCount);
+  const missing=Math.max(0,totalSpent-collected);
+  const surplus=Math.max(0,collected-totalSpent);
+
+  return {
+    contribution,
+    suggested:eventRoundedContribution(perPerson),
+    guests,
+    invitedCount:guests.length,
+    paidCount,
+    pendingCount,
+    exemptCount,
+    collected,
+    missing,
+    surplus
+  };
+}
+
+function eventRenderMessage(ev,stats){
+  ensureEventContribution(ev);
+
+  const date=eventDateBR(ev.date);
+  const time=eventTimeBR(ev.time);
+  const place=String(ev.location||"").trim();
+  const eventName=String(ev.name||"Evento").trim()||"Evento";
+
+  let whenText="";
+  if(ev.date){
+    whenText=`No dia ${date}${time?`, às ${time}`:""}`;
+  }else if(time){
+    whenText=`Às ${time}`;
+  }else{
+    whenText="Em breve";
+  }
+
+  const lines=[
+    `Pessoal! ${whenText}, vamos fazer ${eventName}! 🎉`
+  ];
+
+  if(place){
+    lines.push("",`📍 ${place}`);
+  }
+
+  lines.push(
+    "",
+    "Vocês estão convidados para participar com a gente.",
+    "",
+    `Para ajudar com os custos, o valor por pessoa ficou em ${brl(stats.contribution)}.`,
+    "",
+    `📲 PIX da ${ev.pixName||EVENT_DEFAULT_PIX_NAME}: ${ev.pixKey||EVENT_DEFAULT_PIX_KEY}`,
+    "",
+    "O principal é a presença de vocês!"
+  );
+
+  return lines.join("\n");
+}
+
+function eventGuestRowsHtml(ev,stats){
+  if(!stats.guests.length){
+    return '<div class="event-guests-empty">Nenhum convidado cadastrado. Clique em “+ Convidado”.</div>';
+  }
+
+  return stats.guests.map(g=>{
+    const exempt=g.special==="free";
+    const custom=g.special==="custom";
+    const statusClass=exempt?"exempt":g.paid?"paid":"pending";
+    const statusText=exempt?"Não paga":g.paid?"Pago":"Pendente";
+
+    return `
+      <div class="event-guest-row ${g.paid?"paid":""} ${exempt?"exempt":""}" data-guest-id="${esc(g.id)}">
+        <input class="event-guest-paid" type="checkbox"
+               ${g.paid?"checked":""}
+               ${exempt?"disabled":""}
+               title="${exempt?"Este convidado não precisa pagar":"Marcar como pago"}">
+
+        <input class="guest-name event-guest-name"
+               value="${esc(g.name)}"
+               placeholder="Nome do convidado">
+
+        <span class="event-guest-status ${statusClass}">${statusText}</span>
+
+        <select class="event-guest-special" title="Situação especial">
+          <option value="normal" ${g.special==="normal"?"selected":""}>Normal</option>
+          <option value="custom" ${custom?"selected":""}>Valor especial</option>
+          <option value="free" ${exempt?"selected":""}>Não precisa pagar</option>
+        </select>
+
+        <input class="event-guest-special-amount"
+               type="number" min="0" step="0.01"
+               value="${num(g.specialAmount)}"
+               placeholder="${num(stats.contribution)}"
+               ${custom?"":"hidden"}
+               title="Valor especial recebido">
+
+        <button class="btn small danger remove-event-guest" type="button">Excluir</button>
+      </div>
+    `;
+  }).join("");
+}
+
 function renderEvents(){
   eventsList.innerHTML="";
 
@@ -6479,6 +6862,11 @@ function renderEvents(){
     const totalSpent=itemsPaid+extraCost;
     const perPerson=people>0 ? totalSpent/people : 0;
     const paidCount=ev.items.filter(i=>num(i.paidTotal)>0).length;
+
+    ensureEventContribution(ev);
+    const contributionStats=eventContributionStats(ev,totalSpent,perPerson);
+    const contribution=contributionStats.contribution;
+    const messagePreview=eventRenderMessage(ev,contributionStats);
 
     const meat=eventMeatStats(ev);
     const showMeatPlanner=
@@ -6507,7 +6895,7 @@ function renderEvents(){
           </div>
         </div>
         <div class="event-head-actions">
-          <button class="btn small copy-event-share">Copiar rateio</button>
+          <button class="btn small copy-event-share">Copiar convite</button>
           <button class="btn small add-event-item">+ Item</button>
           <button class="btn small danger del-event">Excluir evento</button>
         </div>
@@ -6543,6 +6931,88 @@ function renderEvents(){
             <input class="event-extra-cost-input" type="number" min="0" step="0.01" value="${num(ev.extraCost)}">
             <small>Ex.: entrega, transporte, taxa, aluguel</small>
           </label>
+        </div>
+      </div>
+
+      <div class="event-contribution-planner">
+        <div class="event-calc-title">
+          <strong>Convidados, ajuda de custo e pagamentos</strong>
+          <span>Marque quem pagou e use “Especial” só quando houver exceção.</span>
+        </div>
+
+        <div class="event-contribution-grid">
+          <div class="event-contribution-card">
+            <span>Ajuda por pessoa</span>
+            <strong>${brl(contribution)}</strong>
+            <small>Automático: ${brl(contributionStats.suggested)} • regra 21–25→20, 26–35→30</small>
+          </div>
+          <div class="event-contribution-card">
+            <span>Convidados</span>
+            <strong>${contributionStats.invitedCount}</strong>
+            <small>${contributionStats.paidCount} pago(s) • ${contributionStats.pendingCount} pendente(s)${contributionStats.exemptCount?` • ${contributionStats.exemptCount} não paga`:``}</small>
+          </div>
+          <div class="event-contribution-card collected">
+            <span>Arrecadado</span>
+            <strong>${brl(contributionStats.collected)}</strong>
+            <small>Somente convidados marcados como pagos</small>
+          </div>
+          <div class="event-contribution-card ${contributionStats.missing>0?"missing":"closed"}">
+            <span>${contributionStats.missing>0?"Falta para fechar":"Conta fechada"}</span>
+            <strong>${brl(contributionStats.missing)}</strong>
+            <small>${contributionStats.surplus>0?`Excedente: ${brl(contributionStats.surplus)}`:`Conta do evento: ${brl(totalSpent)}`}</small>
+          </div>
+        </div>
+
+        <div class="event-contribution-settings">
+          <label>Ajuda por pessoa (R$)
+            <input class="event-contribution-input"
+                   type="number" min="0" step="0.01"
+                   value="${num(contribution)}"
+                   placeholder="${num(contributionStats.suggested)}">
+          </label>
+          <label>Horário
+            <input class="event-time-input" type="time" value="${esc(ev.time||"")}">
+          </label>
+          <label>Local do evento
+            <input class="event-location-input" value="${esc(ev.location||"")}" placeholder="Ex.: No Xororó">
+          </label>
+          <label>Nome do PIX
+            <input class="event-pix-name-input" value="${esc(ev.pixName||EVENT_DEFAULT_PIX_NAME)}" placeholder="Lauren">
+          </label>
+          <label>Chave PIX
+            <input class="event-pix-key-input" value="${esc(ev.pixKey||EVENT_DEFAULT_PIX_KEY)}" placeholder="29855807812">
+          </label>
+        </div>
+        <div class="event-contribution-help">
+          O valor automático arredonda o rateio para dezenas: até final 5 arredonda para baixo; acima de 5, para cima.
+          Se quiser outro valor, digite no campo. Para voltar ao automático, apague o valor e saia do campo.
+        </div>
+
+        <div class="event-guests-box">
+          <div class="event-guests-head">
+            <strong>Lista de convidados</strong>
+            <div class="event-guests-actions">
+              <button class="btn small add-event-guest" type="button">+ Convidado</button>
+              <button class="btn small sync-event-people" type="button" ${contributionStats.invitedCount?"":"disabled"}>
+                Usar ${contributionStats.invitedCount||0} no rateio
+              </button>
+            </div>
+          </div>
+          <div class="event-guests-list">${eventGuestRowsHtml(ev,contributionStats)}</div>
+          <div class="event-guest-total">
+            Lista: <strong>${contributionStats.invitedCount}</strong> convidado(s) •
+            Rateio: <strong>${people}</strong> pessoa(s).
+            ${contributionStats.exemptCount?` • <strong>${contributionStats.exemptCount}</strong> sem cobrança.`:""}
+          </div>
+        </div>
+
+        <div class="event-message-final">
+          <label>Mensagem final
+            <textarea class="event-message-preview" rows="7" readonly>${esc(messagePreview)}</textarea>
+          </label>
+          <div class="event-message-actions">
+            <button class="btn small primary copy-event-message" type="button">Copiar mensagem</button>
+          </div>
         </div>
       </div>
 
@@ -6695,24 +7165,110 @@ function renderEvents(){
       renderAll();
     });
 
-    card.querySelector(".copy-event-share").onclick=async()=>{
-      const line=[
-        ev.name,
-        `Total gasto: ${brl(totalSpent)}`,
-        `${people} pessoa(s)`,
-        `Valor por pessoa: ${brl(perPerson)}`,
-        ...(showMeatPlanner && meat.netKg>0
-          ? [`Carne real: ${eventKg(meat.netKg)}`,`Ideal: ${meat.idealMin}-${meat.idealMax} pessoas`]
-          : [])
-      ].join(" | ");
+    card.querySelector(".event-contribution-input")?.addEventListener("change",e=>{
+      const raw=String(e.target.value??"").trim();
+      ev.contributionManual=raw===""?null:Math.max(0,num(raw));
+      save();
+      renderAll();
+    });
 
+    card.querySelector(".event-time-input")?.addEventListener("change",e=>{
+      ev.time=String(e.target.value||"").trim();
+      save();
+      renderAll();
+    });
+
+    card.querySelector(".event-location-input")?.addEventListener("change",e=>{
+      ev.location=String(e.target.value||"").trim();
+      save();
+      renderAll();
+    });
+
+    card.querySelector(".event-pix-name-input")?.addEventListener("change",e=>{
+      ev.pixName=String(e.target.value||"").trim()||EVENT_DEFAULT_PIX_NAME;
+      save();
+      renderAll();
+    });
+
+    card.querySelector(".event-pix-key-input")?.addEventListener("change",e=>{
+      ev.pixKey=String(e.target.value||"").trim()||EVENT_DEFAULT_PIX_KEY;
+      save();
+      renderAll();
+    });
+
+    card.querySelector(".add-event-guest")?.addEventListener("click",()=>{
+      const name=prompt("Nome do convidado:");
+      if(name===null)return;
+      const clean=String(name).trim();
+      if(!clean)return;
+      ev.guests.push({id:uid(),name:clean,paid:false,special:"normal",specialAmount:0});
+      save();
+      renderAll();
+    });
+
+    card.querySelector(".sync-event-people")?.addEventListener("click",()=>{
+      if(!ev.guests.length)return;
+      ev.people=ev.guests.length;
+      save();
+      renderAll();
+    });
+
+    card.querySelectorAll(".event-guest-row").forEach(row=>{
+      const guest=ev.guests.find(g=>String(g.id)===String(row.dataset.guestId));
+      if(!guest)return;
+
+      row.querySelector(".event-guest-paid")?.addEventListener("change",e=>{
+        if(guest.special==="free")return;
+        guest.paid=!!e.target.checked;
+        save();
+        renderAll();
+      });
+
+      row.querySelector(".event-guest-name")?.addEventListener("change",e=>{
+        guest.name=String(e.target.value||"").trim();
+        save();
+        renderAll();
+      });
+
+      row.querySelector(".event-guest-special")?.addEventListener("change",e=>{
+        guest.special=e.target.value;
+        if(guest.special==="free"){
+          guest.paid=false;
+          guest.specialAmount=0;
+        }else if(guest.special==="custom" && num(guest.specialAmount)<=0){
+          guest.specialAmount=contribution;
+        }
+        save();
+        renderAll();
+      });
+
+      row.querySelector(".event-guest-special-amount")?.addEventListener("change",e=>{
+        guest.specialAmount=Math.max(0,num(e.target.value));
+        save();
+        renderAll();
+      });
+
+      row.querySelector(".remove-event-guest")?.addEventListener("click",()=>{
+        ev.guests=ev.guests.filter(g=>String(g.id)!==String(guest.id));
+        save();
+        renderAll();
+      });
+    });
+
+    const copyContributionMessage=async()=>{
+      const freshStats=eventContributionStats(ev,totalSpent,perPerson);
+      const text=eventRenderMessage(ev,freshStats);
       try{
-        await navigator.clipboard.writeText(line);
-        alert("Rateio copiado.");
+        await navigator.clipboard.writeText(text);
+        alert("Mensagem do evento copiada.");
       }catch(error){
-        prompt("Copie o rateio:",line);
+        prompt("Copie a mensagem:",text);
       }
     };
+
+    card.querySelector(".copy-event-message")?.addEventListener("click",copyContributionMessage);
+
+    card.querySelector(".copy-event-share").onclick=copyContributionMessage;
 
     card.querySelector(".add-event-item").onclick=()=>{
       ev.items.push({
