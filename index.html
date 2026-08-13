@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.14 Controle de Viagens</title>
+<title>Casa Cambuquira — V10.15 Carne x Pessoas</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -2468,6 +2468,105 @@ footer{
   .travel-card-actions{justify-content:flex-start;width:100%}
   .travel-card-actions .btn{flex:1}
   .travel-card-summary{grid-template-columns:1fr 1fr}
+}
+
+
+/* ===== V10.15 — ESPECIAIS / CARNE REAL X PESSOAS ===== */
+.event-meat-planner{
+  padding:13px 14px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  background:
+    radial-gradient(circle at 100% 0%,rgba(245,158,11,.08),transparent 34%),
+    #10141a;
+}
+.event-meat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+.event-meat-card{
+  display:block;
+  min-width:0;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:13px;
+  background:#171b23;
+}
+.event-meat-card>span{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.event-meat-card>strong{
+  display:block;
+  margin-top:5px;
+  color:#fff;
+  font-size:21px;
+}
+.event-meat-card>small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.4;
+}
+.event-meat-card.event-meat-ideal{
+  border-color:rgba(46,204,113,.22);
+  background:linear-gradient(180deg,rgba(46,204,113,.08),transparent),#171b23;
+}
+.event-meat-card.event-meat-ideal>strong{color:#8ef1b3}
+.event-meat-card.event-meat-limit>strong{color:#ffd166}
+.event-meat-input-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:7px;
+  align-items:center;
+  margin-top:5px;
+}
+.event-meat-input-row input{
+  width:100%;
+  min-width:0;
+  min-height:38px;
+  font-size:17px;
+  font-weight:800;
+}
+.event-meat-input-row b{
+  color:#fff;
+  font-size:11px;
+}
+.event-group-select{
+  min-width:145px!important;
+  font-size:11px!important;
+}
+tr.event-meat-row td:nth-child(3) select{
+  border-color:rgba(46,204,113,.26)!important;
+  color:#a7f3c1!important;
+}
+
+/* A nova coluna "Tipo" desloca as colunas seguintes. */
+.event-table-v108{min-width:1260px!important}
+.event-table-v108 th:nth-child(2),
+.event-table-v108 td:nth-child(2){min-width:190px!important}
+.event-table-v108 th:nth-child(3),
+.event-table-v108 td:nth-child(3){min-width:155px!important}
+.event-table-v108 th:nth-child(4),
+.event-table-v108 td:nth-child(4){min-width:95px!important}
+.event-table-v108 th:nth-child(5),
+.event-table-v108 td:nth-child(5){min-width:115px!important}
+.event-table-v108 th:nth-child(6),
+.event-table-v108 td:nth-child(6){min-width:140px!important}
+.event-table-v108 th:nth-child(7),
+.event-table-v108 td:nth-child(7){min-width:390px!important}
+
+@media(max-width:950px){
+  .event-meat-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .event-meat-grid{grid-template-columns:1fr 1fr}
+  .event-meat-card>strong{font-size:18px}
 }
 
 </style>
@@ -5997,6 +6096,95 @@ manualBuyForm.onsubmit=e=>{
 removeBoughtBtn.onclick=()=>{state.hideBought=!state.hideBought;removeBoughtBtn.textContent=state.hideBought?"Mostrar comprados":"Ocultar comprados";save();renderShopping()};
 
 /* EVENTOS */
+
+const EVENT_GROUPS=["Carne","Acompanhamento","Bebida","Carvão / apoio","Descartáveis","Outro"];
+
+function inferEventGroup(item){
+  const n=norm(item?.name);
+
+  if(/carne|contra.?file|picanha|alcatra|maminha|fraldinha|costela|cupim|linguica|frango|pernil|suino|porco|coracao|asa\b|cox(a|inha)?|sobrecox|kafta|espetinho/.test(n)){
+    return "Carne";
+  }
+  if(/arroz|farofa|vinagrete|salada|pao de alho|maionese|mandioca|batata|feijao|molho|queijo|recheio|azeitona|tempero/.test(n)){
+    return "Acompanhamento";
+  }
+  if(/refrigerante|agua|suco|cerveja|vinho|bebida|energetico|cha\b|cafe\b/.test(n)){
+    return "Bebida";
+  }
+  if(/carvao|gelo|gas\b|lenha|acendedor|fosforo|isqueiro/.test(n)){
+    return "Carvão / apoio";
+  }
+  if(/prato|copo|talher|guardanapo|descart|saco de lixo|papel toalha/.test(n)){
+    return "Descartáveis";
+  }
+  return "Outro";
+}
+
+function eventItemGroup(item){
+  return EVENT_GROUPS.includes(item?.eventGroup)
+    ? item.eventGroup
+    : inferEventGroup(item);
+}
+
+function eventItemMeatKg(item){
+  if(eventItemGroup(item)!=="Carne")return 0;
+
+  const qty=Math.max(0,num(item.qty));
+  const unit=norm(item.unit).replace(/\s+/g,"");
+
+  if(unit==="kg" || unit.includes("quilo"))return qty;
+  if(["g","gr","grama","gramas"].includes(unit))return qty/1000;
+
+  return 0;
+}
+
+function eventMeatStats(ev){
+  const grossKg=(ev.items||[]).reduce((sum,item)=>sum+eventItemMeatKg(item),0);
+
+  const manualSet=
+    ev.meatNetKg!==undefined &&
+    ev.meatNetKg!==null &&
+    String(ev.meatNetKg).trim()!=="";
+
+  const netKg=manualSet
+    ? Math.max(0,num(ev.meatNetKg))
+    : grossKg;
+
+  if(netKg<=0){
+    return {
+      grossKg,netKg,manualSet,
+      comfortable:0,idealMin:0,idealMax:0,limit:0
+    };
+  }
+
+  // Calibrado para o exemplo desejado:
+  // 4,3 kg reais => 12 confortável | 13–14 ideal | 15 limite.
+  const comfortable=Math.max(1,Math.round(netKg/0.36));
+  const idealMin=Math.max(comfortable+1,Math.round(netKg/0.33));
+  const idealMax=Math.max(idealMin,Math.round(netKg/0.31));
+  const limit=Math.max(idealMax+1,Math.round(netKg/0.287));
+
+  return {grossKg,netKg,manualSet,comfortable,idealMin,idealMax,limit};
+}
+
+function eventPeopleMeatStatus(stats,people){
+  if(!stats.netKg)return "Informe a carne real";
+  if(people<=stats.comfortable)return "Confortável";
+  if(people>=stats.idealMin && people<=stats.idealMax)return "Ideal";
+  if(people<=stats.limit)return "No limite";
+  return "Acima da carne";
+}
+
+function eventGroupOptions(current){
+  return EVENT_GROUPS
+    .map(group=>`<option value="${esc(group)}" ${current===group?"selected":""}>${esc(group)}</option>`)
+    .join("");
+}
+
+function eventKg(value){
+  return `${num(value).toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:2})} kg`;
+}
+
 function eventTemplate(type,people){
   const p=Math.max(1,num(people));
   if(type==="churrasco")return [
@@ -6269,6 +6457,8 @@ function renderEvents(){
   eventsList.innerHTML="";
 
   state.events.forEach(ev=>{
+    ev.items=Array.isArray(ev.items)?ev.items:[];
+
     const people=Math.max(1,num(ev.people));
     const totals={c:0,o:0,s:0,best:0};
 
@@ -6289,6 +6479,16 @@ function renderEvents(){
     const totalSpent=itemsPaid+extraCost;
     const perPerson=people>0 ? totalSpent/people : 0;
     const paidCount=ev.items.filter(i=>num(i.paidTotal)>0).length;
+
+    const meat=eventMeatStats(ev);
+    const showMeatPlanner=
+      ev.type==="churrasco" ||
+      meat.grossKg>0 ||
+      meat.manualSet;
+
+    const meatStatus=eventPeopleMeatStatus(meat,people);
+    const idealText=meat.netKg>0 ? `${meat.idealMin}–${meat.idealMax}` : "—";
+    const rangeText=meat.netKg>0 ? `${meat.comfortable} / ${meat.limit}` : "—";
 
     const card=document.createElement("div");
     card.className="event-card";
@@ -6346,11 +6546,51 @@ function renderEvents(){
         </div>
       </div>
 
+      ${showMeatPlanner?`
+      <div class="event-meat-planner">
+        <div class="event-calc-title">
+          <strong>Carne x pessoas</strong>
+          <span>Só itens marcados como Carne entram neste cálculo.</span>
+        </div>
+
+        <div class="event-meat-grid">
+          <div class="event-meat-card">
+            <span>Carne cadastrada</span>
+            <strong>${eventKg(meat.grossKg)}</strong>
+            <small>Soma automática das carnes em kg</small>
+          </div>
+
+          <label class="event-meat-card">
+            <span>Carne real</span>
+            <div class="event-meat-input-row">
+              <input class="event-meat-net-input"
+                     type="number"
+                     min="0"
+                     step="0.01"
+                     value="${meat.manualSet?num(ev.meatNetKg):num(meat.grossKg)}">
+              <b>kg</b>
+            </div>
+            <small>Desconte osso e perdas. Apague para voltar ao automático.</small>
+          </label>
+
+          <div class="event-meat-card event-meat-ideal">
+            <span>Ideal</span>
+            <strong>${idealText}</strong>
+            <small>${meat.netKg>0?`pessoas • agora: ${esc(meatStatus)}`:"pessoas"}</small>
+          </div>
+
+          <div class="event-meat-card event-meat-limit">
+            <span>Faixa</span>
+            <strong>${rangeText}</strong>
+            <small>${meat.netKg>0?`${meat.comfortable} confortável • ${meat.limit} limite`:"Informe a carne real"}</small>
+          </div>
+        </div>
+      </div>`:""}
+
       <div class="event-body">
         <div class="event-paid-help">
-          Em <strong>Comparar preços</strong>, informe preço total + quantidade de cada cidade.
-          O sistema transforma tudo em preço por ${ev.items[0]?.unit ? "unidade" : "unidade"} e mostra onde compensa.
-          O campo <strong>Valor pago</strong> entra no rateio entre as pessoas.
+          Use <strong>Tipo</strong> para separar carne, acompanhamentos, bebidas, carvão/apoio e descartáveis.
+          Só <strong>Carne</strong> entra no cálculo de pessoas. O <strong>Valor pago</strong> continua entrando no rateio.
         </div>
 
         <div class="table-wrap">
@@ -6359,6 +6599,7 @@ function renderEvents(){
               <tr>
                 <th>OK</th>
                 <th>Item</th>
+                <th>Tipo</th>
                 <th>Qtd.</th>
                 <th>Unidade</th>
                 <th>Valor pago</th>
@@ -6374,12 +6615,21 @@ function renderEvents(){
     const tbody=card.querySelector(".event-tbody");
 
     ev.items.forEach(i=>{
+      const group=eventItemGroup(i);
       const tr=document.createElement("tr");
-      if(i.bought)tr.className="done";
+      tr.className=[
+        i.bought?"done":"",
+        group==="Carne"?"event-meat-row":""
+      ].filter(Boolean).join(" ");
 
       tr.innerHTML=`
         <td><input data-k="bought" type="checkbox" ${i.bought?"checked":""}></td>
         <td><input data-k="name" value="${esc(i.name)}"></td>
+        <td>
+          <select class="event-group-select" data-k="eventGroup">
+            ${eventGroupOptions(group)}
+          </select>
+        </td>
         <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(i.qty)}"></td>
         <td><input data-k="unit" value="${esc(i.unit)}"></td>
         <td>
@@ -6405,6 +6655,7 @@ function renderEvents(){
             : ["qty","paidTotal"].includes(k)
               ? num(inp.value)
               : inp.value;
+
           save();
           renderAll();
         };
@@ -6422,7 +6673,7 @@ function renderEvents(){
     });
 
     if(!ev.items.length){
-      tbody.innerHTML='<tr><td colspan="7"><div class="empty">Nenhum item.</div></td></tr>';
+      tbody.innerHTML='<tr><td colspan="8"><div class="empty">Nenhum item.</div></td></tr>';
     }
 
     card.querySelector(".event-people-input").onchange=e=>{
@@ -6437,12 +6688,22 @@ function renderEvents(){
       renderAll();
     };
 
+    card.querySelector(".event-meat-net-input")?.addEventListener("change",e=>{
+      const raw=String(e.target.value??"").trim();
+      ev.meatNetKg=raw==="" ? null : Math.max(0,num(raw));
+      save();
+      renderAll();
+    });
+
     card.querySelector(".copy-event-share").onclick=async()=>{
       const line=[
         ev.name,
         `Total gasto: ${brl(totalSpent)}`,
         `${people} pessoa(s)`,
-        `Valor por pessoa: ${brl(perPerson)}`
+        `Valor por pessoa: ${brl(perPerson)}`,
+        ...(showMeatPlanner && meat.netKg>0
+          ? [`Carne real: ${eventKg(meat.netKg)}`,`Ideal: ${meat.idealMin}-${meat.idealMax} pessoas`]
+          : [])
       ].join(" | ");
 
       try{
@@ -6457,6 +6718,7 @@ function renderEvents(){
       ev.items.push({
         id:uid(),
         name:"Novo item",
+        eventGroup:"Outro",
         qty:1,
         unit:"un.",
         bought:false,
