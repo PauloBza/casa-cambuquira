@@ -2379,7 +2379,7 @@ footer{
 }
 
 .dashboard-shopping-dialog{
-  width:min(900px,calc(100vw - 24px))!important;
+  width:min(1040px,calc(100vw - 24px))!important;
   max-width:none!important;
   max-height:92vh!important;
   padding:0!important;
@@ -2427,7 +2427,7 @@ footer{
 }
 .dashboard-shopping-metrics{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(5,1fr);
   gap:8px;
   padding:12px 16px 8px;
 }
@@ -2548,6 +2548,106 @@ footer{
   background:#182d25;
   color:#8ef1b3;
 }
+.dashboard-shopping-badges{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
+}
+.dashboard-shopping-badge.overlap{
+  background:#30230e;
+  color:#ffd166;
+  border:1px solid rgba(245,158,11,.24);
+}
+.dashboard-shopping-overlap-note{
+  color:#ffd166!important;
+}
+.dashboard-shopping-overlaps{
+  display:grid;
+  gap:8px;
+  margin:4px 0 14px;
+}
+.dashboard-shopping-overlaps-head{
+  padding:10px 11px;
+  border:1px solid rgba(245,158,11,.24);
+  border-radius:12px;
+  background:#1d180f;
+}
+.dashboard-shopping-overlaps-head strong{
+  display:block;
+  color:#ffd166;
+  font-size:12px;
+}
+.dashboard-shopping-overlaps-head small{
+  display:block;
+  margin-top:4px;
+  color:#c9b98f;
+  font-size:9px;
+  line-height:1.4;
+}
+.dashboard-shopping-overlap-card{
+  display:grid;
+  grid-template-columns:minmax(170px,1.2fr) minmax(260px,2fr) minmax(210px,1.2fr);
+  gap:10px;
+  align-items:center;
+  padding:10px 11px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  background:#151922;
+}
+.dashboard-shopping-overlap-name strong{
+  display:block;
+  color:#fff;
+  font-size:12px;
+}
+.dashboard-shopping-overlap-name small{
+  display:block;
+  margin-top:3px;
+  color:#ffd166;
+  font-size:9px;
+}
+.dashboard-shopping-overlap-sources{
+  display:grid;
+  gap:4px;
+}
+.dashboard-shopping-overlap-source{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  padding:5px 7px;
+  border-radius:8px;
+  background:#11151c;
+  color:#cbd5e1;
+  font-size:9px;
+}
+.dashboard-shopping-overlap-source strong{
+  color:#fff;
+  white-space:nowrap;
+}
+.dashboard-shopping-overlap-decision{
+  display:grid;
+  gap:5px;
+}
+.dashboard-shopping-overlap-decision label{
+  color:var(--muted);
+  font-size:8px;
+  font-weight:900;
+  text-transform:uppercase;
+}
+.dashboard-shopping-overlap-choice{
+  width:100%;
+  min-width:0;
+  min-height:34px;
+  font-size:10px;
+}
+.dashboard-shopping-overlap-result{
+  color:#cbd5e1;
+  font-size:9px;
+  line-height:1.35;
+}
+.dashboard-shopping-overlap-result strong{
+  color:#8ef1b3;
+}
 .dashboard-shopping-actions{
   display:flex;
   justify-content:flex-end;
@@ -2621,6 +2721,12 @@ footer{
   }
   .dashboard-shopping-badge{
     justify-self:start;
+  }
+  .dashboard-shopping-badges{
+    align-items:flex-start;
+  }
+  .dashboard-shopping-overlap-card{
+    grid-template-columns:1fr;
   }
   .dashboard-shopping-actions{
     justify-content:flex-start;
@@ -5766,13 +5872,18 @@ tr.event-meat-row td:nth-child(3) select{
         <span>Especiais</span>
         <strong id="dashboardShoppingSpecialCount">0</strong>
       </div>
+      <div>
+        <span>Itens em comum</span>
+        <strong id="dashboardShoppingOverlapCount">0</strong>
+      </div>
     </div>
 
     <div class="dashboard-shopping-legend">
       <span><strong>Em casa</strong> = quantidade atual</span>
       <span><strong>Mínimo</strong> = quantidade que você quer manter</span>
       <span><strong>Falta comprar</strong> = quantidade necessária agora</span>
-      <span><strong>Editar / Excluir</strong> = ajuste a lista antes de copiar ou exportar</span>
+      <span><strong>Item em comum</strong> = o mesmo produto também aparece em Estoque, Especial ou compra manual</span>
+      <span><strong>Decisão</strong> = você escolhe manter separado, usar a maior quantidade ou somar</span>
     </div>
 
     <div id="dashboardShoppingFullList" class="dashboard-shopping-full-list"></div>
@@ -7081,7 +7192,148 @@ function excludeDashboardShoppingItem(item){
   renderDashboardShoppingDialog();
 }
 
-function dashboardShoppingRowHtml(item){
+
+function dashboardOverlapNameKey(name){
+  let s=norm(name)
+    .replace(/\([^)]*\)/g," ")
+    .replace(/\b\d+(?:[.,]\d+)?\s*(kg|g|ml|l|lt|litro|litros|un|unidade|unidades)\b/g," ")
+    .replace(/\b\d+(?:[.,]\d+)?\b/g," ")
+    .replace(/\b(tipo|marca)\b/g," ")
+    .replace(/[^a-z0-9]+/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+  return s;
+}
+function dashboardOverlapUnitInfo(unit){
+  const u=normalizeUnit(unit);
+  if(u==="g")return {dimension:"mass",factor:1,base:"g"};
+  if(u==="kg")return {dimension:"mass",factor:1000,base:"g"};
+  if(u==="ml")return {dimension:"volume",factor:1,base:"ml"};
+  if(u==="L")return {dimension:"volume",factor:1000,base:"ml"};
+  return {dimension:`unit:${u}`,factor:1,base:u};
+}
+function dashboardOverlapQtyBase(item){
+  const info=dashboardOverlapUnitInfo(item.unit);
+  return num(item.need)*info.factor;
+}
+function dashboardOverlapDisplayUnit(group){
+  const dim=group.dimension;
+  const units=group.items.map(x=>normalizeUnit(x.unit));
+  if(dim==="mass")return units.includes("kg")?"kg":"g";
+  if(dim==="volume")return units.includes("L")?"L":"ml";
+  return normalizeUnit(group.items[0]?.unit||"un.");
+}
+function dashboardOverlapFormatBase(base,group){
+  const unit=dashboardOverlapDisplayUnit(group);
+  const info=dashboardOverlapUnitInfo(unit);
+  const value=info.factor ? base/info.factor : base;
+  return shoppingQtyText(value,unit);
+}
+function dashboardOverlapSourceLabel(item){
+  if(item.source==="stock")return "Estoque";
+  if(item.source==="manual")return "Compra manual";
+  if(item.source==="event")return `Especial — ${item.eventName||"Evento"}`;
+  return "Outro";
+}
+function dashboardShoppingOverlapData(items){
+  const buckets=new Map();
+  items.forEach(item=>{
+    const nameKey=dashboardOverlapNameKey(item.name);
+    if(!nameKey)return;
+    const info=dashboardOverlapUnitInfo(item.unit);
+    const key=`${nameKey}::${info.dimension}`;
+    if(!buckets.has(key))buckets.set(key,{key,nameKey,dimension:info.dimension,items:[]});
+    buckets.get(key).items.push(item);
+  });
+
+  const groups=[...buckets.values()].filter(group=>{
+    if(group.items.length<2)return false;
+    const sourceScopes=new Set(group.items.map(x=>x.source==="event"?"event":x.source));
+    const eventIds=new Set(group.items.filter(x=>x.source==="event").map(x=>String(x.eventId)));
+    return sourceScopes.size>1 || eventIds.size>1;
+  });
+
+  groups.forEach(group=>{
+    group.sumBase=group.items.reduce((s,x)=>s+dashboardOverlapQtyBase(x),0);
+    group.maxItem=group.items.slice().sort((a,b)=>dashboardOverlapQtyBase(b)-dashboardOverlapQtyBase(a))[0]||null;
+    group.maxBase=group.maxItem?dashboardOverlapQtyBase(group.maxItem):0;
+  });
+
+  const byItem=new Map();
+  groups.forEach(group=>group.items.forEach(item=>byItem.set(String(item.shoppingKey),group)));
+  return {groups,byItem};
+}
+function dashboardOverlapChoice(group){
+  state.shoppingOverlapChoices=state.shoppingOverlapChoices||{};
+  return state.shoppingOverlapChoices[group.key]||"review";
+}
+function dashboardOverlapSetChoice(group,choice){
+  state.shoppingOverlapChoices=state.shoppingOverlapChoices||{};
+  if(choice==="review")delete state.shoppingOverlapChoices[group.key];
+  else state.shoppingOverlapChoices[group.key]=choice;
+  save();
+}
+function dashboardOverlapDecisionText(group){
+  const choice=dashboardOverlapChoice(group);
+  if(choice==="max"){
+    return `Comprar ${dashboardOverlapFormatBase(group.maxBase,group)} no total — baseado no maior pedido (${dashboardOverlapSourceLabel(group.maxItem)}).`;
+  }
+  if(choice==="sum"){
+    return `Comprar ${dashboardOverlapFormatBase(group.sumBase,group)} no total — soma de todas as necessidades.`;
+  }
+  if(choice==="separate"){
+    return "Manter os pedidos separados como estão na lista.";
+  }
+  return "Pendente: escolha como tratar este item antes de copiar/exportar.";
+}
+function dashboardOverlapConsolidatedText(group){
+  const choice=dashboardOverlapChoice(group);
+  if(choice==="max")return dashboardOverlapFormatBase(group.maxBase,group);
+  if(choice==="sum")return dashboardOverlapFormatBase(group.sumBase,group);
+  if(choice==="separate")return "Separado";
+  return "A decidir";
+}
+function dashboardOverlapCardHtml(group){
+  const choice=dashboardOverlapChoice(group);
+  const title=group.items[0]?.name||"Item";
+  return `
+    <div class="dashboard-shopping-overlap-card" data-overlap-key="${esc(group.key)}">
+      <div class="dashboard-shopping-overlap-name">
+        <strong>${esc(title)}</strong>
+        <small>Mesmo item em ${group.items.length} pedidos</small>
+      </div>
+      <div class="dashboard-shopping-overlap-sources">
+        ${group.items.map(item=>`
+          <div class="dashboard-shopping-overlap-source">
+            <span>${esc(dashboardOverlapSourceLabel(item))}</span>
+            <strong>${shoppingQtyText(item.need,item.unit)}</strong>
+          </div>`).join("")}
+      </div>
+      <div class="dashboard-shopping-overlap-decision">
+        <label>O que fazer?</label>
+        <select class="dashboard-shopping-overlap-choice">
+          <option value="review" ${choice==="review"?"selected":""}>Decidir depois</option>
+          <option value="max" ${choice==="max"?"selected":""}>Comprar só a maior quantidade</option>
+          <option value="sum" ${choice==="sum"?"selected":""}>Somar as quantidades</option>
+          <option value="separate" ${choice==="separate"?"selected":""}>Manter separado</option>
+        </select>
+        <div class="dashboard-shopping-overlap-result">${dashboardOverlapDecisionText(group)}</div>
+      </div>
+    </div>`;
+}
+function dashboardOverlapSummaryHtml(overlapData){
+  if(!overlapData.groups.length)return "";
+  return `
+    <section class="dashboard-shopping-overlaps">
+      <div class="dashboard-shopping-overlaps-head">
+        <strong>⚠ Itens que aparecem em mais de um lugar</strong>
+        <small>Nada é removido da lista. Você decide se a compra deve cobrir só o maior pedido, somar as necessidades ou continuar separada.</small>
+      </div>
+      ${overlapData.groups.map(dashboardOverlapCardHtml).join("")}
+    </section>`;
+}
+
+function dashboardShoppingRowHtml(item,overlap){
   const isStock=item.source==="stock";
   const isEvent=item.source==="event";
   const zero=isStock && num(item.current)<=0;
@@ -7092,12 +7344,19 @@ function dashboardShoppingRowHtml(item){
     : isStock
       ? (item.location||"Estoque")
       : "Compra adicionada manualmente";
+  const overlapOthers=overlap
+    ? overlap.items.filter(x=>String(x.shoppingKey)!==String(item.shoppingKey))
+    : [];
+  const overlapNote=overlapOthers.length
+    ? `Também em: ${overlapOthers.map(dashboardOverlapSourceLabel).join(" • ")}`
+    : "";
 
   return `
     <div class="dashboard-shopping-row" data-shopping-key="${esc(item.shoppingKey)}">
       <div class="dashboard-shopping-name">
         <strong>${esc(item.name)}</strong>
         <small>${esc(detail)}</small>
+        ${overlapNote?`<small class="dashboard-shopping-overlap-note">${esc(overlapNote)}</small>`:""}
       </div>
       <div class="dashboard-shopping-value">
         <span>Em casa</span>
@@ -7111,7 +7370,10 @@ function dashboardShoppingRowHtml(item){
         <span>${isEvent?"Comprar para evento":"Falta comprar"}</span>
         <strong>${shoppingQtyText(item.need,item.unit)}</strong>
       </div>
-      <span class="dashboard-shopping-badge ${badgeClass}">${badgeText}</span>
+      <div class="dashboard-shopping-badges">
+        <span class="dashboard-shopping-badge ${badgeClass}">${badgeText}</span>
+        ${overlap?`<span class="dashboard-shopping-badge overlap">EM COMUM</span>`:""}
+      </div>
       <div class="dashboard-shopping-actions">
         <button class="btn small dashboard-shopping-edit" type="button">Editar</button>
         <button class="btn small danger dashboard-shopping-delete" type="button">Excluir</button>
@@ -7121,6 +7383,7 @@ function dashboardShoppingRowHtml(item){
 
 function renderDashboardShoppingDialog(){
   const items=dashboardShoppingItems();
+  const overlapData=dashboardShoppingOverlapData(items);
   const regular=items.filter(x=>x.source!=="event");
   const specials=items.filter(x=>x.source==="event");
   const stockCount=regular.filter(x=>x.source==="stock").length;
@@ -7132,6 +7395,8 @@ function renderDashboardShoppingDialog(){
   dashboardShoppingManualCount.textContent=manualCount;
   const specialCountEl=document.getElementById("dashboardShoppingSpecialCount");
   if(specialCountEl)specialCountEl.textContent=specialCount;
+  const overlapCountEl=document.getElementById("dashboardShoppingOverlapCount");
+  if(overlapCountEl)overlapCountEl.textContent=overlapData.groups.length;
 
   const restoreBtn=document.getElementById("dashboardShoppingRestoreBtn");
   const excludedCount=dashboardShoppingExcludedCount();
@@ -7162,7 +7427,7 @@ function renderDashboardShoppingDialog(){
   const regularHtml=[...regularGroups.entries()].map(([category,group])=>`
     <section class="dashboard-shopping-category">
       <div class="dashboard-shopping-category-title">${esc(category)} • ${group.length} item(ns)</div>
-      ${group.map(dashboardShoppingRowHtml).join("")}
+      ${group.map(item=>dashboardShoppingRowHtml(item,overlapData.byItem.get(String(item.shoppingKey)))).join("")}
     </section>
   `).join("");
 
@@ -7184,12 +7449,21 @@ function renderDashboardShoppingDialog(){
           <div class="dashboard-shopping-category-title">
             ${esc(first.eventName)}${dateText?` • ${esc(dateText)}`:""} • ${group.length} item(ns)
           </div>
-          ${group.map(dashboardShoppingRowHtml).join("")}
+          ${group.map(item=>dashboardShoppingRowHtml(item,overlapData.byItem.get(String(item.shoppingKey)))).join("")}
         </section>`;
     }).join("")}
   ` : "";
 
-  dashboardShoppingFullList.innerHTML=regularHtml+specialsHtml;
+  dashboardShoppingFullList.innerHTML=dashboardOverlapSummaryHtml(overlapData)+regularHtml+specialsHtml;
+
+  dashboardShoppingFullList.querySelectorAll(".dashboard-shopping-overlap-card").forEach(card=>{
+    const group=overlapData.groups.find(g=>String(g.key)===String(card.dataset.overlapKey));
+    if(!group)return;
+    card.querySelector(".dashboard-shopping-overlap-choice")?.addEventListener("change",e=>{
+      dashboardOverlapSetChoice(group,e.target.value);
+      renderDashboardShoppingDialog();
+    });
+  });
 
   dashboardShoppingFullList.querySelectorAll(".dashboard-shopping-row").forEach(row=>{
     const item=items.find(x=>String(x.shoppingKey)===String(row.dataset.shoppingKey));
@@ -7206,9 +7480,25 @@ function openDashboardShoppingList(){
 
 async function copyDashboardShoppingList(){
   const items=dashboardShoppingItems();
+  const overlapData=dashboardShoppingOverlapData(items);
   const lines=["LISTA DE COMPRAS — CASA CAMBUQUIRA",""];
-  let lastGroup="";
 
+  if(overlapData.groups.length){
+    lines.push("ITENS EM COMUM — REVISAR");
+    overlapData.groups.forEach(group=>{
+      lines.push("");
+      lines.push(`${String(group.items[0]?.name||"Item").toUpperCase()}`);
+      group.items.forEach(item=>{
+        lines.push(`• ${dashboardOverlapSourceLabel(item)}: ${shoppingQtyText(item.need,item.unit)}`);
+      });
+      lines.push(`→ ${dashboardOverlapDecisionText(group)}`);
+    });
+    lines.push("");
+    lines.push("--------------------------------");
+    lines.push("");
+  }
+
+  let lastGroup="";
   items.forEach(item=>{
     const isEvent=item.source==="event";
     const groupKey=isEvent?`event:${item.eventId}`:`category:${item.category}`;
@@ -7225,12 +7515,15 @@ async function copyDashboardShoppingList(){
       lastGroup=groupKey;
     }
 
+    const overlap=overlapData.byItem.get(String(item.shoppingKey));
+    const commonTag=overlap?` [ITEM EM COMUM • ${dashboardOverlapChoice(overlap)==="review"?"A DECIDIR":dashboardOverlapChoice(overlap).toUpperCase()}]`:"";
+
     if(item.source==="stock"){
-      lines.push(`• ${item.name} — tem ${shoppingQtyText(item.current,item.unit)} | mínimo ${shoppingQtyText(item.minimum,item.unit)} | comprar ${shoppingQtyText(item.need,item.unit)}`);
+      lines.push(`• ${item.name}${commonTag} — tem ${shoppingQtyText(item.current,item.unit)} | mínimo ${shoppingQtyText(item.minimum,item.unit)} | comprar ${shoppingQtyText(item.need,item.unit)}`);
     }else if(isEvent){
-      lines.push(`• ${item.name} [${item.category||"Outro"}] — comprar ${shoppingQtyText(item.need,item.unit)}`);
+      lines.push(`• ${item.name}${commonTag} [${item.category||"Outro"}] — comprar ${shoppingQtyText(item.need,item.unit)}`);
     }else{
-      lines.push(`• ${item.name} — comprar ${shoppingQtyText(item.need,item.unit)}`);
+      lines.push(`• ${item.name}${commonTag} — comprar ${shoppingQtyText(item.need,item.unit)}`);
     }
   });
 
@@ -7244,6 +7537,7 @@ async function copyDashboardShoppingList(){
     prompt("Copie a lista:",content);
   }
 }
+
 function renderShopping(){
   shoppingBody.innerHTML="";let items=shoppingItems();
   if(state.hideBought)items=items.filter(x=>!x.bought);
@@ -8604,18 +8898,25 @@ dashboardShoppingCopyBtn.onclick=copyDashboardShoppingList;
 document.getElementById("dashboardShoppingRestoreBtn")?.addEventListener("click",restoreDashboardShoppingExcluded);
 dashboardShoppingCsvBtn.onclick=()=>{
   const items=dashboardShoppingItems();
+  const overlapData=dashboardShoppingOverlapData(items);
   download("lista-de-compras-casa-cambuquira.csv",csv([
-    ["Item","Categoria","Evento","Em casa","Mínimo","Falta comprar","Unidade","Origem"],
-    ...items.map(x=>[
-      x.name,
-      x.category,
-      x.source==="event"?(x.eventName||""):"",
-      x.source==="stock"?x.current:"",
-      x.source==="stock"?x.minimum:"",
-      x.need,
-      x.unit,
-      x.source==="stock"?"Estoque":x.source==="event"?"Especial":"Manual"
-    ])
+    ["Item","Categoria","Evento","Em casa","Mínimo","Falta comprar","Unidade","Origem","Item em comum","Decisão","Quantidade consolidada"],
+    ...items.map(x=>{
+      const overlap=overlapData.byItem.get(String(x.shoppingKey));
+      return [
+        x.name,
+        x.category,
+        x.source==="event"?(x.eventName||""):"",
+        x.source==="stock"?x.current:"",
+        x.source==="stock"?x.minimum:"",
+        x.need,
+        x.unit,
+        x.source==="stock"?"Estoque":x.source==="event"?"Especial":"Manual",
+        overlap?"SIM":"",
+        overlap?dashboardOverlapChoice(overlap):"",
+        overlap?dashboardOverlapConsolidatedText(overlap):""
+      ];
+    })
   ]),"text/csv");
 };
 
