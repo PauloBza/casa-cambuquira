@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.18 Lista de Compras + Especiais</title>
+<title>Casa Cambuquira — V10.19 Estoque Visual</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -1152,6 +1152,215 @@ footer{
   .stock-group summary{align-items:flex-start;flex-direction:column}
   .stock-group-meta{justify-content:flex-start}
   .stock-toolbar-location{min-width:0}
+}
+
+
+
+/* ===== V10.19 — ESTOQUE VISUAL / LEITURA RÁPIDA ===== */
+#stockPanel .cards{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
+#stockPanel .stock-visual-help{
+  border-color:rgba(245,158,11,.22);
+}
+#stockPanel .stock-group{
+  overflow:hidden;
+}
+#stockPanel .stock-group summary{
+  padding:13px 15px;
+}
+#stockPanel .stock-items-visual{
+  display:grid;
+  gap:0;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+#stockPanel .stock-item-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(210px,1.25fr) minmax(560px,3fr) auto;
+  gap:14px;
+  align-items:center;
+  padding:13px 14px;
+  border-bottom:1px solid rgba(255,255,255,.055);
+  background:#11141a;
+}
+#stockPanel .stock-item-card:last-child{border-bottom:0}
+#stockPanel .stock-item-card.is-out{
+  background:linear-gradient(90deg,rgba(255,92,92,.09),transparent 30%),#11141a;
+}
+#stockPanel .stock-item-card.is-low{
+  background:linear-gradient(90deg,rgba(245,158,11,.09),transparent 30%),#11141a;
+}
+#stockPanel .stock-item-card.is-ok{
+  background:linear-gradient(90deg,rgba(46,204,113,.035),transparent 26%),#11141a;
+}
+#stockPanel .stock-item-main{
+  min-width:0;
+}
+#stockPanel .stock-item-title-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+#stockPanel .stock-item-name{
+  min-width:0;
+  color:#fff;
+  font-size:15px;
+  font-weight:900;
+  line-height:1.25;
+}
+#stockPanel .stock-item-note{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:10px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#stockPanel .stock-item-metrics{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(95px,1fr));
+  gap:7px;
+}
+#stockPanel .stock-metric-box{
+  min-width:0;
+  min-height:63px;
+  padding:8px 9px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:11px;
+  background:#171b23;
+}
+#stockPanel .stock-metric-box>span{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.035em;
+}
+#stockPanel .stock-metric-box>strong{
+  display:block;
+  color:#fff;
+  font-size:15px;
+  line-height:1.2;
+}
+#stockPanel .stock-metric-box>small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.25;
+}
+#stockPanel .stock-metric-box.need{
+  border-color:rgba(245,158,11,.22);
+  background:#201a10;
+}
+#stockPanel .stock-item-card.is-out .stock-metric-box.need{
+  border-color:rgba(255,92,92,.24);
+  background:#211316;
+}
+#stockPanel .stock-metric-box.need>strong{
+  color:#ffd166;
+  font-size:17px;
+}
+#stockPanel .stock-item-card.is-out .stock-metric-box.need>strong{color:#ff8d8d}
+#stockPanel .stock-metric-box.value>strong{color:#8ef1b3}
+#stockPanel .stock-quick-field{
+  display:grid;
+  grid-template-columns:minmax(62px,1fr) minmax(72px,.85fr);
+  gap:5px;
+}
+#stockPanel .stock-quick-field input,
+#stockPanel .stock-quick-field select,
+#stockPanel .stock-date-input{
+  width:100%;
+  min-width:0;
+  min-height:34px;
+  height:34px;
+  padding:5px 7px;
+  border-radius:8px;
+  font-size:12px;
+}
+#stockPanel .stock-unit-static{
+  color:#d9e0ea;
+  font-size:12px;
+  font-weight:800;
+}
+#stockPanel .stock-item-actions{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:86px;
+}
+#stockPanel .stock-item-actions .btn{
+  width:100%;
+}
+#stockPanel .stock-expiry-alert{
+  display:inline-flex;
+  margin-top:5px;
+}
+#stockPanel .stock-empty-price{
+  color:var(--muted)!important;
+}
+#stockPanel .stock-group-meta .stock-missing-count{
+  color:#ffd166;
+  border:1px solid rgba(245,158,11,.22);
+  background:#201a10;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+}
+#stockPanel .toolbar{
+  position:sticky;
+  top:106px;
+  z-index:10;
+  padding:9px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  background:rgba(13,15,20,.94);
+  backdrop-filter:blur(9px);
+}
+#stockPanel .stock-storage-note{
+  padding:0 2px;
+}
+@media(max-width:1180px){
+  #stockPanel .stock-item-card{
+    grid-template-columns:minmax(190px,1fr) minmax(0,2.7fr);
+  }
+  #stockPanel .stock-item-actions{
+    grid-column:1/-1;
+    flex-direction:row;
+    justify-content:flex-end;
+  }
+  #stockPanel .stock-item-actions .btn{width:auto}
+  #stockPanel .stock-item-metrics{
+    grid-template-columns:repeat(3,minmax(120px,1fr));
+  }
+}
+@media(max-width:800px){
+  #stockPanel .cards{grid-template-columns:1fr 1fr}
+  #stockPanel .stock-item-card{
+    grid-template-columns:1fr;
+    gap:10px;
+    padding:12px;
+  }
+  #stockPanel .stock-item-metrics{
+    grid-template-columns:1fr 1fr;
+  }
+  #stockPanel .stock-item-actions{
+    grid-column:auto;
+    justify-content:stretch;
+  }
+  #stockPanel .stock-item-actions .btn{flex:1}
+  #stockPanel .toolbar{position:static}
+}
+@media(max-width:520px){
+  #stockPanel .cards{grid-template-columns:1fr}
+  #stockPanel .stock-item-metrics{grid-template-columns:1fr 1fr}
 }
 
 
@@ -3493,8 +3702,8 @@ tr.event-meat-row td:nth-child(3) select{
 </section>
 
 <section id="stockPanel" class="panel">
-  <div class="help">
-    Organize o estoque por <strong>categoria</strong> e <strong>local de armazenamento</strong>. Produtos abaixo do mínimo continuam entrando automaticamente na lista de compras.
+  <div class="help stock-visual-help">
+    <strong>Visão rápida do estoque:</strong> veja quanto há em casa, o mínimo, quanto falta comprar, validade e valor estimado de reposição. Categoria, local e observações ficam no botão <strong>Editar</strong>.
   </div>
   <div class="city-setting">
     <strong>Outra cidade para comparar:</strong>
@@ -3505,7 +3714,7 @@ tr.event-meat-row td:nth-child(3) select{
     <div class="metric alert"><span>Zerados</span><strong id="stockOut">0</strong></div>
     <div class="metric warn"><span>Abaixo do mínimo</span><strong id="stockLow">5</strong></div>
     <div class="metric warn"><span>Vencendo em 30 dias</span><strong id="stockExpiry">0</strong></div>
-    <div class="metric"><span>Valor do estoque</span><strong id="stockValue">R$&nbsp;0,00</strong></div>
+    <div class="metric"><span>Reposição estimada</span><strong id="stockValue">R$&nbsp;0,00</strong></div>
   </div>
   <div class="toolbar">
     <input id="stockSearch" type="search" placeholder="Buscar produto, local ou observação...">
@@ -3544,7 +3753,7 @@ tr.event-meat-row td:nth-child(3) select{
     <button id="exportStockCsv" class="btn">Exportar estoque CSV</button>
   </div>
   <div class="stock-storage-note">
-    Seções: alimentos de armário, geladeira, freezer, bebidas/líquidos, limpeza, descartáveis/papéis, higiene, manutenção/reparos e outros.
+    Itens zerados e baixos aparecem primeiro. A unidade pode ser escolhida em uma lista padronizada; unidades antigas permanecem preservadas até você alterá-las.
   </div>
   <div id="stockGroups" class="stock-groups"><details class="stock-group" data-group="food-pantry" open=""><summary>
       <span class="stock-group-title"><strong>🥫 Alimentos — Armário / Despensa</strong></span>
@@ -5265,7 +5474,25 @@ tr.event-meat-row td:nth-child(3) select{
   </div>
   <div class="form-cols">
     <label>Quantidade em casa<input id="stockQtyInput" type="number" min="0" step="0.01" value="0"></label>
-    <label>Unidade<input id="stockUnitInput" value="un." placeholder="un., kg, pacote, litro"></label>
+    <label>Unidade<select id="stockUnitInput">
+      <option value="un.">un.</option>
+      <option value="g">g</option>
+      <option value="kg">kg</option>
+      <option value="ml">ml</option>
+      <option value="L">L</option>
+      <option value="pacote">pacote</option>
+      <option value="lata">lata</option>
+      <option value="caixa">caixa</option>
+      <option value="garrafa">garrafa</option>
+      <option value="saco">saco</option>
+      <option value="sachê">sachê</option>
+      <option value="dúzia">dúzia</option>
+      <option value="rolo">rolo</option>
+      <option value="m">m</option>
+      <option value="par">par</option>
+      <option value="frasco">frasco</option>
+      <option value="pote">pote</option>
+    </select></label>
   </div>
   <div class="form-cols">
     <label>Estoque mínimo<input id="stockMinInput" type="number" min="0" step="0.01" value="1"></label>
@@ -5443,6 +5670,7 @@ const DEFAULT_CHECKED = new Set([3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18
 const KEY = "casa-cambuquira-controle-v4";
 const OLD_KEY = "casa-cambuquira-controle-v3";
 const OLDER_KEY = "casa-cambuquira-organizador-v2";
+const V1019_BACKUP_KEY = "casa-cambuquira-controle-v4-backup-before-v10.19";
 
 const BASIC_STOCK = [
 ["Arroz 5 kg","Alimentos","Despensa / Armário","pacote",1],
@@ -5636,7 +5864,14 @@ function freshState(){
 function loadState(){
   try{
     const current=localStorage.getItem(KEY);
-    if(current)return {...freshState(),...JSON.parse(current)};
+    if(current){
+      // Segurança V10.19: salva uma cópia do estado anterior apenas uma vez.
+      // A interface nova usa a MESMA chave KEY e não apaga campos antigos.
+      if(!localStorage.getItem(V1019_BACKUP_KEY)){
+        localStorage.setItem(V1019_BACKUP_KEY,current);
+      }
+      return {...freshState(),...JSON.parse(current)};
+    }
 
     const v3=localStorage.getItem(OLD_KEY);
     if(v3)return {...freshState(),...JSON.parse(v3)};
@@ -5661,6 +5896,7 @@ function loadState(){
 }
 let state=loadState();
 let houseOpen=new Set(),houseEdit=false,editingHouseCat=null,editingHouseItem=null;
+let editingStockId=null;
 function save(){
   localStorage.setItem(KEY,JSON.stringify(state));
   if(window.CasaCloud && !window.CasaCloud.applyingRemote){
@@ -6213,36 +6449,156 @@ function ensureStockStructure(){
 function stockGroupId(x){
   return STOCK_GROUPS.find(g=>g.match(x))?.id||"others";
 }
-function stockRow(x){
-  const st=stockStatus(x),low=lowestPrice(x),expDays=daysUntil(x.expiry);
-  const tr=document.createElement("tr");tr.className=st.key;
-  tr.innerHTML=`
-    <td><span class="badge ${st.cls}">${st.label}</span>${expDays<=30?`<div><span class="badge danger">${expDays<0?"Vencido":expDays+" dias"}</span></div>`:""}</td>
-    <td><input data-k="name" value="${esc(x.name)}"></td>
-    <td><select data-k="category">${STOCK_CATEGORIES.map(v=>`<option ${x.category===v?"selected":""}>${v}</option>`).join("")}</select></td>
-    <td><select data-k="location">${STOCK_LOCATIONS.map(v=>`<option ${x.location===v?"selected":""}>${v}</option>`).join("")}</select></td>
-    <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(x.qty)}"></td>
-    <td><input data-k="unit" value="${esc(x.unit)}"></td>
-    <td><input data-k="min" type="number" min="0" step="0.01" value="${num(x.min)}"></td>
-    <td><input data-k="expiry" type="date" value="${esc(x.expiry||"")}"></td>
-    <td><input data-k="priceC" type="number" min="0" step="0.01" value="${num(x.priceC)}" class="${low.city==="Cambuquira"&&low.price?"price-best":""}"></td>
-    <td><input data-k="priceO" type="number" min="0" step="0.01" value="${num(x.priceO)}" class="${low.city===state.otherCity&&low.price?"price-best":""}"></td>
-    <td><input data-k="priceSP" type="number" min="0" step="0.01" value="${num(x.priceSP)}" class="${low.city==="São Paulo"&&low.price?"price-best":""}"></td>
-    <td><span class="money">${low.price?brl(low.price):"—"}</span><div class="muted">${esc(low.city)}</div></td>
-    <td><input data-k="updated" type="date" value="${esc(x.updated||"")}"></td>
-    <td><input data-k="note" value="${esc(x.note||"")}" placeholder="Mercado, marca..."></td>
-    <td>
-      <div style="display:flex;gap:5px;flex-wrap:wrap">
-        <button class="btn small stock-prices">Preços</button>
-        <button class="btn small danger del-stock">Excluir</button>
+const STOCK_UNIT_OPTIONS=[
+  "un.","g","kg","ml","L","pacote","lata","caixa","garrafa","saco","sachê","dúzia","rolo","m","par","frasco","pote"
+];
+
+function stockUnitOptions(current){
+  const currentText=String(current||"un.").trim()||"un.";
+  const values=[...STOCK_UNIT_OPTIONS];
+  if(!values.includes(currentText))values.unshift(currentText);
+  return values.map(v=>`<option value="${esc(v)}" ${v===currentText?"selected":""}>${esc(v)}</option>`).join("");
+}
+
+function ensureStockDialogUnit(current){
+  const currentText=String(current||"un.").trim()||"un.";
+  if(![...stockUnitInput.options].some(o=>o.value===currentText)){
+    const opt=document.createElement("option");
+    opt.value=currentText;
+    opt.textContent=currentText;
+    stockUnitInput.prepend(opt);
+  }
+  stockUnitInput.value=currentText;
+}
+
+function stockMissing(x){
+  return Math.max(num(x.min)-num(x.qty),0);
+}
+
+function stockReplacementEstimate(x){
+  const missing=stockMissing(x);
+  const price=lowestPrice(x).price;
+  return missing>0&&price>0?missing*price:0;
+}
+
+function stockFormatQty(value){
+  return new Intl.NumberFormat("pt-BR",{
+    minimumFractionDigits:0,
+    maximumFractionDigits:3
+  }).format(num(value));
+}
+
+function stockPriority(x){
+  const key=stockStatus(x).key;
+  return key==="out"?0:key==="low"?1:2;
+}
+
+function openStockEditor(x){
+  editingStockId=x?.id||null;
+  stockForm.reset();
+  stockDialogTitle.textContent=x?"Editar produto":"Adicionar produto";
+  stockNameInput.value=x?.name||"";
+  stockCategoryInput.value=x?.category||"Alimentos";
+  stockLocationInput.value=x?.location||suggestedLocationForCategory(stockCategoryInput.value);
+  stockQtyInput.value=x?num(x.qty):0;
+  stockMinInput.value=x?num(x.min):1;
+  stockExpiryInput.value=x?.expiry||"";
+  stockNoteInput.value=x?.note||"";
+  ensureStockDialogUnit(x?.unit||"un.");
+  stockDialog.showModal();
+}
+
+function stockCard(x){
+  const st=stockStatus(x);
+  const low=lowestPrice(x);
+  const expDays=daysUntil(x.expiry);
+  const missing=stockMissing(x);
+  const estimated=stockReplacementEstimate(x);
+  const card=document.createElement("div");
+  card.className=`stock-item-card is-${st.key}`;
+  card.dataset.id=x.id;
+  const expiryBadge=x.expiry&&expDays<=30
+    ? `<span class="badge ${expDays<0?"danger":"warn"} stock-expiry-alert">${expDays<0?"Vencido":expDays+" dias"}</span>`
+    : "";
+  const bestPrice=low.price
+    ? `<strong>${brl(low.price)}</strong><small>${esc(low.city)} / ${esc(x.unit||"un.")}</small>`
+    : `<strong class="stock-empty-price">—</strong><small>Cadastre em Preços</small>`;
+  const replacement=estimated>0
+    ? `<strong>${brl(estimated)}</strong><small>para repor o mínimo</small>`
+    : `<strong class="stock-empty-price">—</strong><small>${missing>0?"sem preço cadastrado":"não precisa repor"}</small>`;
+
+  card.innerHTML=`
+    <div class="stock-item-main">
+      <div class="stock-item-title-row">
+        <span class="badge ${st.cls}">${st.label}</span>
+        <div class="stock-item-name">${esc(x.name)}</div>
       </div>
-    </td>`;
-  tr.querySelectorAll("[data-k]").forEach(inp=>inp.onchange=()=>{
-    const k=inp.dataset.k;
-    x[k]=["qty","min","priceC","priceO","priceSP"].includes(k)?num(inp.value):inp.value;
+      ${expiryBadge}
+      ${x.note?`<div class="stock-item-note" title="${esc(x.note)}">${esc(x.note)}</div>`:""}
+    </div>
+
+    <div class="stock-item-metrics">
+      <div class="stock-metric-box">
+        <span>Em casa</span>
+        <div class="stock-quick-field">
+          <input class="stock-qty-input" type="number" min="0" step="0.01" value="${num(x.qty)}" aria-label="Quantidade em casa">
+          <select class="stock-unit-select" aria-label="Unidade">${stockUnitOptions(x.unit)}</select>
+        </div>
+      </div>
+
+      <div class="stock-metric-box">
+        <span>Mínimo</span>
+        <div class="stock-quick-field">
+          <input class="stock-min-input" type="number" min="0" step="0.01" value="${num(x.min)}" aria-label="Estoque mínimo">
+          <div class="stock-unit-static">${esc(x.unit||"un.")}</div>
+        </div>
+      </div>
+
+      <div class="stock-metric-box need">
+        <span>Falta comprar</span>
+        <strong>${missing>0?`${stockFormatQty(missing)} ${esc(x.unit||"un.")}`:"Nada"}</strong>
+        <small>${missing>0?"até atingir o mínimo":"estoque suficiente"}</small>
+      </div>
+
+      <div class="stock-metric-box">
+        <span>Validade</span>
+        <input class="stock-date-input stock-expiry-input" type="date" value="${esc(x.expiry||"")}" aria-label="Validade">
+      </div>
+
+      <div class="stock-metric-box">
+        <span>Melhor preço</span>
+        ${bestPrice}
+      </div>
+
+      <div class="stock-metric-box value">
+        <span>Reposição estimada</span>
+        ${replacement}
+      </div>
+    </div>
+
+    <div class="stock-item-actions">
+      <button class="btn small stock-prices">Preços</button>
+      <button class="btn small stock-edit">Editar</button>
+      <button class="btn small danger del-stock">Excluir</button>
+    </div>`;
+
+  card.querySelector(".stock-qty-input").onchange=e=>{
+    x.qty=num(e.target.value);
     save();renderAll();
-  });
-  tr.querySelector(".stock-prices").onclick=()=>{
+  };
+  card.querySelector(".stock-min-input").onchange=e=>{
+    x.min=num(e.target.value);
+    save();renderAll();
+  };
+  card.querySelector(".stock-unit-select").onchange=e=>{
+    x.unit=e.target.value||"un.";
+    save();renderAll();
+  };
+  card.querySelector(".stock-expiry-input").onchange=e=>{
+    x.expiry=e.target.value||"";
+    save();renderAll();
+  };
+  card.querySelector(".stock-prices").onclick=()=>{
     openPanel("priceDbPanel");
     const search=document.getElementById("priceDbSearch");
     if(search){
@@ -6250,19 +6606,21 @@ function stockRow(x){
       search.dispatchEvent(new Event("input",{bubbles:true}));
     }
   };
-  tr.querySelector(".del-stock").onclick=()=>{
-    if(confirm("Excluir este produto do estoque?")){
+  card.querySelector(".stock-edit").onclick=()=>openStockEditor(x);
+  card.querySelector(".del-stock").onclick=()=>{
+    if(confirm(`Excluir "${x.name}" do estoque?`)){
       state.inventory=state.inventory.filter(i=>i.id!==x.id);
       save();renderAll();
     }
   };
-  return tr;
+  return card;
 }
+
 function renderStock(){
   ensureStockStructure();
   const q=norm(stockSearch.value),cat=stockCategoryFilter.value,loc=stockLocationFilter.value,status=stockStatusFilter.value;
   const filtered=state.inventory.filter(x=>{
-    const st=stockStatus(x).key,exp=daysUntil(x.expiry)<=30;
+    const st=stockStatus(x).key,exp=!!x.expiry&&daysUntil(x.expiry)<=30;
     const searchable=norm([x.name,x.category,x.location,x.note].join(" "));
     return (!q||searchable.includes(q)) &&
       (cat==="all"||x.category===cat) &&
@@ -6275,12 +6633,15 @@ function renderStock(){
   let renderedSections=0;
 
   STOCK_GROUPS.forEach(group=>{
-    const items=filtered.filter(group.match);
+    const items=filtered
+      .filter(group.match)
+      .sort((a,b)=>stockPriority(a)-stockPriority(b)||String(a.name).localeCompare(String(b.name),"pt-BR"));
     if(!items.length&&!defaultView)return;
     renderedSections++;
 
     const lowCount=items.filter(x=>stockStatus(x).key==="low").length;
     const outCount=items.filter(x=>stockStatus(x).key==="out").length;
+    const missingCount=items.filter(x=>stockMissing(x)>0).length;
     const details=document.createElement("details");
     details.className="stock-group";
     details.dataset.group=group.id;
@@ -6293,6 +6654,7 @@ function renderStock(){
       <span class="stock-group-meta">
         ${outCount?`<span class="badge danger">${outCount} zerado${outCount>1?"s":""}</span>`:""}
         ${lowCount?`<span class="badge warn">${lowCount} baixo${lowCount>1?"s":""}</span>`:""}
+        ${missingCount?`<span class="stock-missing-count">${missingCount} para repor</span>`:""}
         <span class="stock-group-count">${items.length} ${items.length===1?"item":"itens"}</span>
       </span>`;
     details.appendChild(summary);
@@ -6303,20 +6665,10 @@ function renderStock(){
       empty.textContent="Nenhum item cadastrado nesta seção.";
       details.appendChild(empty);
     }else{
-      const wrap=document.createElement("div");
-      wrap.className="table-wrap";
-      wrap.innerHTML=`
-        <table>
-          <thead><tr>
-            <th>Situação</th><th>Produto</th><th>Categoria</th><th>Local</th><th>Em casa</th><th>Unidade</th>
-            <th>Mínimo</th><th>Validade</th><th>Cambuquira</th><th class="other-city-label">${esc(state.otherCity||"Outra cidade")}</th>
-            <th>São Paulo</th><th>Menor preço</th><th>Atualizado</th><th>Observação</th><th></th>
-          </tr></thead>
-          <tbody></tbody>
-        </table>`;
-      const tbody=wrap.querySelector("tbody");
-      items.forEach(x=>tbody.appendChild(stockRow(x)));
-      details.appendChild(wrap);
+      const list=document.createElement("div");
+      list.className="stock-items-visual";
+      items.forEach(x=>list.appendChild(stockCard(x)));
+      details.appendChild(list);
     }
     stockGroups.appendChild(details);
   });
@@ -6327,13 +6679,14 @@ function renderStock(){
 
   const out=state.inventory.filter(x=>num(x.qty)<=0).length;
   const low=state.inventory.filter(x=>num(x.qty)>0&&num(x.qty)<num(x.min)).length;
-  const exp=state.inventory.filter(x=>daysUntil(x.expiry)<=30).length;
-  const value=state.inventory.reduce((s,x)=>s+num(x.qty)*lowestPrice(x).price,0);
+  const exp=state.inventory.filter(x=>!!x.expiry&&daysUntil(x.expiry)<=30).length;
+  const replacement=state.inventory.reduce((s,x)=>s+stockReplacementEstimate(x),0);
+
   stockTotal.textContent=state.inventory.length;
   stockOut.textContent=out;
   stockLow.textContent=low;
   stockExpiry.textContent=exp;
-  stockValue.textContent=brl(value);
+  stockValue.textContent=brl(replacement);
 }
 stockSearch.oninput=renderStock;
 stockCategoryFilter.onchange=renderStock;
@@ -6349,20 +6702,19 @@ function suggestedLocationForCategory(category){
   if(category==="Outros")return "Outro";
   return "Despensa / Armário";
 }
-stockCategoryInput.onchange=()=>{stockLocationInput.value=suggestedLocationForCategory(stockCategoryInput.value)};
-addStockBtn.onclick=()=>{
-  stockForm.reset();
-  stockCategoryInput.value="Alimentos";
-  stockLocationInput.value="Despensa / Armário";
-  stockUnitInput.value="un.";
-  stockMinInput.value=1;
-  stockDialog.showModal();
+stockCategoryInput.onchange=()=>{
+  if(!editingStockId)stockLocationInput.value=suggestedLocationForCategory(stockCategoryInput.value);
 };
+addStockBtn.onclick=()=>openStockEditor(null);
+
 stockForm.onsubmit=e=>{
-  if(e.submitter?.value==="cancel")return;
+  if(e.submitter?.value==="cancel"){
+    editingStockId=null;
+    return;
+  }
   e.preventDefault();
-  state.inventory.push({
-    id:uid(),
+
+  const payload={
     name:stockNameInput.value.trim(),
     category:stockCategoryInput.value,
     location:stockLocationInput.value,
@@ -6370,12 +6722,25 @@ stockForm.onsubmit=e=>{
     unit:stockUnitInput.value||"un.",
     min:num(stockMinInput.value),
     expiry:stockExpiryInput.value||"",
-    priceC:0,priceO:0,priceSP:0,updated:"",
-    note:stockNoteInput.value.trim(),
-    buyQty:0,bought:false,where:"best"
-  });
+    note:stockNoteInput.value.trim()
+  };
+
+  if(editingStockId){
+    const item=state.inventory.find(x=>String(x.id)===String(editingStockId));
+    if(item)Object.assign(item,payload);
+  }else{
+    state.inventory.push({
+      id:uid(),
+      ...payload,
+      priceC:0,priceO:0,priceSP:0,updated:"",
+      buyQty:0,bought:false,where:"best"
+    });
+  }
+
+  editingStockId=null;
   save();renderAll();stockDialog.close();
 };
+stockDialog.addEventListener("close",()=>{editingStockId=null;});
 basicStockBtn.onclick=()=>{
   const names=new Set(state.inventory.map(x=>norm(x.name)));let added=0;
   BASIC_STOCK.forEach(([name,category,location,unit,min])=>{
