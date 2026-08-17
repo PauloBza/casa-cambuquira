@@ -3018,6 +3018,101 @@ tr.event-meat-row td:nth-child(3) select{
 }
 
 
+
+/* ===== V10.20 — ESPECIAIS MAIS LIMPOS E PADRÃO DE UNIDADES ===== */
+.event-title-wrap{
+  display:grid;
+  gap:7px;
+}
+.event-meta-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.event-meta-chip{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  padding:0 9px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.08);
+  background:#171b23;
+  color:#d9e0ea;
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.event-type-chip{
+  border-color:rgba(239,68,68,.20);
+  background:rgba(239,68,68,.12);
+  color:#ffb3b3;
+}
+.event-price-reference{
+  line-height:1.45;
+  font-size:10px;
+}
+.event-split-calculator,
+.event-contribution-planner,
+.event-meat-planner,
+.event-body{
+  margin:12px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),#12161d;
+}
+.event-body{padding:12px}
+.event-head-actions .btn{
+  min-height:38px;
+}
+.event-contribution-settings input,
+.event-contribution-settings select,
+.event-guests-list input,
+.event-guests-list select,
+.event-table input,
+.event-table select{
+  min-height:38px;
+}
+.event-guest-row{
+  grid-template-columns:36px minmax(180px,1fr) 88px 150px 120px auto;
+  gap:8px;
+}
+.event-unit-select,
+.event-group-select{
+  min-width:0!important;
+  width:100%;
+  font-size:11px!important;
+}
+.event-unit-select{
+  min-width:95px!important;
+}
+.event-table-v108{min-width:1160px!important}
+.event-table-v108 th:nth-child(2),
+.event-table-v108 td:nth-child(2){min-width:180px!important}
+.event-table-v108 th:nth-child(3),
+.event-table-v108 td:nth-child(3){min-width:155px!important}
+.event-table-v108 th:nth-child(4),
+.event-table-v108 td:nth-child(4){min-width:90px!important}
+.event-table-v108 th:nth-child(5),
+.event-table-v108 td:nth-child(5){min-width:110px!important}
+.event-table-v108 th:nth-child(6),
+.event-table-v108 td:nth-child(6){min-width:145px!important}
+.event-table-v108 th:nth-child(7),
+.event-table-v108 td:nth-child(7){min-width:330px!important}
+@media(max-width:1180px){
+  .event-head{flex-direction:column}
+  .event-head-actions{justify-content:flex-start;width:100%}
+  .event-head-actions .btn{flex:1}
+  .event-contribution-settings{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  .event-meta-chips{width:100%}
+  .event-split-calculator,
+  .event-contribution-planner,
+  .event-meat-planner,
+  .event-body{margin:10px;padding:10px}
+}
+
 /* ===== V10.20 — EVENTOS REALIZADOS / ARQUIVO AUTOMÁTICO ===== */
 .event-archive-section{
   margin-top:18px;
@@ -4658,10 +4753,10 @@ tr.event-meat-row td:nth-child(3) select{
 
 <section id="eventsPanel" class="panel">
   <div class="help">
-    Crie listas para churrasco, pizza, festa, almoço, viagem ou qualquer outra ocasião. Informe o <strong>valor realmente pago</strong> em cada item e o sistema soma todos os gastos e calcula automaticamente quanto ficou por pessoa.
+    Organize aqui <strong>eventos e compras especiais</strong>: churrascos, pizzas, festas, viagens, estadias e compras avulsas. Use o <strong>valor realmente pago</strong> em cada item, padronize as unidades e acompanhe total, rateio, convidados e lista de compras do evento.
   </div>
   <div class="actions">
-    <button id="newEventBtn" class="btn primary">+ Novo especial</button>
+    <button id="newEventBtn" class="btn primary">+ Novo evento / especial</button>
   </div>
   <div id="eventsList"><div class="empty">Nenhuma lista especial criada.</div></div>
 
@@ -5516,14 +5611,32 @@ tr.event-meat-row td:nth-child(3) select{
 <h2>Adicionar item avulso</h2><div class="form-grid">
 <label>Item<input id="manualBuyName" required=""></label>
 <div class="form-cols"><label>Categoria<select id="manualBuyCategory"><option>Alimentos</option><option>Bebidas e líquidos</option><option>Limpeza</option><option>Descartáveis e papéis</option><option>Higiene</option><option>Manutenção e reparos</option><option>Outros</option><option>Especial</option></select></label>
-<label>Unidade<input id="manualBuyUnit" value="un."></label></div>
+<label>Unidade<select id="manualBuyUnit">
+  <option value="un.">un.</option>
+  <option value="g">g</option>
+  <option value="kg">kg</option>
+  <option value="ml">ml</option>
+  <option value="L">L</option>
+  <option value="pacote">pacote</option>
+  <option value="lata">lata</option>
+  <option value="caixa">caixa</option>
+  <option value="garrafa">garrafa</option>
+  <option value="saco">saco</option>
+  <option value="sachê">sachê</option>
+  <option value="dúzia">dúzia</option>
+  <option value="rolo">rolo</option>
+  <option value="m">m</option>
+  <option value="par">par</option>
+  <option value="frasco">frasco</option>
+  <option value="pote">pote</option>
+</select></label></div>
 <label>Quantidade<input id="manualBuyQty" type="number" min="0.01" step="0.01" value="1"></label>
 </div><div class="dialog-actions"><button value="cancel" class="btn">Cancelar</button><button class="btn primary">Adicionar</button></div>
 </form></dialog>
 
 <dialog id="eventDialog"><form method="dialog" id="eventForm" class="dialog-body">
-<h2>Novo especial</h2><div class="form-grid">
-<label>Tipo<select id="eventType"><option value="churrasco">Churrasco</option><option value="pizza">Pizza</option><option value="outro">Outro</option></select></label>
+<h2>Novo evento / compra especial</h2><div class="form-grid">
+<label>Tipo<select id="eventType"><option value="churrasco">Churrasco</option><option value="pizza">Pizza</option><option value="refeicao">Refeição / almoço</option><option value="viagem">Viagem</option><option value="estadia">Estadia</option><option value="compras">Compras especiais</option><option value="outro">Outro</option></select></label>
 <label>Nome<input id="eventName" required="" placeholder="Ex.: Churrasco de sábado"></label>
 <div class="form-cols">
   <label>Data<input id="eventDate" type="date"></label>
@@ -5907,6 +6020,7 @@ let state=loadState();
 let houseOpen=new Set(),houseEdit=false,editingHouseCat=null,editingHouseItem=null;
 let editingStockId=null;
 function save(){
+  if(typeof standardizeUnitsInState==="function")standardizeUnitsInState();
   localStorage.setItem(KEY,JSON.stringify(state));
   if(window.CasaCloud && !window.CasaCloud.applyingRemote){
     window.CasaCloud.queueSave("main",state);
@@ -6462,15 +6576,46 @@ const STOCK_UNIT_OPTIONS=[
   "un.","g","kg","ml","L","pacote","lata","caixa","garrafa","saco","sachê","dúzia","rolo","m","par","frasco","pote"
 ];
 
+function normalizeUnit(value){
+  const raw=String(value||"").trim();
+  if(!raw)return "un.";
+  const key=norm(raw).replace(/\./g,"");
+  if(["un","unidade","unidades","und","unds"].includes(key))return "un.";
+  if(["g","grama","gramas"].includes(key))return "g";
+  if(["kg","quilo","quilos"].includes(key))return "kg";
+  if(["ml","mililitro","mililitros"].includes(key))return "ml";
+  if(["l","lt","litro","litros"].includes(key))return "L";
+  if(["pacote","pacotes","pct"].includes(key))return "pacote";
+  if(["lata","latas"].includes(key))return "lata";
+  if(["caixa","caixas"].includes(key))return "caixa";
+  if(["garrafa","garrafas"].includes(key))return "garrafa";
+  if(["saco","sacos"].includes(key))return "saco";
+  if(["sache","saches","saches","sache"].includes(key))return "sachê";
+  if(["duzia","duzias"].includes(key))return "dúzia";
+  if(["rolo","rolos"].includes(key))return "rolo";
+  if(["m","metro","metros"].includes(key))return "m";
+  if(["par","pares"].includes(key))return "par";
+  if(["frasco","frascos"].includes(key))return "frasco";
+  if(["pote","potes"].includes(key))return "pote";
+  return raw;
+}
 function stockUnitOptions(current){
-  const currentText=String(current||"un.").trim()||"un.";
+  const currentText=normalizeUnit(current);
   const values=[...STOCK_UNIT_OPTIONS];
   if(!values.includes(currentText))values.unshift(currentText);
   return values.map(v=>`<option value="${esc(v)}" ${v===currentText?"selected":""}>${esc(v)}</option>`).join("");
 }
+function eventUnitOptions(current){
+  return stockUnitOptions(current);
+}
+function standardizeUnitsInState(){
+  (state.inventory||[]).forEach(x=>x.unit=normalizeUnit(x.unit));
+  (state.manualBuys||[]).forEach(x=>x.unit=normalizeUnit(x.unit));
+  (state.events||[]).forEach(ev=>(ev.items||[]).forEach(i=>i.unit=normalizeUnit(i.unit)));
+}
 
 function ensureStockDialogUnit(current){
-  const currentText=String(current||"un.").trim()||"un.";
+  const currentText=normalizeUnit(current);
   if(![...stockUnitInput.options].some(o=>o.value===currentText)){
     const opt=document.createElement("option");
     opt.value=currentText;
@@ -7135,7 +7280,7 @@ function renderShopping(){
 addManualBuyBtn.onclick=()=>{manualBuyForm.reset();manualBuyQty.value=1;manualBuyUnit.value="un.";manualBuyDialog.showModal()};
 manualBuyForm.onsubmit=e=>{
   if(e.submitter?.value==="cancel")return;e.preventDefault();
-  state.manualBuys.push({id:uid(),name:manualBuyName.value.trim(),category:manualBuyCategory.value,qty:num(manualBuyQty.value),unit:manualBuyUnit.value||"un.",priceC:0,priceO:0,priceSP:0,where:"best",bought:false});
+  state.manualBuys.push({id:uid(),name:manualBuyName.value.trim(),category:manualBuyCategory.value,qty:num(manualBuyQty.value),unit:normalizeUnit(manualBuyUnit.value)||"un.",priceC:0,priceO:0,priceSP:0,where:"best",bought:false});
   save();renderAll();manualBuyDialog.close();
 };
 removeBoughtBtn.onclick=()=>{state.hideBought=!state.hideBought;removeBoughtBtn.textContent=state.hideBought?"Mostrar comprados":"Ocultar comprados";save();renderShopping()};
@@ -7143,6 +7288,8 @@ removeBoughtBtn.onclick=()=>{state.hideBought=!state.hideBought;removeBoughtBtn.
 /* EVENTOS */
 
 const EVENT_GROUPS=["Carne","Acompanhamento","Bebida","Carvão / apoio","Descartáveis","Outro"];
+const EVENT_TYPE_LABELS={churrasco:"Churrasco",pizza:"Pizza",refeicao:"Refeição / almoço",viagem:"Viagem",estadia:"Estadia",compras:"Compras especiais",outro:"Outro"};
+function eventTypeLabel(type){return EVENT_TYPE_LABELS[type]||String(type||"Outro");}
 
 function inferEventGroup(item){
   const n=norm(item?.name);
@@ -7955,9 +8102,16 @@ function renderEvents(){
       <div class="event-head">
         <div class="event-title-wrap">
           <h3>${esc(ev.name)}</h3>
-          <div class="muted">${esc(ev.type)} ${ev.date?"• "+ev.date:""}</div>
+          <div class="event-meta-chips">
+            <span class="event-meta-chip event-type-chip">${esc(eventTypeLabel(ev.type))}</span>
+            ${ev.date?`<span class="event-meta-chip">${esc(ev.date)}</span>`:""}
+            ${ev.time?`<span class="event-meta-chip">${esc(ev.time)}</span>`:""}
+            ${ev.location?`<span class="event-meta-chip">${esc(ev.location)}</span>`:""}
+            <span class="event-meta-chip">${people} pessoa(s)</span>
+            <span class="event-meta-chip">${ev.items.length} item(ns)</span>
+          </div>
           <div class="muted event-price-reference">
-            Estimativa para a quantidade deste evento —
+            Estimativa do evento —
             Cambuquira: ${brl(totals.c)} |
             ${esc(state.otherCity)}: ${brl(totals.o)} |
             SP: ${brl(totals.s)} |
@@ -8008,7 +8162,7 @@ function renderEvents(){
       <div class="event-contribution-planner">
         <div class="event-calc-title">
           <strong>Convidados, ajuda de custo e pagamentos</strong>
-          <span>Marque quem pagou e use “Especial” só quando houver exceção.</span>
+          <span>Marque quem pagou e use valor especial apenas quando alguém contribuir com valor diferente.</span>
         </div>
 
         <div class="event-contribution-grid">
@@ -8172,7 +8326,7 @@ function renderEvents(){
           </select>
         </td>
         <td><input data-k="qty" type="number" min="0" step="0.01" value="${num(i.qty)}"></td>
-        <td><input data-k="unit" value="${esc(i.unit)}"></td>
+        <td><select class="event-unit-select" data-k="unit">${eventUnitOptions(i.unit)}</select></td>
         <td>
           <div class="event-paid-input-wrap">
             <span>R$</span>
@@ -8195,7 +8349,9 @@ function renderEvents(){
             ? inp.checked
             : ["qty","paidTotal"].includes(k)
               ? num(inp.value)
-              : inp.value;
+              : k==="unit"
+                ? normalizeUnit(inp.value)
+                : inp.value;
 
           save();
           renderAll();
@@ -8463,6 +8619,7 @@ dashboardShoppingCsvBtn.onclick=()=>{
   ]),"text/csv");
 };
 
+standardizeUnitsInState();
 renderAll();
 </script>
 
