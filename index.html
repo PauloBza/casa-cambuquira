@@ -1177,7 +1177,7 @@ footer{
 #stockPanel .stock-item-card{
   position:relative;
   display:grid;
-  grid-template-columns:minmax(210px,1.25fr) minmax(560px,3fr) auto;
+  grid-template-columns:minmax(220px,1.15fr) minmax(0,3fr) auto;
   gap:14px;
   align-items:center;
   padding:13px 14px;
@@ -1220,8 +1220,9 @@ footer{
 }
 #stockPanel .stock-item-metrics{
   display:grid;
-  grid-template-columns:repeat(6,minmax(95px,1fr));
+  grid-template-columns:repeat(6,minmax(0,1fr));
   gap:7px;
+  min-width:0;
 }
 #stockPanel .stock-metric-box{
   min-width:0;
@@ -1230,6 +1231,7 @@ footer{
   border:1px solid rgba(255,255,255,.07);
   border-radius:11px;
   background:#171b23;
+  overflow:hidden;
 }
 #stockPanel .stock-metric-box>span{
   display:block;
@@ -1269,13 +1271,15 @@ footer{
 #stockPanel .stock-metric-box.value>strong{color:#8ef1b3}
 #stockPanel .stock-quick-field{
   display:grid;
-  grid-template-columns:minmax(62px,1fr) minmax(72px,.85fr);
+  grid-template-columns:minmax(0,.95fr) minmax(0,.9fr);
   gap:5px;
+  min-width:0;
 }
 #stockPanel .stock-quick-field input,
 #stockPanel .stock-quick-field select,
 #stockPanel .stock-date-input{
   width:100%;
+  max-width:100%;
   min-width:0;
   min-height:34px;
   height:34px;
@@ -1327,7 +1331,7 @@ footer{
 #stockPanel .stock-storage-note{
   padding:0 2px;
 }
-@media(max-width:1180px){
+@media(max-width:1260px){
   #stockPanel .stock-item-card{
     grid-template-columns:minmax(190px,1fr) minmax(0,2.7fr);
   }
@@ -1338,7 +1342,12 @@ footer{
   }
   #stockPanel .stock-item-actions .btn{width:auto}
   #stockPanel .stock-item-metrics{
-    grid-template-columns:repeat(3,minmax(120px,1fr));
+    grid-template-columns:repeat(3,minmax(140px,1fr));
+  }
+}
+@media(max-width:980px){
+  #stockPanel .stock-item-metrics{
+    grid-template-columns:repeat(2,minmax(140px,1fr));
   }
 }
 @media(max-width:800px){
