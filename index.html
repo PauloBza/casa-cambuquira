@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa Cambuquira — V10.17 Convidados & Pagamentos</title>
+<title>Casa Cambuquira — V10.18 Lista de Compras + Especiais</title>
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--text:#182230;--muted:#667085;--border:#dfe3e8;
@@ -2209,7 +2209,7 @@ footer{
 }
 .dashboard-shopping-metrics{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:8px;
   padding:12px 16px 8px;
 }
@@ -2265,7 +2265,7 @@ footer{
 }
 .dashboard-shopping-row{
   display:grid;
-  grid-template-columns:minmax(170px,1.5fr) repeat(3,minmax(110px,.7fr)) 92px;
+  grid-template-columns:minmax(170px,1.5fr) repeat(3,minmax(100px,.7fr)) 82px 126px;
   gap:8px;
   align-items:center;
   padding:10px 8px;
@@ -2326,6 +2326,38 @@ footer{
   background:#20293a;
   color:#9cc1ff;
 }
+.dashboard-shopping-badge.special{
+  background:#182d25;
+  color:#8ef1b3;
+}
+.dashboard-shopping-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:5px;
+  flex-wrap:wrap;
+}
+.dashboard-shopping-actions .btn{
+  min-height:28px;
+  padding:0 7px;
+  font-size:9px;
+}
+.dashboard-shopping-specials-label{
+  margin:14px 0 6px;
+  padding:8px 10px;
+  border:1px solid rgba(142,241,179,.16);
+  border-radius:10px;
+  background:#132019;
+  color:#8ef1b3;
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.dashboard-shopping-category.special .dashboard-shopping-category-title{
+  background:#17241d;
+  color:#b7f7ce;
+  border-left:3px solid #4ade80;
+}
 .dashboard-shopping-empty{
   padding:30px 14px;
   text-align:center;
@@ -2351,7 +2383,7 @@ footer{
   .dashboard-shopping-head{padding:12px}
   .dashboard-shopping-head h2{font-size:17px}
   .dashboard-shopping-metrics{
-    grid-template-columns:1fr 1fr 1fr;
+    grid-template-columns:1fr 1fr;
     padding:10px;
   }
   .dashboard-shopping-metrics>div{padding:8px}
@@ -2371,6 +2403,9 @@ footer{
   }
   .dashboard-shopping-badge{
     justify-self:start;
+  }
+  .dashboard-shopping-actions{
+    justify-content:flex-start;
   }
   .dashboard-shopping-footer{
     padding:9px 10px;
@@ -5360,7 +5395,7 @@ tr.event-meat-row td:nth-child(3) select{
     <div class="dashboard-shopping-head">
       <div>
         <h2>Lista de compras</h2>
-        <p>Itens que estão abaixo do mínimo no Estoque e compras adicionadas manualmente.</p>
+        <p>Estoque abaixo do mínimo, compras manuais e itens pendentes dos Especiais.</p>
       </div>
       <button id="dashboardShoppingCloseX" class="btn dashboard-shopping-close" type="button" title="Fechar">×</button>
     </div>
@@ -5378,17 +5413,23 @@ tr.event-meat-row td:nth-child(3) select{
         <span>Itens manuais</span>
         <strong id="dashboardShoppingManualCount">0</strong>
       </div>
+      <div>
+        <span>Especiais</span>
+        <strong id="dashboardShoppingSpecialCount">0</strong>
+      </div>
     </div>
 
     <div class="dashboard-shopping-legend">
       <span><strong>Em casa</strong> = quantidade atual</span>
       <span><strong>Mínimo</strong> = quantidade que você quer manter</span>
       <span><strong>Falta comprar</strong> = quantidade necessária agora</span>
+      <span><strong>Editar / Excluir</strong> = ajuste a lista antes de copiar ou exportar</span>
     </div>
 
     <div id="dashboardShoppingFullList" class="dashboard-shopping-full-list"></div>
 
     <div class="dashboard-shopping-footer">
+      <button id="dashboardShoppingRestoreBtn" class="btn" type="button" hidden>Restaurar excluídos</button>
       <button id="dashboardShoppingCopyBtn" class="btn" type="button">Copiar lista</button>
       <button id="dashboardShoppingCsvBtn" class="btn" type="button">Exportar CSV</button>
       <button id="dashboardShoppingCloseBtn" class="btn primary" type="button">Fechar</button>
@@ -6353,8 +6394,12 @@ basicStockBtn.onclick=()=>{
 
 /* COMPRAS */
 function shoppingItems(){
-  const auto=state.inventory.filter(x=>num(x.qty)<num(x.min)).map(x=>({...x,source:"stock",ref:x.id,buyQty:num(x.buyQty)>0?num(x.buyQty):Math.max(num(x.min)-num(x.qty),1)}));
-  const manual=state.manualBuys.map(x=>({...x,source:"manual",ref:x.id,buyQty:num(x.qty)}));
+  const auto=state.inventory
+    .filter(x=>num(x.qty)<num(x.min) && !x.shoppingExcluded)
+    .map(x=>({...x,source:"stock",ref:x.id,buyQty:num(x.buyQty)>0?num(x.buyQty):Math.max(num(x.min)-num(x.qty),1)}));
+  const manual=state.manualBuys
+    .filter(x=>!x.shoppingExcluded)
+    .map(x=>({...x,source:"manual",ref:x.id,buyQty:num(x.qty)}));
   return [...auto,...manual];
 }
 
@@ -6376,8 +6421,31 @@ function shoppingNeedFor(item){
   return num(item.buyQty);
 }
 
+function dashboardSpecialShoppingItems(){
+  return (state.events||[])
+    .filter(ev=>!eventIsRealized(ev))
+    .flatMap(ev=>(Array.isArray(ev.items)?ev.items:[])
+      .filter(item=>!item.bought && !item.shoppingExcluded)
+      .map(item=>({
+        ...item,
+        source:"event",
+        ref:item.id,
+        eventId:ev.id,
+        eventName:String(ev.name||"Evento"),
+        eventDate:String(ev.date||""),
+        eventType:String(ev.type||""),
+        category:eventItemGroup(item)||"Outro",
+        buyQty:num(item.qty),
+        current:null,
+        minimum:null,
+        need:num(item.qty),
+        shoppingKey:`event:${ev.id}:${item.id}`
+      }))
+    );
+}
+
 function dashboardShoppingItems(){
-  return shoppingItems()
+  const regular=shoppingItems()
     .filter(x=>!x.bought)
     .map(x=>{
       const stock=x.source==="stock";
@@ -6386,67 +6454,230 @@ function dashboardShoppingItems(){
         current:stock?num(x.qty):null,
         minimum:stock?num(x.min):null,
         need:shoppingNeedFor(x),
-        category:x.category||"Outros"
+        category:x.category||"Outros",
+        shoppingKey:`${x.source}:${x.ref}`
       };
     })
     .sort((a,b)=>
       String(a.category).localeCompare(String(b.category),"pt-BR") ||
       String(a.name).localeCompare(String(b.name),"pt-BR")
     );
+
+  const specials=dashboardSpecialShoppingItems()
+    .sort((a,b)=>
+      String(a.eventDate||"9999-12-31").localeCompare(String(b.eventDate||"9999-12-31")) ||
+      String(a.eventName).localeCompare(String(b.eventName),"pt-BR") ||
+      String(a.category).localeCompare(String(b.category),"pt-BR") ||
+      String(a.name).localeCompare(String(b.name),"pt-BR")
+    );
+
+  return [...regular,...specials];
+}
+
+function dashboardShoppingTarget(item){
+  if(item.source==="stock"){
+    return state.inventory.find(x=>String(x.id)===String(item.ref))||null;
+  }
+  if(item.source==="manual"){
+    return state.manualBuys.find(x=>String(x.id)===String(item.ref))||null;
+  }
+  if(item.source==="event"){
+    const ev=(state.events||[]).find(x=>String(x.id)===String(item.eventId));
+    return ev?.items?.find(x=>String(x.id)===String(item.ref))||null;
+  }
+  return null;
+}
+
+function dashboardShoppingExcludedCount(){
+  const stock=(state.inventory||[]).filter(x=>
+    num(x.qty)<num(x.min) && !x.bought && !!x.shoppingExcluded
+  ).length;
+  const manual=(state.manualBuys||[]).filter(x=>!x.bought && !!x.shoppingExcluded).length;
+  const special=(state.events||[])
+    .filter(ev=>!eventIsRealized(ev))
+    .reduce((sum,ev)=>sum+(ev.items||[]).filter(x=>!x.bought && !!x.shoppingExcluded).length,0);
+  return stock+manual+special;
+}
+
+function restoreDashboardShoppingExcluded(){
+  (state.inventory||[]).forEach(x=>{delete x.shoppingExcluded});
+  (state.manualBuys||[]).forEach(x=>{delete x.shoppingExcluded});
+  (state.events||[]).forEach(ev=>(ev.items||[]).forEach(x=>{delete x.shoppingExcluded}));
+  save();
+  renderAll();
+  renderDashboardShoppingDialog();
+  showCasaSaveToast?.("Itens restaurados na lista de compras ✓","ok",2200);
+}
+
+function editDashboardShoppingItem(item){
+  const target=dashboardShoppingTarget(item);
+  if(!target)return;
+
+  const nameRaw=prompt("Nome do item:",String(target.name||item.name||""));
+  if(nameRaw===null)return;
+  const name=String(nameRaw).trim();
+  if(!name){
+    alert("O nome do item não pode ficar vazio.");
+    return;
+  }
+
+  const qtyRaw=prompt(
+    item.source==="stock" ? "Quantidade que deseja comprar:" : "Quantidade:",
+    String(item.need??item.buyQty??target.qty??1).replace(".",",")
+  );
+  if(qtyRaw===null)return;
+  const qty=Number(String(qtyRaw).trim().replace(",","."));
+  if(!Number.isFinite(qty) || qty<=0){
+    alert("Informe uma quantidade maior que zero.");
+    return;
+  }
+
+  const unitRaw=prompt("Unidade:",String(target.unit||item.unit||"un."));
+  if(unitRaw===null)return;
+  const unit=String(unitRaw).trim()||"un.";
+
+  target.name=name;
+  target.unit=unit;
+  if(item.source==="stock"){
+    target.buyQty=qty;
+  }else{
+    target.qty=qty;
+  }
+  delete target.shoppingExcluded;
+
+  save();
+  renderAll();
+  renderDashboardShoppingDialog();
+  showCasaSaveToast?.("Item atualizado na lista de compras ✓","ok",1800);
+}
+
+function excludeDashboardShoppingItem(item){
+  const target=dashboardShoppingTarget(item);
+  if(!target)return;
+  if(!confirm(`Excluir "${item.name}" desta lista de compras?\n\nO cadastro original será preservado e poderá ser restaurado pelo botão "Restaurar excluídos".`))return;
+
+  target.shoppingExcluded=true;
+  save();
+  renderAll();
+  renderDashboardShoppingDialog();
+}
+
+function dashboardShoppingRowHtml(item){
+  const isStock=item.source==="stock";
+  const isEvent=item.source==="event";
+  const zero=isStock && num(item.current)<=0;
+  const badgeClass=isEvent?"special":item.source==="manual"?"manual":zero?"zero":"";
+  const badgeText=isEvent?"ESPECIAL":item.source==="manual"?"MANUAL":zero?"ZERADO":"BAIXO";
+  const detail=isEvent
+    ? `${item.category||"Outro"}${item.eventDate?` • ${item.eventDate}`:""}`
+    : isStock
+      ? (item.location||"Estoque")
+      : "Compra adicionada manualmente";
+
+  return `
+    <div class="dashboard-shopping-row" data-shopping-key="${esc(item.shoppingKey)}">
+      <div class="dashboard-shopping-name">
+        <strong>${esc(item.name)}</strong>
+        <small>${esc(detail)}</small>
+      </div>
+      <div class="dashboard-shopping-value">
+        <span>Em casa</span>
+        <strong>${isStock ? shoppingQtyText(item.current,item.unit) : "—"}</strong>
+      </div>
+      <div class="dashboard-shopping-value">
+        <span>Mínimo</span>
+        <strong>${isStock ? shoppingQtyText(item.minimum,item.unit) : "—"}</strong>
+      </div>
+      <div class="dashboard-shopping-value need">
+        <span>${isEvent?"Comprar para evento":"Falta comprar"}</span>
+        <strong>${shoppingQtyText(item.need,item.unit)}</strong>
+      </div>
+      <span class="dashboard-shopping-badge ${badgeClass}">${badgeText}</span>
+      <div class="dashboard-shopping-actions">
+        <button class="btn small dashboard-shopping-edit" type="button">Editar</button>
+        <button class="btn small danger dashboard-shopping-delete" type="button">Excluir</button>
+      </div>
+    </div>`;
 }
 
 function renderDashboardShoppingDialog(){
   const items=dashboardShoppingItems();
-  const stockCount=items.filter(x=>x.source==="stock").length;
-  const manualCount=items.filter(x=>x.source==="manual").length;
+  const regular=items.filter(x=>x.source!=="event");
+  const specials=items.filter(x=>x.source==="event");
+  const stockCount=regular.filter(x=>x.source==="stock").length;
+  const manualCount=regular.filter(x=>x.source==="manual").length;
+  const specialCount=specials.length;
 
   dashboardShoppingCount.textContent=items.length;
   dashboardShoppingStockCount.textContent=stockCount;
   dashboardShoppingManualCount.textContent=manualCount;
+  const specialCountEl=document.getElementById("dashboardShoppingSpecialCount");
+  if(specialCountEl)specialCountEl.textContent=specialCount;
+
+  const restoreBtn=document.getElementById("dashboardShoppingRestoreBtn");
+  const excludedCount=dashboardShoppingExcludedCount();
+  if(restoreBtn){
+    restoreBtn.hidden=excludedCount===0;
+    restoreBtn.textContent=excludedCount
+      ? `Restaurar excluídos (${excludedCount})`
+      : "Restaurar excluídos";
+  }
 
   if(!items.length){
     dashboardShoppingFullList.innerHTML=
-      '<div class="dashboard-shopping-empty"><strong>Nada para comprar.</strong><br>O estoque está dentro dos mínimos definidos.</div>';
+      `<div class="dashboard-shopping-empty">
+        <strong>Nada para comprar.</strong><br>
+        ${excludedCount
+          ? `${excludedCount} item(ns) foi(ram) excluído(s) desta lista. Use "Restaurar excluídos" para trazê-los de volta.`
+          : "O estoque está dentro dos mínimos definidos e não há itens pendentes nos Especiais."}
+      </div>`;
     return;
   }
 
-  const groups=new Map();
-  items.forEach(item=>{
-    if(!groups.has(item.category))groups.set(item.category,[]);
-    groups.get(item.category).push(item);
+  const regularGroups=new Map();
+  regular.forEach(item=>{
+    if(!regularGroups.has(item.category))regularGroups.set(item.category,[]);
+    regularGroups.get(item.category).push(item);
   });
 
-  dashboardShoppingFullList.innerHTML=[...groups.entries()].map(([category,group])=>`
+  const regularHtml=[...regularGroups.entries()].map(([category,group])=>`
     <section class="dashboard-shopping-category">
       <div class="dashboard-shopping-category-title">${esc(category)} • ${group.length} item(ns)</div>
-      ${group.map(item=>{
-        const isStock=item.source==="stock";
-        const zero=isStock && num(item.current)<=0;
-        return `
-          <div class="dashboard-shopping-row">
-            <div class="dashboard-shopping-name">
-              <strong>${esc(item.name)}</strong>
-              <small>${isStock ? esc(item.location||"Estoque") : "Compra adicionada manualmente"}</small>
-            </div>
-            <div class="dashboard-shopping-value">
-              <span>Em casa</span>
-              <strong>${isStock ? shoppingQtyText(item.current,item.unit) : "—"}</strong>
-            </div>
-            <div class="dashboard-shopping-value">
-              <span>Mínimo</span>
-              <strong>${isStock ? shoppingQtyText(item.minimum,item.unit) : "—"}</strong>
-            </div>
-            <div class="dashboard-shopping-value need">
-              <span>Falta comprar</span>
-              <strong>${shoppingQtyText(item.need,item.unit)}</strong>
-            </div>
-            <span class="dashboard-shopping-badge ${item.source==="manual"?"manual":zero?"zero":""}">
-              ${item.source==="manual"?"MANUAL":zero?"ZERADO":"BAIXO"}
-            </span>
-          </div>`;
-      }).join("")}
+      ${group.map(dashboardShoppingRowHtml).join("")}
     </section>
   `).join("");
+
+  const eventGroups=new Map();
+  specials.forEach(item=>{
+    if(!eventGroups.has(item.eventId))eventGroups.set(item.eventId,[]);
+    eventGroups.get(item.eventId).push(item);
+  });
+
+  const specialsHtml=specials.length ? `
+    <div class="dashboard-shopping-specials-label">Especiais • ${specials.length} item(ns) para comprar</div>
+    ${[...eventGroups.values()].map(group=>{
+      const first=group[0];
+      const dateText=first.eventDate
+        ? (typeof eventDateBR==="function"?eventDateBR(first.eventDate):first.eventDate)
+        : "";
+      return `
+        <section class="dashboard-shopping-category special">
+          <div class="dashboard-shopping-category-title">
+            ${esc(first.eventName)}${dateText?` • ${esc(dateText)}`:""} • ${group.length} item(ns)
+          </div>
+          ${group.map(dashboardShoppingRowHtml).join("")}
+        </section>`;
+    }).join("")}
+  ` : "";
+
+  dashboardShoppingFullList.innerHTML=regularHtml+specialsHtml;
+
+  dashboardShoppingFullList.querySelectorAll(".dashboard-shopping-row").forEach(row=>{
+    const item=items.find(x=>String(x.shoppingKey)===String(row.dataset.shoppingKey));
+    if(!item)return;
+    row.querySelector(".dashboard-shopping-edit")?.addEventListener("click",()=>editDashboardShoppingItem(item));
+    row.querySelector(".dashboard-shopping-delete")?.addEventListener("click",()=>excludeDashboardShoppingItem(item));
+  });
 }
 
 function openDashboardShoppingList(){
@@ -6457,19 +6688,34 @@ function openDashboardShoppingList(){
 async function copyDashboardShoppingList(){
   const items=dashboardShoppingItems();
   const lines=["LISTA DE COMPRAS — CASA CAMBUQUIRA",""];
-  let lastCategory="";
+  let lastGroup="";
+
   items.forEach(item=>{
-    if(item.category!==lastCategory){
-      if(lastCategory)lines.push("");
-      lines.push(item.category.toUpperCase());
-      lastCategory=item.category;
+    const isEvent=item.source==="event";
+    const groupKey=isEvent?`event:${item.eventId}`:`category:${item.category}`;
+    if(groupKey!==lastGroup){
+      if(lastGroup)lines.push("");
+      if(isEvent){
+        const dateText=item.eventDate
+          ? (typeof eventDateBR==="function"?eventDateBR(item.eventDate):item.eventDate)
+          : "";
+        lines.push(`ESPECIAL — ${String(item.eventName||"Evento").toUpperCase()}${dateText?` — ${dateText}`:""}`);
+      }else{
+        lines.push(String(item.category||"Outros").toUpperCase());
+      }
+      lastGroup=groupKey;
     }
+
     if(item.source==="stock"){
       lines.push(`• ${item.name} — tem ${shoppingQtyText(item.current,item.unit)} | mínimo ${shoppingQtyText(item.minimum,item.unit)} | comprar ${shoppingQtyText(item.need,item.unit)}`);
+    }else if(isEvent){
+      lines.push(`• ${item.name} [${item.category||"Outro"}] — comprar ${shoppingQtyText(item.need,item.unit)}`);
     }else{
       lines.push(`• ${item.name} — comprar ${shoppingQtyText(item.need,item.unit)}`);
     }
   });
+
+  if(!items.length)lines.push("Nada para comprar.");
 
   const content=lines.join("\n");
   try{
@@ -7825,18 +8071,20 @@ dashOpenShoppingList.onclick=openDashboardShoppingList;
 dashboardShoppingCloseBtn.onclick=()=>dashboardShoppingDialog.close();
 dashboardShoppingCloseX.onclick=()=>dashboardShoppingDialog.close();
 dashboardShoppingCopyBtn.onclick=copyDashboardShoppingList;
+document.getElementById("dashboardShoppingRestoreBtn")?.addEventListener("click",restoreDashboardShoppingExcluded);
 dashboardShoppingCsvBtn.onclick=()=>{
   const items=dashboardShoppingItems();
   download("lista-de-compras-casa-cambuquira.csv",csv([
-    ["Item","Categoria","Em casa","Mínimo","Falta comprar","Unidade","Origem"],
+    ["Item","Categoria","Evento","Em casa","Mínimo","Falta comprar","Unidade","Origem"],
     ...items.map(x=>[
       x.name,
       x.category,
+      x.source==="event"?(x.eventName||""):"",
       x.source==="stock"?x.current:"",
       x.source==="stock"?x.minimum:"",
       x.need,
       x.unit,
-      x.source==="stock"?"Estoque":"Manual"
+      x.source==="stock"?"Estoque":x.source==="event"?"Especial":"Manual"
     ])
   ]),"text/csv");
 };
